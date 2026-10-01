@@ -1,22 +1,23 @@
-# beatober
+# studiodaze-beatober
 
 Public October beat + Strudel showcase (`studio-daze` header, separate GitHub/Vercel project).
 
-**Live:** https://beatober.vercel.app
+**Live:** https://studiodaze-beatober.vercel.app  
+**GitHub:** https://github.com/EdwinMunoz416/studiodaze-beatober
 
 ## Infra (CLI — not manual dashboard-only)
 
 From a linked project directory (`vercel link`):
 
 ```bash
-chmod +x scripts/provision-beatober-infra.sh
-./scripts/provision-beatober-infra.sh
+chmod +x scripts/provision-studiodaze-beatober-infra.sh
+./scripts/provision-studiodaze-beatober-infra.sh
 ```
 
 Or step by step:
 
 ```bash
-# Blob (public store, iad1)
+# Blob (public store, iad1) — legacy store name kept for existing uploads
 npx vercel storage create beatober-media --type blob --access public --region iad1
 npx vercel storage connect beatober-media --yes
 
@@ -65,7 +66,7 @@ Share a day: **`/day/3`** (OG image for social previews). Sitemap: `/sitemap.xml
 - **Vercel Hobby Web Analytics** — same custom events via `@vercel/analytics`.
 - **Neon first-party** — `/api/events` → `analytics_events` table (richer detail, your data).
 
-**Control room:** https://beatober.vercel.app/admin — password = `BEATOBER_AUTHOR_SECRET`.  
+**Control room:** https://studiodaze-beatober.vercel.app/admin — password = `BEATOBER_AUTHOR_SECRET`.  
 **Devices:** `/admin/devices` — tag this browser as **internal** or **ignore** (visitors-only metrics by default).
 
 Events: `page_view`, `day_view`, `day_select`, `day_locked_interaction`, `play_beat`, `beat_*`, `strudel_*`.

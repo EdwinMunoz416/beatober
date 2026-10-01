@@ -1,6 +1,6 @@
 /**
  * Turbopack cannot resolve Strudel's Vite-style SharedWorker URL.
- * Run from beatober/ via postinstall. Idempotent.
+ * Run from studiodaze-beatober/ via postinstall. Idempotent.
  */
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";

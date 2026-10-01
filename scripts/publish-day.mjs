@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Publish one beatober day: pattern → Neon, optional approve + audio upload.
+ * Publish one studiodaze-beatober day: pattern → Neon, optional approve + audio upload.
  *
  * Usage:
  *   node scripts/publish-day.mjs 3 --pattern content/patterns/03.strudel --approve
@@ -81,4 +81,7 @@ if (audioPath) {
   if (r.status !== 0) process.exit(r.status ?? 1);
 }
 
-console.log("Done. Share:", `https://beatober.vercel.app/day/${day}`);
+console.log(
+  "Done. Share:",
+  `https://studiodaze-beatober.vercel.app/day/${day}`,
+);
