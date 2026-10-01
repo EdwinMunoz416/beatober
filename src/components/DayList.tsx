@@ -36,6 +36,13 @@ export function DayList({
             now,
             authorMode,
           );
+          const lockedForPublic = isDayLocked(
+            d.day,
+            d.approved,
+            calendar,
+            now,
+            false,
+          );
           const selected = d.day === selectedDay;
           const canSelect = authorMode || !locked;
 
@@ -69,9 +76,19 @@ export function DayList({
                 <span className="day-chip-theme">
                   {d.title ?? `day ${d.day}`}
                 </span>
-                {locked ? (
+                {lockedForPublic ? (
                   <span className="day-chip-lock" aria-hidden>
-                    ◌
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect x="5" y="11" width="14" height="10" rx="1" />
+                      <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+                    </svg>
                   </span>
                 ) : null}
               </button>
