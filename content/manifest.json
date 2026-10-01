@@ -1,0 +1,7 @@
+{
+  "year": 2026,
+  "month": 10,
+  "days": [
+    { "day": 1, "approved": false, "title": "Day 1", "strudelFile": "01.strudel" }
+  ]
+}

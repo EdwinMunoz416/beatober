@@ -1,0 +1,2 @@
+$: note("c3 eb3 g3 bb3").s("sawtooth").lpf(sine.range(400, 2400).slow(4)).gain(0.35)
+$: s("bd*2, ~ sd, ~ bd, sd").gain(0.75)
