@@ -60,7 +60,8 @@ export function StrudelRepl({
     setPlaying(false);
     setError(null);
     void hush();
-  }, [day, publishedCode, canPublish, remixMode, hush]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hush on day/publish change only
+  }, [day, publishedCode, canPublish, remixMode]);
 
   useEffect(() => {
     if (!remixMode || canPublish) return;
@@ -193,7 +194,9 @@ export function StrudelRepl({
         {editable || readOnly ? (
           <StrudelCodeEditor
             instanceKey={`${day}-${editorInstance}`}
-            initialCode={code}
+            initialCode={
+              initialEditorCode(day, publishedCode, canPublish, remixMode)
+            }
             readOnly={readOnly}
             onCodeChange={setCode}
             onEvaluate={() => void runEvaluate()}

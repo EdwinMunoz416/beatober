@@ -38,6 +38,8 @@ export function StrudelCodeEditor({
     let cancelled = false;
     let view: EditorView | null = null;
 
+    const seedDoc = initialCode;
+
     void (async () => {
       const cm = await import("@strudel/codemirror");
       const { EditorState, StateEffect } = await import("@codemirror/state");
@@ -46,7 +48,7 @@ export function StrudelCodeEditor({
 
       cm.codemirrorSettings.set({
         ...cm.defaultSettings,
-        theme: "blackscreen",
+        theme: "strudelTheme",
         isLineWrappingEnabled: true,
         isLineNumbersDisplayed: true,
         isAutoCompletionEnabled: true,
@@ -58,7 +60,7 @@ export function StrudelCodeEditor({
 
       view = cm.initEditor({
         root: hostRef.current,
-        initialCode,
+        initialCode: seedDoc,
         onChange: (update) => {
           if (update.docChanged) {
             onCodeChangeRef.current(update.state.doc.toString());
@@ -82,7 +84,8 @@ export function StrudelCodeEditor({
       view?.destroy();
       viewRef.current = null;
     };
-  }, [instanceKey, readOnly, initialCode]);
+    // initialCode intentionally omitted — only remount on instanceKey (day/reset), not each keystroke
+  }, [instanceKey, readOnly]);
 
   return (
     <div

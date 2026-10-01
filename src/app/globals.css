@@ -330,12 +330,26 @@ html {
 
 .repl-cm-host .cm-editor {
   height: 100%;
-  background: transparent;
+  background: var(--bg);
 }
 
 .repl-cm-host .cm-scroller {
   font-family: var(--mono);
   line-height: 1.45;
+}
+
+.repl-cm-host .cm-gutters {
+  background: var(--bg);
+  border-right: 1px solid var(--surface-border);
+  color: var(--text-muted);
+}
+
+.repl-cm-host .cm-content {
+  caret-color: var(--accent-cyan);
+}
+
+.repl-cm-host .cm-activeLine {
+  background: color-mix(in srgb, var(--accent-cyan) 6%, transparent);
 }
 
 .repl--codemirror .repl-editor {
