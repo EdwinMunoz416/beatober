@@ -17,7 +17,7 @@
   --accent-cyan: #5ef0ff;
   --title-glow: #c41e1e;
   --workspace-min: 16rem;
-  --day-col: 10.75rem;
+  --day-col: min(11rem, 34vw);
   --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
 }
 
@@ -94,8 +94,10 @@ html {
 }
 
 .day-list {
-  height: 100%;
-  min-height: 0;
+  align-self: start;
+  width: 100%;
+  height: auto;
+  max-height: 100%;
   border: 1px solid var(--surface-border);
   background: var(--surface);
   border-radius: 4px;
@@ -106,9 +108,15 @@ html {
   list-style: none;
   margin: 0;
   padding: 0.35rem 0;
-  height: 100%;
+  height: auto;
+  max-height: inherit;
   overflow-y: auto;
+  overflow-x: hidden;
   scrollbar-width: thin;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-content: start;
+  gap: 0;
 }
 
 .day-list-inner li {
@@ -194,12 +202,37 @@ html {
   height: 100%;
 }
 
+@media (min-width: 720px) {
+  :root {
+    --day-col: min(22rem, 38vw);
+  }
+
+  .day-list-inner {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .beatober-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .day-list {
+    max-height: min(40vh, 20rem);
+  }
+
+  .day-list-inner {
+    grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+  }
+}
+
 .beatober-main {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  min-height: 0;
-  height: 100%;
+  min-height: var(--workspace-min);
+  min-width: 0;
+  align-self: stretch;
 }
 
 .author-bar {
