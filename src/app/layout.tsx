@@ -4,7 +4,7 @@ import { AnalyticsBootstrap } from "@/components/AnalyticsBootstrap";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "studio-daze · beatober",
+  title: "studio daze · beatober",
   description: "Daily beats and Strudel patterns — October 2026",
 };
 

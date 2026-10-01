@@ -64,8 +64,10 @@ body {
   color: #fff;
   text-transform: lowercase;
   animation: title-flicker 8s ease-in-out infinite;
+  -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.35);
   text-shadow:
-    0 0 1px rgba(255, 255, 255, 0.45),
+    0 0 1px rgba(255, 255, 255, 0.55),
+    0 1px 0 rgba(255, 255, 255, 0.35),
     0 0 6px rgba(196, 30, 30, 0.35),
     0 0 14px rgba(196, 30, 30, 0.22),
     0 0 24px rgba(127, 29, 29, 0.12);

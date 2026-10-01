@@ -10,12 +10,25 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 const LED_FONT = "Ledlight";
-const TEXT = "#000000";
+const TEXT_FILL = "#000000";
+const TEXT_STROKE = "#ffffff";
 const PAGE_BG = "#0c0d10";
 const PREVIEW_BG = "public/og/preview-background.png";
+const STROKE = 2;
 
 /** Matches former day number block (fontSize 120, lineHeight 1). */
 const NUMBER_SLOT_HEIGHT = 120;
+
+const STROKE_XY: [number, number][] = [
+  [-STROKE, 0],
+  [STROKE, 0],
+  [0, -STROKE],
+  [0, STROKE],
+  [-STROKE, -STROKE],
+  [STROKE, -STROKE],
+  [-STROKE, STROKE],
+  [STROKE, STROKE],
+];
 
 type Props = { params: Promise<{ n: string }> };
 
@@ -55,7 +68,6 @@ export default async function OgImage({ params }: Props) {
           alignItems: "center",
           position: "relative",
           backgroundColor: PAGE_BG,
-          color: TEXT,
         }}
       >
         <img
@@ -83,14 +95,39 @@ export default async function OgImage({ params }: Props) {
         >
           <div
             style={{
-              fontFamily: LED_FONT,
-              fontSize: 56,
-              color: TEXT,
+              position: "relative",
+              display: "flex",
+              justifyContent: "center",
               marginBottom: 24,
-              letterSpacing: 4,
             }}
           >
-            studio-daze
+            {STROKE_XY.map(([dx, dy]) => (
+              <div
+                key={`brand-${dx}-${dy}`}
+                style={{
+                  position: "absolute",
+                  fontFamily: LED_FONT,
+                  fontSize: 56,
+                  letterSpacing: 4,
+                  color: TEXT_STROKE,
+                  left: dx,
+                  top: dy,
+                }}
+              >
+                studio daze
+              </div>
+            ))}
+            <div
+              style={{
+                position: "relative",
+                fontFamily: LED_FONT,
+                fontSize: 56,
+                letterSpacing: 4,
+                color: TEXT_FILL,
+              }}
+            >
+              studio daze
+            </div>
           </div>
           <div
             style={{
@@ -100,16 +137,41 @@ export default async function OgImage({ params }: Props) {
           />
           <div
             style={{
-              fontFamily: LED_FONT,
-              fontSize: 42,
+              position: "relative",
+              display: "flex",
+              justifyContent: "center",
               marginTop: 20,
-              color: TEXT,
-              letterSpacing: 3,
-              textAlign: "center",
               maxWidth: 1000,
             }}
           >
-            {theme}
+            {STROKE_XY.map(([dx, dy]) => (
+              <div
+                key={`theme-${dx}-${dy}`}
+                style={{
+                  position: "absolute",
+                  fontFamily: LED_FONT,
+                  fontSize: 42,
+                  letterSpacing: 3,
+                  color: TEXT_STROKE,
+                  left: dx,
+                  top: dy,
+                }}
+              >
+                {theme}
+              </div>
+            ))}
+            <div
+              style={{
+                position: "relative",
+                fontFamily: LED_FONT,
+                fontSize: 42,
+                letterSpacing: 3,
+                color: TEXT_FILL,
+                textAlign: "center",
+              }}
+            >
+              {theme}
+            </div>
           </div>
         </div>
       </div>
