@@ -11,26 +11,56 @@ export const contentType = "image/png";
 
 const LED_FONT = "Ledlight";
 const TEXT_FILL = "#000000";
-const TEXT_STROKE = "#ffffff";
 const PAGE_BG = "#0c0d10";
 const PREVIEW_BG = "public/og/preview-background.png";
-const STROKE = 2;
+
+const PILL_BG = "rgba(0, 0, 0, 0.5)";
+const PILL_BORDER = "rgba(255, 255, 255, 0.18)";
 
 /** Matches former day number block (fontSize 120, lineHeight 1). */
 const NUMBER_SLOT_HEIGHT = 120;
 
-const STROKE_XY: [number, number][] = [
-  [-STROKE, 0],
-  [STROKE, 0],
-  [0, -STROKE],
-  [0, STROKE],
-  [-STROKE, -STROKE],
-  [STROKE, -STROKE],
-  [-STROKE, STROKE],
-  [STROKE, STROKE],
+/** Simulates multi-layer text-shadow / halo (Satori has no text-shadow). */
+const GLOW_RINGS: { radius: number; alpha: number }[] = [
+  { radius: 1, alpha: 0.95 },
+  { radius: 2, alpha: 0.9 },
+  { radius: 3, alpha: 0.78 },
+  { radius: 4, alpha: 0.65 },
+  { radius: 6, alpha: 0.48 },
+  { radius: 8, alpha: 0.38 },
 ];
 
 type Props = { params: Promise<{ n: string }> };
+
+type GlowLayer = { dx: number; dy: number; alpha: number; key: string };
+
+function buildGlowLayers(prefix: string): GlowLayer[] {
+  const out: GlowLayer[] = [];
+  for (const { radius, alpha } of GLOW_RINGS) {
+    const d = Math.round(radius * 0.707);
+    const points: [number, number][] = [
+      [radius, 0],
+      [-radius, 0],
+      [0, radius],
+      [0, -radius],
+      [d, d],
+      [-d, d],
+      [d, -d],
+      [-d, -d],
+    ];
+    for (const [dx, dy] of points) {
+      out.push({
+        dx,
+        dy,
+        alpha,
+        key: `${prefix}-${radius}-${dx}-${dy}`,
+      });
+    }
+  }
+  return out;
+}
+
+const GLOW_LAYERS = buildGlowLayers("g");
 
 async function loadFontFile(relativePath: string): Promise<ArrayBuffer> {
   const path = join(process.cwd(), relativePath);
@@ -99,17 +129,26 @@ export default async function OgImage({ params }: Props) {
               display: "flex",
               justifyContent: "center",
               marginBottom: 24,
+              backgroundColor: PILL_BG,
+              borderRadius: 8,
+              borderWidth: 1,
+              borderColor: PILL_BORDER,
+              borderStyle: "solid",
+              paddingTop: 8,
+              paddingBottom: 8,
+              paddingLeft: 16,
+              paddingRight: 16,
             }}
           >
-            {STROKE_XY.map(([dx, dy]) => (
+            {GLOW_LAYERS.map(({ dx, dy, alpha, key }) => (
               <div
-                key={`brand-${dx}-${dy}`}
+                key={`brand-${key}`}
                 style={{
                   position: "absolute",
                   fontFamily: LED_FONT,
                   fontSize: 56,
                   letterSpacing: 4,
-                  color: TEXT_STROKE,
+                  color: `rgba(255, 255, 255, ${alpha})`,
                   left: dx,
                   top: dy,
                 }}
@@ -142,17 +181,26 @@ export default async function OgImage({ params }: Props) {
               justifyContent: "center",
               marginTop: 20,
               maxWidth: 1000,
+              backgroundColor: PILL_BG,
+              borderRadius: 8,
+              borderWidth: 1,
+              borderColor: PILL_BORDER,
+              borderStyle: "solid",
+              paddingTop: 8,
+              paddingBottom: 8,
+              paddingLeft: 16,
+              paddingRight: 16,
             }}
           >
-            {STROKE_XY.map(([dx, dy]) => (
+            {GLOW_LAYERS.map(({ dx, dy, alpha, key }) => (
               <div
-                key={`theme-${dx}-${dy}`}
+                key={`theme-${key}`}
                 style={{
                   position: "absolute",
                   fontFamily: LED_FONT,
                   fontSize: 42,
                   letterSpacing: 3,
-                  color: TEXT_STROKE,
+                  color: `rgba(255, 255, 255, ${alpha})`,
                   left: dx,
                   top: dy,
                 }}

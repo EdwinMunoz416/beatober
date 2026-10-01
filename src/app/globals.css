@@ -54,6 +54,16 @@ body {
   margin-bottom: 2rem;
 }
 
+.site-title-pill {
+  display: inline-block;
+  padding: 0.35rem 1rem 0.55rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
 .site-title {
   margin: 0;
   font-family: "Ledlight", system-ui, sans-serif;
@@ -64,10 +74,9 @@ body {
   color: #fff;
   text-transform: lowercase;
   animation: title-flicker 8s ease-in-out infinite;
-  -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.35);
   text-shadow:
-    0 0 1px rgba(255, 255, 255, 0.55),
-    0 1px 0 rgba(255, 255, 255, 0.35),
+    0 0 8px rgba(255, 255, 255, 0.9),
+    0 0 16px rgba(255, 255, 255, 0.6),
     0 0 6px rgba(196, 30, 30, 0.35),
     0 0 14px rgba(196, 30, 30, 0.22),
     0 0 24px rgba(127, 29, 29, 0.12);
