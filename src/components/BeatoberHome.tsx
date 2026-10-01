@@ -133,8 +133,8 @@ export function BeatoberHome({
 
   return (
     <div className="beatober-page">
-      <StudioDazeHeader />
       <div className="beatober-workspace">
+        <StudioDazeHeader />
         <DayOptionWheel
           days={days}
           calendar={calendar}

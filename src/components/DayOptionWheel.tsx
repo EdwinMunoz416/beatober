@@ -58,16 +58,18 @@ export function DayOptionWheel({
         className="beatober-day-wheel"
         items={labels}
         selected={focusIndex}
-        loop={false}
-        fontSize={0.82}
-        spacing={1.55}
-        tilt={5}
+        loop
+        fontSize={1.64}
+        spacing={3.1}
+        tilt={0}
         curve={0.85}
-        blur={1.2}
-        fade={0.22}
+        blur={2.4}
+        fade={0.165}
         inset={12}
-        textColor="#8b919e"
-        activeColor="#5ef0ff"
+        textColor="#a6a6a6"
+        activeColor="#ffffff"
+        soundUrl=""
+        soundVolume={0}
         onChange={(index) => {
           const entry = sorted[index];
           if (!entry) return;
@@ -77,7 +79,6 @@ export function DayOptionWheel({
           lockedByIndex[index] ? "option-wheel__item--locked" : undefined
         }
       />
-      <p className="day-wheel-hint">Scroll or drag · ↑↓</p>
     </nav>
   );
 }

@@ -92,11 +92,29 @@ html {
   flex: 1 1 auto;
   display: grid;
   grid-template-columns: var(--day-col) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
   gap: var(--page-gap);
   align-items: stretch;
   min-height: 0;
   padding: 0 var(--page-gap) var(--page-gap);
   overflow: hidden;
+}
+
+.beatober-workspace > .site-header {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+}
+
+.beatober-workspace > .day-wheel-panel {
+  grid-column: 1;
+  grid-row: 1 / -1;
+}
+
+.beatober-workspace > .beatober-main {
+  grid-column: 2;
+  grid-row: 2;
+  min-height: 0;
 }
 
 .day-wheel-panel {
@@ -106,9 +124,7 @@ html {
   height: 100%;
   min-width: 0;
   align-self: stretch;
-  border: 1px solid var(--surface-border);
   background: var(--bg);
-  border-radius: 4px;
   overflow: hidden;
 }
 
@@ -117,21 +133,25 @@ html {
   min-height: 0;
 }
 
-.day-wheel-hint {
-  margin: 0;
-  padding: 0.35rem 0.45rem;
-  font-size: 0.58rem;
-  letter-spacing: 0.04em;
-  color: var(--text-muted);
-  text-align: center;
-  border-top: 1px solid var(--surface-border);
-  flex-shrink: 0;
-}
-
 @media (max-width: 640px) {
   .beatober-workspace {
     grid-template-columns: 1fr;
-    grid-template-rows: minmax(0, 34%) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 34%) minmax(0, 1fr);
+  }
+
+  .beatober-workspace > .site-header {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .beatober-workspace > .day-wheel-panel {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .beatober-workspace > .beatober-main {
+    grid-column: 1;
+    grid-row: 3;
   }
 }
 
