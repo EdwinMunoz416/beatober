@@ -10,31 +10,15 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 const LED_FONT = "Ledlight";
-const NUM_FONT = "Space Grotesk";
-
-const NUM_FONT_URL =
-  "https://cdn.jsdelivr.net/fontsource/fonts/space-grotesk@5.2.5/latin-700-normal.woff";
+const ACID_FONT = "Acidic";
+const WHITE = "#ffffff";
 
 type Props = { params: Promise<{ n: string }> };
 
-async function loadLedlightFont(): Promise<ArrayBuffer> {
-  const path = join(process.cwd(), "public/fonts/LEDLIGHT.otf");
+async function loadFontFile(relativePath: string): Promise<ArrayBuffer> {
+  const path = join(process.cwd(), relativePath);
   const buf = await readFile(path);
   return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
-}
-
-let numericFontCache: Promise<ArrayBuffer> | null = null;
-
-async function loadNumericFont(): Promise<ArrayBuffer> {
-  if (!numericFontCache) {
-    numericFontCache = fetch(NUM_FONT_URL).then((res) => {
-      if (!res.ok) {
-        throw new Error(`Failed to load ${NUM_FONT}: ${res.status}`);
-      }
-      return res.arrayBuffer();
-    });
-  }
-  return numericFontCache;
 }
 
 /** OG card — sync manifest only (no Neon); Satori-safe styles. */
@@ -45,9 +29,9 @@ export default async function OgImage({ params }: Props) {
   const entry = manifest.days.find((d) => d.day === day);
   const title = entry?.title;
   const pad = String(day).padStart(2, "0");
-  const [ledFont, numFont] = await Promise.all([
-    loadLedlightFont(),
-    loadNumericFont(),
+  const [ledFont, acidFont] = await Promise.all([
+    loadFontFile("public/fonts/LEDLIGHT.otf"),
+    loadFontFile("public/fonts/Acidic.ttf"),
   ]);
 
   return new ImageResponse(
@@ -61,15 +45,15 @@ export default async function OgImage({ params }: Props) {
           justifyContent: "center",
           alignItems: "center",
           backgroundColor: "#0c0d10",
-          color: "#ffffff",
-          fontFamily: NUM_FONT,
+          color: WHITE,
+          fontFamily: ACID_FONT,
         }}
       >
         <div
           style={{
             fontFamily: LED_FONT,
             fontSize: 56,
-            color: "#ffffff",
+            color: WHITE,
             marginBottom: 24,
             letterSpacing: 4,
           }}
@@ -78,11 +62,10 @@ export default async function OgImage({ params }: Props) {
         </div>
         <div
           style={{
-            fontFamily: NUM_FONT,
+            fontFamily: ACID_FONT,
             fontSize: 120,
-            fontWeight: 700,
-            color: "#ff3ec8",
-            letterSpacing: -2,
+            color: WHITE,
+            letterSpacing: 2,
             lineHeight: 1,
           }}
         >
@@ -91,11 +74,10 @@ export default async function OgImage({ params }: Props) {
         {title ? (
           <div
             style={{
-              fontFamily: LED_FONT,
-              fontSize: 32,
+              fontFamily: ACID_FONT,
+              fontSize: 36,
               marginTop: 16,
-              color: "#e8eaef",
-              letterSpacing: 2,
+              color: WHITE,
             }}
           >
             {title}
@@ -103,32 +85,24 @@ export default async function OgImage({ params }: Props) {
         ) : (
           <div
             style={{
-              display: "flex",
-              fontSize: 32,
+              fontFamily: ACID_FONT,
+              fontSize: 36,
               marginTop: 16,
-              color: "#e8eaef",
+              color: WHITE,
             }}
           >
-            <span style={{ fontFamily: LED_FONT, letterSpacing: 2 }}>Day </span>
-            <span style={{ fontFamily: NUM_FONT, fontWeight: 700 }}>{pad}</span>
+            {`Day ${pad}`}
           </div>
         )}
         <div
           style={{
-            display: "flex",
-            fontSize: 20,
+            fontFamily: ACID_FONT,
+            fontSize: 22,
             marginTop: 12,
-            color: "#8b919e",
-            alignItems: "center",
+            color: WHITE,
           }}
         >
-          <span style={{ fontFamily: LED_FONT, letterSpacing: 1 }}>October </span>
-          <span style={{ fontFamily: NUM_FONT, fontWeight: 700 }}>{day}</span>
-          <span style={{ fontFamily: LED_FONT }}>, </span>
-          <span style={{ fontFamily: NUM_FONT, fontWeight: 700 }}>
-            {manifest.year}
-          </span>
-          <span style={{ fontFamily: LED_FONT, letterSpacing: 1 }}> · beatober</span>
+          {`October ${day}, ${manifest.year} · beatober`}
         </div>
       </div>
     ),
@@ -143,10 +117,10 @@ export default async function OgImage({ params }: Props) {
           weight: 400,
         },
         {
-          name: NUM_FONT,
-          data: numFont,
+          name: ACID_FONT,
+          data: acidFont,
           style: "normal",
-          weight: 700,
+          weight: 400,
         },
       ],
     },
