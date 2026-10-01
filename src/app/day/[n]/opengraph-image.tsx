@@ -10,7 +10,7 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 const LED_FONT = "Ledlight";
-const ACID_FONT = "Acidic";
+const MODERN_FONT = "Space Grotesk";
 const WHITE = "#ffffff";
 
 type Props = { params: Promise<{ n: string }> };
@@ -29,9 +29,10 @@ export default async function OgImage({ params }: Props) {
   const entry = manifest.days.find((d) => d.day === day);
   const title = entry?.title;
   const pad = String(day).padStart(2, "0");
-  const [ledFont, acidFont] = await Promise.all([
+  const [ledFont, modernMedium, modernBold] = await Promise.all([
     loadFontFile("public/fonts/LEDLIGHT.otf"),
-    loadFontFile("public/fonts/Acidic.ttf"),
+    loadFontFile("public/fonts/SpaceGrotesk-500.woff"),
+    loadFontFile("public/fonts/SpaceGrotesk-700.woff"),
   ]);
 
   return new ImageResponse(
@@ -46,7 +47,7 @@ export default async function OgImage({ params }: Props) {
           alignItems: "center",
           backgroundColor: "#0c0d10",
           color: WHITE,
-          fontFamily: ACID_FONT,
+          fontFamily: MODERN_FONT,
         }}
       >
         <div
@@ -62,10 +63,11 @@ export default async function OgImage({ params }: Props) {
         </div>
         <div
           style={{
-            fontFamily: ACID_FONT,
+            fontFamily: MODERN_FONT,
             fontSize: 120,
+            fontWeight: 700,
             color: WHITE,
-            letterSpacing: 2,
+            letterSpacing: -3,
             lineHeight: 1,
           }}
         >
@@ -74,10 +76,12 @@ export default async function OgImage({ params }: Props) {
         {title ? (
           <div
             style={{
-              fontFamily: ACID_FONT,
-              fontSize: 36,
+              fontFamily: MODERN_FONT,
+              fontSize: 34,
+              fontWeight: 500,
               marginTop: 16,
               color: WHITE,
+              letterSpacing: -0.5,
             }}
           >
             {title}
@@ -85,8 +89,9 @@ export default async function OgImage({ params }: Props) {
         ) : (
           <div
             style={{
-              fontFamily: ACID_FONT,
-              fontSize: 36,
+              fontFamily: MODERN_FONT,
+              fontSize: 34,
+              fontWeight: 500,
               marginTop: 16,
               color: WHITE,
             }}
@@ -96,8 +101,9 @@ export default async function OgImage({ params }: Props) {
         )}
         <div
           style={{
-            fontFamily: ACID_FONT,
-            fontSize: 22,
+            fontFamily: MODERN_FONT,
+            fontSize: 20,
+            fontWeight: 500,
             marginTop: 12,
             color: WHITE,
           }}
@@ -117,10 +123,16 @@ export default async function OgImage({ params }: Props) {
           weight: 400,
         },
         {
-          name: ACID_FONT,
-          data: acidFont,
+          name: MODERN_FONT,
+          data: modernMedium,
           style: "normal",
-          weight: 400,
+          weight: 500,
+        },
+        {
+          name: MODERN_FONT,
+          data: modernBold,
+          style: "normal",
+          weight: 700,
         },
       ],
     },
