@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { loadManifest } from "@/lib/content";
 import { parseDayParam } from "@/lib/day-routes";
@@ -7,7 +9,15 @@ export const runtime = "nodejs";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+const LED_FONT = "Ledlight";
+
 type Props = { params: Promise<{ n: string }> };
+
+async function loadLedlightFont(): Promise<ArrayBuffer> {
+  const path = join(process.cwd(), "public/fonts/LEDLIGHT.otf");
+  const buf = await readFile(path);
+  return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+}
 
 /** OG card — sync manifest only (no Neon); Satori-safe styles. */
 export default async function OgImage({ params }: Props) {
@@ -17,6 +27,7 @@ export default async function OgImage({ params }: Props) {
   const entry = manifest.days.find((d) => d.day === day);
   const title = entry?.title ?? `Day ${day}`;
   const pad = String(day).padStart(2, "0");
+  const ledFont = await loadLedlightFont();
 
   return new ImageResponse(
     (
@@ -35,9 +46,11 @@ export default async function OgImage({ params }: Props) {
       >
         <div
           style={{
-            fontSize: 28,
-            color: "#5ef0ff",
+            fontFamily: LED_FONT,
+            fontSize: 56,
+            color: "#ffffff",
             marginBottom: 24,
+            letterSpacing: 4,
           }}
         >
           studio-daze
@@ -57,6 +70,17 @@ export default async function OgImage({ params }: Props) {
         </div>
       </div>
     ),
-    { width: 1200, height: 630 },
+    {
+      width: 1200,
+      height: 630,
+      fonts: [
+        {
+          name: LED_FONT,
+          data: ledFont,
+          style: "normal",
+          weight: 400,
+        },
+      ],
+    },
   );
 }
