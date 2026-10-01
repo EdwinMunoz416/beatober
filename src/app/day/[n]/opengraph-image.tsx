@@ -10,8 +10,10 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 const LED_FONT = "Ledlight";
-const MODERN_FONT = "Space Grotesk";
 const WHITE = "#ffffff";
+
+/** Matches former day number block (fontSize 120, lineHeight 1). */
+const NUMBER_SLOT_HEIGHT = 120;
 
 type Props = { params: Promise<{ n: string }> };
 
@@ -28,11 +30,7 @@ export default async function OgImage({ params }: Props) {
   const manifest = loadManifest();
   const entry = manifest.days.find((d) => d.day === day);
   const theme = entry?.title ?? `day ${day}`;
-  const pad = String(day).padStart(2, "0");
-  const [ledFont, modernBold] = await Promise.all([
-    loadFontFile("public/fonts/LEDLIGHT.otf"),
-    loadFontFile("public/fonts/SpaceGrotesk-700.woff"),
-  ]);
+  const ledFont = await loadFontFile("public/fonts/LEDLIGHT.otf");
 
   return new ImageResponse(
     (
@@ -61,16 +59,10 @@ export default async function OgImage({ params }: Props) {
         </div>
         <div
           style={{
-            fontFamily: MODERN_FONT,
-            fontSize: 120,
-            fontWeight: 700,
-            color: WHITE,
-            letterSpacing: -3,
-            lineHeight: 1,
+            height: NUMBER_SLOT_HEIGHT,
+            flexShrink: 0,
           }}
-        >
-          {pad}
-        </div>
+        />
         <div
           style={{
             fontFamily: LED_FONT,
@@ -95,12 +87,6 @@ export default async function OgImage({ params }: Props) {
           data: ledFont,
           style: "normal",
           weight: 400,
-        },
-        {
-          name: MODERN_FONT,
-          data: modernBold,
-          style: "normal",
-          weight: 700,
         },
       ],
     },
