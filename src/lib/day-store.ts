@@ -16,11 +16,16 @@ type DbRow = {
   pattern: string | null;
 };
 
-function rowToEntry(row: DbRow): DayEntry {
+function manifestTitle(manifest: Manifest, day: number): string | undefined {
+  return manifest.days.find((d) => d.day === day)?.title;
+}
+
+function rowToEntry(row: DbRow, manifest: Manifest): DayEntry {
+  const fromManifest = manifestTitle(manifest, row.day);
   return {
     day: row.day,
     approved: row.approved,
-    title: row.title ?? `Day ${row.day}`,
+    title: fromManifest ?? row.title ?? `Day ${row.day}`,
     strudelFile: row.strudel_file,
     audioUrl: row.audio_url ?? undefined,
   };
@@ -46,7 +51,7 @@ async function loadFromDb(manifest: Manifest): Promise<{
   const filePatterns = loadAllPatterns(manifest);
 
   for (const row of rows) {
-    const entry = rowToEntry(row);
+    const entry = rowToEntry(row, manifest);
     days.push(entry);
     patterns[entry.day] =
       row.pattern?.trim() ||
