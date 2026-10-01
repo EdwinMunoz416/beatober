@@ -8,6 +8,7 @@ Headless **`@strudel/web`** with a strudel.cc-style **prebake** (samples, synths
 - `StrudelVisualBootstrap` → `#test-canvas` draw layer, CM widget types (`._pianoroll`, `._scope`, …), draw theme synced to site CSS
 - Prebake: `evalScope(draw, tonal, webaudio, beatoberHydraScope)` + `loadBeatoberSamples()`
 - First Play shows **Loading sounds…** until prebake finishes
+- **Web Audio:** Play awaits `initAudio()` so AudioWorklets load before synths / `._spectrum()` / `._scope()` (avoids `AudioWorkletGlobalScope` errors)
 
 ## Pattern / playback UI
 
@@ -19,9 +20,11 @@ Headless **`@strudel/web`** with a strudel.cc-style **prebake** (samples, synths
 
 | API | Where it renders |
 |-----|------------------|
-| `all(pianoroll)` / `.pianoroll()` | Full-screen `#test-canvas` behind UI |
+| `all(pianoroll)` / `.pianoroll()` | Full-screen `#test-canvas` (Drawer / onPaint) |
+| `.punchcard()` / `.spiral()` / `.pitchwheel()` (no `_`) | Full-page `#test-canvas` (onPaint + global ctx) |
 | `._pianoroll()` / `._punchcard()` / `._spiral()` / `._pitchwheel()` | Inline canvas widgets in the editor |
-| `._scope()` / `._spectrum()` / `.scope()` / `.spectrum()` | Inline or default canvas (Web Audio analysers) |
+| `._scope()` / `._spectrum()` | Inline canvas in the editor |
+| `.scope()` / `.spectrum()` / `.fscope()` | Full-page `#test-canvas` (Web Audio `.draw()` + `.analyze()`) |
 | `await initHydra()` | `#hydra-canvas` (WebGL, behind UI) |
 
 Hush / stop clears Hydra, draw animations, and mini highlights.

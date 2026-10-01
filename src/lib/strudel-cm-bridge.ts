@@ -3,10 +3,11 @@
 import type { EditorView } from "@codemirror/view";
 import { reportStrudelRuntimeError } from "@/lib/strudel-runtime-errors";
 import {
+  clearGlobalPatternCanvas,
   ensureStrudelVisuals,
   getStrudelPatternDrawContext,
+  setGlobalPatternDrawActive,
   STRUDEL_DRAW_TIME,
-  STRUDEL_REPL_ID,
 } from "@/lib/strudel-visuals";
 
 type ReplScheduler = {
@@ -151,6 +152,9 @@ export async function onStrudelAfterEval(payload: AfterEvalPayload): Promise<voi
 
   const painters = payload.pattern?.getPainters?.() ?? [];
   d.setDrawTime(painters.length ? STRUDEL_DRAW_TIME : [0, 0]);
+  const showGlobal =
+    painters.length > 0 || Boolean(replInstance?.scheduler?.started);
+  setGlobalPatternDrawActive(showGlobal);
 
   if (replInstance?.scheduler) {
     d.invalidate(replInstance.scheduler);
@@ -165,6 +169,8 @@ export async function onStrudelToggle(started: boolean): Promise<void> {
 
   if (!started) {
     drawer?.stop();
+    await clearGlobalPatternCanvas();
+    setGlobalPatternDrawActive(false);
     if (view) {
       try {
         const cm = await import("@strudel/codemirror");
@@ -176,6 +182,7 @@ export async function onStrudelToggle(started: boolean): Promise<void> {
     return;
   }
 
+  setGlobalPatternDrawActive(true);
   if (!replInstance?.scheduler) return;
   const d = await ensureDrawer();
   d.start(replInstance.scheduler);
@@ -192,10 +199,5 @@ export async function onStrudelHush(): Promise<void> {
       /* ignore */
     }
   }
-  try {
-    const { cleanupDraw } = await import("@strudel/draw");
-    cleanupDraw(true, STRUDEL_REPL_ID);
-  } catch {
-    /* ignore */
-  }
+  await clearGlobalPatternCanvas();
 }

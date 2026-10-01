@@ -45,6 +45,15 @@ declare module "@strudel/draw" {
 
   export function cleanupDraw(clearScreen?: boolean, replId?: string): void;
 
+  export function __pianoroll(options: Record<string, unknown>): void;
+  export function getDrawOptions(
+    drawTime: [number, number],
+    options?: Record<string, unknown>,
+  ): Record<string, unknown>;
+  export function pianoroll(
+    arg?: unknown,
+  ): unknown | ((pat: unknown) => unknown);
+
   export class Drawer {
     drawTime: [number, number];
     constructor(
@@ -93,6 +102,7 @@ declare module "@strudel/codemirror" {
   ): void;
   export function updateWidgets(view: EditorView, widgets: unknown[]): void;
   export function flash(view: EditorView, ms?: number): void;
+  export function setWidget(id: string, el: HTMLElement): void;
 
   export const defaultSettings: Record<string, unknown>;
   export function initTheme(name: string): void;

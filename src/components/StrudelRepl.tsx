@@ -8,6 +8,7 @@ import {
   getStrudelRuntimeError,
   strudelErrorKindLabel,
 } from "@/lib/strudel-runtime-errors";
+import { ensureStrudelAudioReady } from "@/lib/strudel-audio";
 import { useStrudelSession } from "@/lib/strudel-session";
 
 type Props = {
@@ -84,6 +85,7 @@ export function StrudelRepl({
     setBusy(true);
     clearRuntimeError();
     try {
+      await ensureStrudelAudioReady();
       await ensureApi();
       const result = await evaluate(code);
       if (!result.ok) {

@@ -61,6 +61,7 @@ html {
   position: relative;
 }
 
+/* Hydra stays behind chrome; page content sits above it. */
 .beatober-page--hydra .beatober-workspace,
 .beatober-page--hydra .beatober-main,
 .beatober-page--hydra .repl {
@@ -68,8 +69,7 @@ html {
   z-index: 1;
 }
 
-#hydra-canvas,
-#test-canvas {
+#hydra-canvas {
   position: fixed;
   inset: 0;
   width: 100%;
@@ -78,8 +78,22 @@ html {
   pointer-events: none;
 }
 
-.beatober-page--strudel-draw #test-canvas {
-  opacity: 0.92;
+/* Strudel `all(pianoroll)` / `all(punchcard)` — full-viewport draw layer */
+#test-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 30;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease-out;
+}
+
+body.strudel-global-draw-active #test-canvas {
+  opacity: 1;
+  visibility: visible;
 }
 
 .site-header {

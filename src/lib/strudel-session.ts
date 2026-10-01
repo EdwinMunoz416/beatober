@@ -16,8 +16,10 @@ import {
   type StrudelRuntimeError,
 } from "@/lib/strudel-runtime-errors";
 import { withQuietPatternEvalConsole } from "@/lib/strudel-eval-console";
+import { beatoberDrawScope } from "@/lib/strudel-draw-bridge";
 import { loadBeatoberSamples } from "@/lib/strudel-prebake";
 import {
+  clearGlobalPatternCanvas,
   ensureStrudelVisuals,
   STRUDEL_REPL_ID,
 } from "@/lib/strudel-visuals";
@@ -87,8 +89,7 @@ export function useStrudelSession() {
             id: STRUDEL_REPL_ID,
             beforeEval: async () => {
               clearStrudelRuntimeError();
-              const { cleanupDraw } = await import("@strudel/draw");
-              cleanupDraw(true, STRUDEL_REPL_ID);
+              await clearGlobalPatternCanvas();
             },
             afterEval: (payload: unknown) => {
               void onStrudelAfterEval(
@@ -108,8 +109,10 @@ export function useStrudelSession() {
               syncReplRuntimeError(state);
             },
             prebake: async () => {
+              await ensureStrudelVisuals();
               await web.evalScope(
                 import("@strudel/draw"),
+                beatoberDrawScope(),
                 import("@strudel/tonal"),
                 import("@strudel/webaudio"),
                 beatoberHydraScope(),

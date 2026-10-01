@@ -5,6 +5,10 @@ function isExpectedPatternConsoleError(arg: unknown): boolean {
   if (!(arg instanceof Error)) return false;
   if (arg instanceof SyntaxError) return true;
   if (arg.name === "SyntaxError") return true;
+  if (/AudioWorkletGlobalScope|AudioWorkletNode cannot be created/i.test(arg.message))
+    return true;
+  if (/is not defined$/i.test(arg.message)) return true;
+  if (/is not a function$/i.test(arg.message)) return true;
   return /unexpected token|parse error|unterminated|expected/i.test(arg.message);
 }
 
