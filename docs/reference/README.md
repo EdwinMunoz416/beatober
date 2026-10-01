@@ -2,7 +2,7 @@
 
 | File | Use |
 |------|-----|
-| `og-preview-background.png` | Source art for social OG cards (`/day/[n]/opengraph-image`). Canonical copy lives at `public/og/preview-background.png`. |
+| `og-preview-background.png` | Source art for social OG cards and **site favicon** (`/day/[n]/opengraph-image`, `layout` icons). Canonical copy: `public/og/preview-background.png`. |
 
 Original generation folder (local): `~/.codex/generated_images/01a0f82c-5be4-7b32-884e-27ffbd974602/`.
 

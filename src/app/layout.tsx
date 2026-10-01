@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import { AnalyticsBootstrap } from "@/components/AnalyticsBootstrap";
+import { PREVIEW_BACKGROUND_URL } from "@/lib/site-branding";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "studio daze · beatober",
   description: "Daily beats and Strudel patterns — October 2026",
+  icons: {
+    icon: [{ url: PREVIEW_BACKGROUND_URL, type: "image/png" }],
+    apple: [{ url: PREVIEW_BACKGROUND_URL, type: "image/png" }],
+    shortcut: [PREVIEW_BACKGROUND_URL],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
