@@ -23,7 +23,6 @@ export function DayOptionWheel({
   focusDay,
   onFocusDay,
 }: Props) {
-  const now = new Date(nowIso);
   const sorted = useMemo(
     () => [...days].sort((a, b) => a.day - b.day),
     [days],
@@ -40,11 +39,13 @@ export function DayOptionWheel({
   );
 
   const lockedByIndex = useMemo(
-    () =>
-      sorted.map((d) =>
+    () => {
+      const now = new Date(nowIso);
+      return sorted.map((d) =>
         isDayLocked(d.day, d.approved, calendar, now, false),
-      ),
-    [sorted, calendar, now],
+      );
+    },
+    [sorted, calendar, nowIso],
   );
 
   const focusIndex = Math.max(
@@ -61,7 +62,7 @@ export function DayOptionWheel({
         loop
         fontSize={1.64}
         spacing={3.1}
-        tilt={0}
+        tilt={6}
         curve={0.85}
         blur={2.4}
         fade={0.165}

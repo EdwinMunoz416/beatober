@@ -164,6 +164,13 @@ async function loadFromDb(manifest: Manifest): Promise<{
       loadPattern(entry.strudelFile);
   }
 
+  for (const d of manifest.days) {
+    if (!Object.hasOwn(patterns, d.day)) {
+      patterns[d.day] =
+        filePatterns[d.day] ?? loadPattern(d.strudelFile);
+    }
+  }
+
   return { days, patterns };
 }
 

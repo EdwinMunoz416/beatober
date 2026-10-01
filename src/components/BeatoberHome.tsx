@@ -34,7 +34,7 @@ type Props = {
   patterns: Record<number, string>;
   nowIso: string;
   canPublish: boolean;
-  initialSelectedDay?: number;
+  initialSelectedDay: number;
 };
 
 export function BeatoberHome({
@@ -56,7 +56,6 @@ export function BeatoberHome({
 
   const initialDay = useMemo(() => {
     if (
-      initialSelectedDay !== undefined &&
       initialSelectedDay >= 1 &&
       initialSelectedDay <= 31
     ) {
@@ -215,11 +214,7 @@ export function BeatoberHome({
               />
             </StrudelErrorBoundary>
           ) : (
-            <LockedDayPanel
-              day={entry.day}
-              title={entry.title}
-              month={calendar.month}
-            />
+            <LockedDayPanel day={entry.day} title={entry.title} />
           )}
         </div>
       </div>

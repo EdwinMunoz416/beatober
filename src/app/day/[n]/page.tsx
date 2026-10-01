@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { BeatoberShell } from "@/components/BeatoberShell";
+import { BeatoberHome } from "@/components/BeatoberHome";
+import { BeatoberInitialVisitGate } from "@/components/BeatoberInitialVisitGate";
+import { loadBeatoberHomePayload } from "@/lib/beatober-home-payload";
 import { loadBeatoberStateSafe } from "@/lib/day-store";
 import { dayPath, parseDayParam, siteBaseUrl } from "@/lib/day-routes";
 
@@ -41,5 +43,11 @@ export default async function DayPage({ params }: Props) {
   const day = parseDayParam(n);
   if (day === null) notFound();
 
-  return <BeatoberShell initialSelectedDay={day} />;
+  const payload = await loadBeatoberHomePayload(day);
+
+  return (
+    <BeatoberInitialVisitGate>
+      <BeatoberHome {...payload} />
+    </BeatoberInitialVisitGate>
+  );
 }

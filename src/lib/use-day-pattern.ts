@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 type Options = {
   viewDay: number;
   initialPatterns: Record<number, string>;
-  /** Fetch when the day is playable (Strudel surface visible). */
+  /** Fetch when the day is playable and pattern missing from preload. */
   enabled: boolean;
 };
 

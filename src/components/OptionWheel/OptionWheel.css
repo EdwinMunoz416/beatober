@@ -49,5 +49,5 @@
 }
 
 .option-wheel__item--locked {
-  opacity: 0.55;
+  color: color-mix(in srgb, var(--ow-text-color) 55%, transparent);
 }

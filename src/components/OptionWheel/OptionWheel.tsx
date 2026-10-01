@@ -350,7 +350,6 @@ export default function OptionWheel({
     }
     selectedRef.current = idx;
     setSelectedIndex(idx);
-    posRef.current = idx;
     targetRef.current = idx;
     startLoop();
   }, [selected, items.length, startLoop]);
@@ -360,19 +359,19 @@ export default function OptionWheel({
     const idx = Math.min(Math.max(selected, 0), Math.max(items.length - 1, 0));
     selectedRef.current = idx;
     setSelectedIndex(idx);
-    posRef.current = idx;
     targetRef.current = idx;
     startLoop();
   }, [resetKey, selected, items.length, startLoop]);
 
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    lastRef.current = performance.now();
+    rafRef.current = requestAnimationFrame(runFrame);
+    return () => {
       if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
       audioRef.current?.pause();
-    },
-    [],
-  );
+    };
+  }, [runFrame]);
 
   return (
     <div

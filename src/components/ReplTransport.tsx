@@ -45,57 +45,60 @@ export function ReplTransport({
   onPlay,
   onStop,
 }: Props) {
-  const showMeta = Boolean(bootLabel || saveHint || playing);
-
   return (
     <nav
       className="repl-transport repl-transport--sticky"
       aria-label="Pattern playback"
     >
-      {showMeta ? (
+      {saveHint ? (
         <p className="repl-transport__meta">
-          {bootLabel ? (
-            <span className="repl-transport__hint repl-transport__hint--boot">
-              {bootLabel}
-            </span>
-          ) : null}
-          {saveHint ? (
-            <span className="repl-transport__hint repl-transport__hint--save">
-              {saveHint}
-            </span>
-          ) : null}
-          {playing ? (
-            <span className="repl-transport__live" aria-live="polite">
-              <span className="repl-transport__pulse" aria-hidden />
-              live
-            </span>
-          ) : null}
+          <span className="repl-transport__hint repl-transport__hint--save">
+            {saveHint}
+          </span>
         </p>
       ) : null}
-      <div className="repl-transport__controls">
-        <button
-          type="button"
-          className={`repl-transport__btn repl-transport__btn--play${playing ? " repl-transport__btn--active" : ""}`}
-          disabled={playDisabled}
-          aria-label={busy ? "Loading pattern" : "Play pattern"}
-          onClick={onPlay}
-        >
-          {busy ? (
-            <span className="repl-transport__spinner" aria-hidden />
-          ) : (
-            <IconPlay />
-          )}
-        </button>
-        <span className="repl-transport__divider" aria-hidden />
-        <button
-          type="button"
-          className="repl-transport__btn repl-transport__btn--stop"
-          disabled={stopDisabled}
-          aria-label="Stop pattern"
-          onClick={onStop}
-        >
-          <IconStop />
-        </button>
+      <div className="repl-transport__bar">
+        {playing ? (
+          <span
+            className="repl-transport__status repl-transport__live"
+            aria-live="polite"
+          >
+            <span className="repl-transport__pulse" aria-hidden />
+            live
+          </span>
+        ) : bootLabel ? (
+          <span
+            className="repl-transport__status repl-transport__hint repl-transport__hint--boot"
+            aria-live="polite"
+          >
+            {bootLabel}
+          </span>
+        ) : null}
+        <div className="repl-transport__controls">
+          <button
+            type="button"
+            className={`repl-transport__btn repl-transport__btn--play${playing ? " repl-transport__btn--active" : ""}`}
+            disabled={playDisabled}
+            aria-label={busy ? "Loading pattern" : "Play pattern"}
+            onClick={onPlay}
+          >
+            {busy ? (
+              <span className="repl-transport__spinner" aria-hidden />
+            ) : (
+              <IconPlay />
+            )}
+          </button>
+          <span className="repl-transport__divider" aria-hidden />
+          <button
+            type="button"
+            className="repl-transport__btn repl-transport__btn--stop"
+            disabled={stopDisabled}
+            aria-label="Stop pattern"
+            onClick={onStop}
+          >
+            <IconStop />
+          </button>
+        </div>
       </div>
     </nav>
   );
