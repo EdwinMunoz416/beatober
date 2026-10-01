@@ -144,6 +144,7 @@ html {
   min-width: 0;
   align-self: stretch;
   overflow: hidden;
+  background: var(--bg);
 }
 
 .author-bar {
