@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { isAllowedEvent } from "@/lib/analytics-events";
 import { insertAnalyticsEvent } from "@/lib/analytics-store";
 import { dbConfigured } from "@/lib/db";
+import { allowAnalyticsEvent, ipHashForProps } from "@/lib/event-rate-limit";
 
 export async function POST(request: Request) {
   if (!dbConfigured()) {
@@ -37,16 +38,32 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unknown event" }, { status: 400 });
   }
 
+  const visitor =
+    typeof visitorId === "string" ? visitorId.slice(0, 64) : undefined;
+
+  try {
+    if (!(await allowAnalyticsEvent(request, visitor))) {
+      return NextResponse.json({ ok: false, error: "rate_limited" }, { status: 429 });
+    }
+  } catch {
+    /* allow on rate-limit query failure */
+  }
+
   const dayNum =
     typeof day === "number" && day >= 1 && day <= 31 ? day : undefined;
+
+  const mergedProps = {
+    ...(props as Record<string, string | number | boolean | null | undefined>),
+    ...ipHashForProps(request),
+  };
 
   try {
     const result = await insertAnalyticsEvent({
       eventName,
-      visitorId: typeof visitorId === "string" ? visitorId.slice(0, 64) : undefined,
+      visitorId: visitor,
       sessionId: typeof sessionId === "string" ? sessionId.slice(0, 64) : undefined,
       day: dayNum,
-      props: props as Record<string, string | number | boolean | null | undefined>,
+      props: mergedProps,
       path: typeof path === "string" ? path.slice(0, 256) : undefined,
       referrerBucket:
         typeof referrerBucket === "string"

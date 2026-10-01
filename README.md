@@ -56,6 +56,9 @@ Production author API: header `x-beatober-author: <BEATOBER_AUTHOR_SECRET>` (set
 | `npm run db:seed` | Seed 31 days from `content/` |
 | `node scripts/db-approve-day.mjs 1` | Approve day in Neon |
 | `./scripts/upload-beat.sh` | Blob upload + Neon `audio_url` |
+| `./scripts/publish-day.sh` | Pattern + optional `--approve` + `--audio` |
+
+Share a day: **`/day/3`** (OG image for social previews). Sitemap: `/sitemap.xml`. Admin routes are `noindex`.
 
 ## Analytics (dual)
 

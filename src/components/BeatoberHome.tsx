@@ -1,7 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { dayPath } from "@/lib/day-routes";
 import type { DayEntry, Manifest } from "@/lib/content";
 import { defaultSelectedDay, type BeatoberCalendar } from "@/lib/day-access";
 import { DayList } from "@/components/DayList";
@@ -15,6 +16,7 @@ type Props = {
   patterns: Record<number, string>;
   nowIso: string;
   authorMode: boolean;
+  initialSelectedDay?: number;
 };
 
 export function BeatoberHome({
@@ -22,36 +24,56 @@ export function BeatoberHome({
   patterns,
   nowIso,
   authorMode,
+  initialSelectedDay,
 }: Props) {
   const router = useRouter();
+  const pathname = usePathname();
   const calendar: BeatoberCalendar = {
     year: manifest.year,
     month: manifest.month,
   };
 
-  const initialDay = useMemo(
-    () =>
-      defaultSelectedDay(manifest.days, calendar, new Date(nowIso), authorMode),
-    [manifest.days, calendar, nowIso, authorMode],
-  );
+  const initialDay = useMemo(() => {
+    if (
+      initialSelectedDay !== undefined &&
+      initialSelectedDay >= 1 &&
+      initialSelectedDay <= 31
+    ) {
+      return initialSelectedDay;
+    }
+    return defaultSelectedDay(
+      manifest.days,
+      calendar,
+      new Date(nowIso),
+      authorMode,
+    );
+  }, [manifest.days, calendar, nowIso, authorMode, initialSelectedDay]);
 
   const [selectedDay, setSelectedDay] = useState(initialDay);
   const [days, setDays] = useState<DayEntry[]>(manifest.days);
 
+  useEffect(() => {
+    setSelectedDay(initialDay);
+  }, [initialDay]);
+
   const selectDay = (day: number) => {
     setSelectedDay(day);
-    trackEvent("day_view", { day });
-    trackEvent("day_select", { day });
+    const target = dayPath(day);
+    if (pathname !== target) {
+      router.push(target);
+    }
   };
 
   useEffect(() => {
-    trackEvent("page_view", { surface: "home" });
-  }, []);
+    trackEvent("page_view", {
+      surface: pathname.startsWith("/day/") ? "day" : "home",
+    });
+  }, [pathname]);
 
   useEffect(() => {
-    trackEvent("day_view", { day: initialDay });
-    trackEvent("day_select", { day: initialDay });
-  }, [initialDay]);
+    trackEvent("day_view", { day: selectedDay });
+    trackEvent("day_select", { day: selectedDay });
+  }, [selectedDay]); // once per selection / initial day
 
   const now = new Date(nowIso);
   const entry = days.find((d) => d.day === selectedDay) ?? days[0]!;

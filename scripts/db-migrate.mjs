@@ -7,8 +7,8 @@ const url =
   process.env.POSTGRES_PRISMA_URL;
 
 if (!url) {
-  console.error("Set DATABASE_URL (vercel env pull).");
-  process.exit(1);
+  console.warn("[db-migrate] No DATABASE_URL — skipping (local build without DB).");
+  process.exit(0);
 }
 
 const sql = neon(url);
@@ -64,4 +64,4 @@ await sql`
   )
 `;
 
-console.log("beatober schema applied (days, analytics, devices).");
+console.log("[db-migrate] Schema applied.");
