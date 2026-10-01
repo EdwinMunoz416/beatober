@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { dayPath } from "@/lib/day-routes";
 import type { DayEntry, Manifest } from "@/lib/content";
 import { defaultSelectedDay, type BeatoberCalendar } from "@/lib/day-access";
-import { DayList } from "@/components/DayList";
+import { DayOptionWheel } from "@/components/DayOptionWheel";
 import { BeatAudio } from "@/components/BeatAudio";
 import { StrudelRepl } from "@/components/StrudelRepl";
 import { StudioDazeHeader } from "@/components/StudioDazeHeader";
@@ -103,7 +103,7 @@ export function BeatoberHome({
     <div className="beatober-page">
       <StudioDazeHeader />
       <div className="beatober-workspace">
-        <DayList
+        <DayOptionWheel
           days={days}
           calendar={calendar}
           nowIso={nowIso}
