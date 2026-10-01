@@ -12,7 +12,11 @@ import {
 import { comingSoonPattern } from "@/lib/coming-soon-pattern";
 import { DayOptionWheel } from "@/components/DayOptionWheel";
 import { BeatAudio } from "@/components/BeatAudio";
-import { StrudelRepl } from "@/components/StrudelRepl";
+import {
+  StrudelReplControls,
+  StrudelReplEditor,
+  useStrudelRepl,
+} from "@/components/StrudelRepl";
 import { StudioDazeHeader } from "@/components/StudioDazeHeader";
 import { trackEvent } from "@/lib/analytics";
 
@@ -111,6 +115,14 @@ export function BeatoberHome({
     : (patterns[entry.day] ?? "");
   const replReadOnly = viewLocked || !authorMode;
 
+  const strudel = useStrudelRepl({
+    day: entry.day,
+    initialCode: replCode,
+    readOnly: replReadOnly,
+    comingSoon: viewLocked,
+    authorMode,
+  });
+
   const toggleApprove = async () => {
     const next = !entry.approved;
     const res = await fetch(`/api/day/${entry.day}/approve`, {
@@ -142,6 +154,18 @@ export function BeatoberHome({
           authorMode={authorMode}
           focusDay={viewDay}
           onFocusDay={handleFocusDay}
+          header={
+            <>
+              <StrudelReplControls {...strudel.controls} />
+              {entry.audioUrl && !viewLocked ? (
+                <BeatAudio
+                  day={entry.day}
+                  audioUrl={entry.audioUrl}
+                  title={entry.title}
+                />
+              ) : null}
+            </>
+          }
         />
         <div className="beatober-main">
           {authorMode ? (
@@ -159,20 +183,7 @@ export function BeatoberHome({
               </span>
             </div>
           ) : null}
-          {entry.audioUrl && !viewLocked ? (
-            <BeatAudio
-              day={entry.day}
-              audioUrl={entry.audioUrl}
-              title={entry.title}
-            />
-          ) : null}
-          <StrudelRepl
-            day={entry.day}
-            initialCode={replCode}
-            readOnly={replReadOnly}
-            comingSoon={viewLocked}
-            authorMode={authorMode}
-          />
+          <StrudelReplEditor {...strudel.editor} />
         </div>
       </div>
     </div>

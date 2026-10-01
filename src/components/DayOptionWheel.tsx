@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import type { DayEntry } from "@/lib/content";
 import type { BeatoberCalendar } from "@/lib/day-access";
 import { isDayLocked } from "@/lib/day-access";
@@ -13,6 +13,7 @@ type Props = {
   authorMode: boolean;
   focusDay: number;
   onFocusDay: (day: number) => void;
+  header?: ReactNode;
 };
 
 export function DayOptionWheel({
@@ -22,6 +23,7 @@ export function DayOptionWheel({
   authorMode,
   focusDay,
   onFocusDay,
+  header,
 }: Props) {
   const now = new Date(nowIso);
   const sorted = useMemo(
@@ -54,6 +56,7 @@ export function DayOptionWheel({
 
   return (
     <nav className="day-wheel-panel" aria-label="October days">
+      {header ? <div className="day-wheel-playback">{header}</div> : null}
       <OptionWheel
         className="beatober-day-wheel"
         items={labels}
