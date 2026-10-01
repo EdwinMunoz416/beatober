@@ -66,6 +66,9 @@ export function DayList({
                 }}
               >
                 <span className="day-chip-num">{String(d.day).padStart(2, "0")}</span>
+                <span className="day-chip-theme">
+                  {d.title ?? `day ${d.day}`}
+                </span>
                 {locked ? (
                   <span className="day-chip-lock" aria-hidden>
                     ◌
