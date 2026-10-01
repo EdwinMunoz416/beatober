@@ -2,6 +2,7 @@
 
 import type { EditorView } from "@codemirror/view";
 import { useEffect, useRef } from "react";
+import { setStrudelEditorView } from "@/lib/strudel-cm-bridge";
 
 type Props = {
   /** Remount when day / reset / published seed changes */
@@ -77,12 +78,14 @@ export function StrudelCodeEditor({
       }
 
       viewRef.current = view;
+      setStrudelEditorView(view);
     })();
 
     return () => {
       cancelled = true;
       view?.destroy();
       viewRef.current = null;
+      setStrudelEditorView(null);
     };
     // initialCode intentionally omitted — only remount on instanceKey (day/reset), not each keystroke
   }, [instanceKey, readOnly]);

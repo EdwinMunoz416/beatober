@@ -2,6 +2,12 @@
 
 import { useCallback, useRef, useState } from "react";
 import { beatoberHydraScope, clearHydra } from "@/lib/beatober-hydra";
+import {
+  onStrudelAfterEval,
+  onStrudelHush,
+  onStrudelToggle,
+  setStrudelRepl,
+} from "@/lib/strudel-cm-bridge";
 import { loadBeatoberSamples } from "@/lib/strudel-prebake";
 
 export type StrudelBootStatus = "idle" | "loading" | "ready" | "error";
@@ -26,7 +32,17 @@ export function useStrudelSession() {
         const started = performance.now();
         try {
           const web = await import("@strudel/web");
-          await web.initStrudel({
+          const repl = (await web.initStrudel({
+            beforeEval: async () => {
+              const { cleanupDraw } = await import("@strudel/draw");
+              cleanupDraw(true);
+            },
+            afterEval: (payload: unknown) => {
+              void onStrudelAfterEval(payload as Parameters<typeof onStrudelAfterEval>[0]);
+            },
+            onToggle: (started: boolean) => {
+              void onStrudelToggle(started);
+            },
             prebake: async () => {
               await web.evalScope(
                 import("@strudel/draw"),
@@ -35,7 +51,10 @@ export function useStrudelSession() {
               );
               await loadBeatoberSamples();
             },
-          });
+          })) as { scheduler: { now: () => number; started: boolean } };
+
+          setStrudelRepl(repl);
+
           const api: StrudelSessionApi = {
             evaluate: web.evaluate,
             hush: web.hush,
@@ -72,6 +91,11 @@ export function useStrudelSession() {
   const hush = useCallback(async () => {
     try {
       apiRef.current?.hush();
+    } catch {
+      /* ignore */
+    }
+    try {
+      await onStrudelHush();
     } catch {
       /* ignore */
     }

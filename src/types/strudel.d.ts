@@ -36,6 +36,22 @@ declare module "@strudel/tonal";
 declare module "@strudel/codemirror" {
   import type { EditorView, ViewUpdate } from "@codemirror/view";
 
+  export function updateMiniLocations(
+    view: EditorView,
+    locations: unknown[],
+  ): void;
+  export function highlightMiniLocations(
+    view: EditorView,
+    atTime: number,
+    haps: unknown[],
+  ): void;
+  export function updateSliderWidgets(
+    view: EditorView,
+    widgets: unknown[],
+  ): void;
+  export function updateWidgets(view: EditorView, widgets: unknown[]): void;
+  export function flash(view: EditorView, ms?: number): void;
+
   export const defaultSettings: Record<string, unknown>;
   export const codemirrorSettings: {
     get(): Record<string, unknown>;

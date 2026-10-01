@@ -7,6 +7,7 @@ Headless **`@strudel/web`** with a strudel.cc-style **prebake** (samples, synths
 - `useStrudelSession` → `initStrudel({ prebake })`
 - Prebake: `evalScope(draw, tonal, beatoberHydraScope)` + `loadBeatoberSamples()`
 - First Play shows **Loading sounds…** until prebake finishes
+- **Pattern highlight:** `afterEval` → `updateMiniLocations`; playback frames → `highlightMiniLocations` (outline on active mini ranges); eval **flash** on the buffer
 
 ## Editing
 
