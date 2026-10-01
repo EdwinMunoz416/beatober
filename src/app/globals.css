@@ -16,8 +16,6 @@
   --accent: #ff3ec8;
   --accent-cyan: #5ef0ff;
   --title-glow: #c41e1e;
-  --og-pill-bg: rgba(0, 0, 0, 0.5);
-  --og-pill-border: rgba(255, 255, 255, 0.18);
   --repl-height: min(62vh, 520px);
   --day-col: 4.25rem;
   --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
@@ -56,17 +54,7 @@ body {
   margin-bottom: 2rem;
 }
 
-/* Matches OG preview: dark pill + black Ledlight with white halo */
-.site-title-pill {
-  display: inline-block;
-  padding: 8px 16px;
-  border-radius: 8px;
-  background: var(--og-pill-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--og-pill-border);
-}
-
+/* Matches OG preview: black Ledlight + 2px white stroke halo (no pill) */
 .site-title {
   margin: 0;
   font-family: "Ledlight", system-ui, sans-serif;
@@ -77,13 +65,14 @@ body {
   color: #000;
   text-transform: lowercase;
   text-shadow:
-    -1px -1px 0 rgba(255, 255, 255, 0.9),
-    1px -1px 0 rgba(255, 255, 255, 0.9),
-    -1px 1px 0 rgba(255, 255, 255, 0.9),
-    1px 1px 0 rgba(255, 255, 255, 0.9),
-    0 0 2px rgba(255, 255, 255, 0.95),
-    0 0 8px rgba(255, 255, 255, 0.9),
-    0 0 16px rgba(255, 255, 255, 0.6);
+    -2px 0 0 #fff,
+    2px 0 0 #fff,
+    0 -2px 0 #fff,
+    0 2px 0 #fff,
+    -2px -2px 0 #fff,
+    2px -2px 0 #fff,
+    -2px 2px 0 #fff,
+    2px 2px 0 #fff;
 }
 
 .beatober-workspace {
