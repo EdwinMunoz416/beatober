@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import type { DayEntry, Manifest } from "@/lib/content";
 import { defaultSelectedDay, type BeatoberCalendar } from "@/lib/day-access";
@@ -22,6 +23,7 @@ export function BeatoberHome({
   nowIso,
   authorMode,
 }: Props) {
+  const router = useRouter();
   const calendar: BeatoberCalendar = {
     year: manifest.year,
     month: manifest.month,
@@ -66,6 +68,7 @@ export function BeatoberHome({
         d.day === entry.day ? { ...d, approved: next } : d,
       ),
     );
+    router.refresh();
   };
 
   return (

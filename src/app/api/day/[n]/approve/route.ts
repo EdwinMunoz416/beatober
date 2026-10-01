@@ -1,13 +1,9 @@
 import { NextResponse } from "next/server";
 import { readFileSync, writeFileSync } from "node:fs";
-import { loadManifest, manifestPath, type Manifest } from "@/lib/content";
-
-function authorOk(request: Request): boolean {
-  if (process.env.NODE_ENV === "development") return true;
-  const secret = process.env.BEATOBER_AUTHOR_SECRET;
-  if (!secret) return false;
-  return request.headers.get("x-beatober-author") === secret;
-}
+import { authorOk } from "@/lib/author";
+import { manifestPath, type Manifest } from "@/lib/content";
+import { dbConfigured } from "@/lib/db";
+import { upsertDay } from "@/lib/day-store";
 
 export async function POST(
   request: Request,
@@ -27,6 +23,11 @@ export async function POST(
     approved?: boolean;
   };
   const approved = body.approved !== false;
+
+  if (dbConfigured()) {
+    await upsertDay(day, { approved });
+    return NextResponse.json({ day, approved, storage: "neon" });
+  }
 
   const path = manifestPath();
   const manifest = JSON.parse(readFileSync(path, "utf8")) as Manifest;
@@ -48,11 +49,11 @@ export async function POST(
     return NextResponse.json(
       {
         error:
-          "Could not write manifest (read-only deploy). Set approved in content/manifest.json and redeploy.",
+          "Could not write manifest. Configure Neon DATABASE_URL or edit content/manifest.json.",
       },
       { status: 503 },
     );
   }
 
-  return NextResponse.json({ day, approved });
+  return NextResponse.json({ day, approved, storage: "file" });
 }

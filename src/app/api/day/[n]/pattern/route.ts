@@ -1,13 +1,9 @@
 import { NextResponse } from "next/server";
 import { writeFileSync } from "node:fs";
+import { authorOk } from "@/lib/author";
 import { loadManifest, patternPath } from "@/lib/content";
-
-function authorOk(request: Request): boolean {
-  if (process.env.NODE_ENV === "development") return true;
-  const secret = process.env.BEATOBER_AUTHOR_SECRET;
-  if (!secret) return false;
-  return request.headers.get("x-beatober-author") === secret;
-}
+import { dbConfigured } from "@/lib/db";
+import { upsertDay } from "@/lib/day-store";
 
 export async function POST(
   request: Request,
@@ -28,6 +24,11 @@ export async function POST(
     return NextResponse.json({ error: "Missing code" }, { status: 400 });
   }
 
+  if (dbConfigured()) {
+    await upsertDay(day, { pattern: code });
+    return NextResponse.json({ day, storage: "neon" });
+  }
+
   const manifest = loadManifest();
   const entry = manifest.days.find((d) => d.day === day);
   const file = entry?.strudelFile ?? `${String(day).padStart(2, "0")}.strudel`;
@@ -41,5 +42,5 @@ export async function POST(
     );
   }
 
-  return NextResponse.json({ day, strudelFile: file });
+  return NextResponse.json({ day, strudelFile: file, storage: "file" });
 }

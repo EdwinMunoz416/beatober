@@ -1,13 +1,9 @@
 import { NextResponse } from "next/server";
 import { readFileSync, writeFileSync } from "node:fs";
+import { authorOk } from "@/lib/author";
 import { manifestPath, type Manifest } from "@/lib/content";
-
-function authorOk(request: Request): boolean {
-  if (process.env.NODE_ENV === "development") return true;
-  const secret = process.env.BEATOBER_AUTHOR_SECRET;
-  if (!secret) return false;
-  return request.headers.get("x-beatober-author") === secret;
-}
+import { dbConfigured } from "@/lib/db";
+import { upsertDay } from "@/lib/day-store";
 
 export async function POST(
   request: Request,
@@ -26,6 +22,11 @@ export async function POST(
   const { audioUrl } = (await request.json()) as { audioUrl?: string };
   if (typeof audioUrl !== "string" || !audioUrl.startsWith("https://")) {
     return NextResponse.json({ error: "Invalid audioUrl" }, { status: 400 });
+  }
+
+  if (dbConfigured()) {
+    await upsertDay(day, { audioUrl });
+    return NextResponse.json({ day, audioUrl, storage: "neon" });
   }
 
   const path = manifestPath();
@@ -49,11 +50,11 @@ export async function POST(
     return NextResponse.json(
       {
         error:
-          "Could not write manifest. Set audioUrl in content/manifest.json and redeploy.",
+          "Could not write manifest. Configure Neon DATABASE_URL or set audioUrl in git.",
       },
       { status: 503 },
     );
   }
 
-  return NextResponse.json({ day, audioUrl });
+  return NextResponse.json({ day, audioUrl, storage: "file" });
 }

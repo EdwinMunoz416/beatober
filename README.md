@@ -2,46 +2,65 @@
 
 Public October beat + Strudel showcase (`studio-daze` header, separate GitHub/Vercel project).
 
+**Live:** https://beatober.vercel.app
+
+## Infra (CLI — not manual dashboard-only)
+
+From a linked project directory (`vercel link`):
+
+```bash
+chmod +x scripts/provision-beatober-infra.sh
+./scripts/provision-beatober-infra.sh
+```
+
+Or step by step:
+
+```bash
+# Blob (public store, iad1)
+npx vercel storage create beatober-media --type blob --access public --region iad1
+npx vercel storage connect beatober-media --yes
+
+# Neon Postgres (marketplace)
+npx vercel integration add neon --name beatober-db --non-interactive
+
+npx vercel env pull .env.local --yes --environment=development
+npm run db:migrate && npm run db:seed
+```
+
+**Blob uploads** use project OIDC after `env pull` (no static RW token required):
+
+```bash
+./scripts/upload-beat.sh 1 ~/path/to/beat.mp3
+```
+
+**Production state** (approve, pattern, audio URL) lives in **Neon** when `DATABASE_URL` is set on Vercel. Git `content/` remains the seed/fallback for local dev without DB.
+
 ## Local dev
 
 ```bash
-cd beatober
 cp .env.example .env.local
+npx vercel env pull .env.local   # DATABASE_URL, BLOB_STORE_ID, …
 npm install
 npm run dev
 ```
 
-With `NEXT_PUBLIC_BEATOBER_AUTHOR=1` in `.env.local`:
+Author UI: `NEXT_PUBLIC_BEATOBER_AUTHOR=1` in `.env.local`.
 
-- Select any day (including locked)
-- Edit Strudel in the REPL (⌘/Ctrl+S save, ⌘/Ctrl+Enter play)
-- **Approve day** when ready — public visitors unlock only when **approved** and **calendar day ≥ that day**
+Production author API: header `x-beatober-author: <BEATOBER_AUTHOR_SECRET>` (set in Vercel env).
 
-## Content
+## Scripts
 
-- `content/manifest.json` — year/month, per-day `approved`, optional `audioUrl`
-- `content/patterns/NN.strudel` — one pattern file per day
-
-## Beat audio (Vercel Blob)
-
-1. Create a **Blob** store on the Vercel project and copy **Read/Write token** → `BLOB_READ_WRITE_TOKEN`.
-2. Upload and patch manifest:
-
-```bash
-export BLOB_READ_WRITE_TOKEN=…
-chmod +x scripts/upload-beat.sh
-./scripts/upload-beat.sh 1 ~/path/to/day-01.mp3
-git add content/manifest.json && git commit -m "Add day 1 beat" && git push
-```
+| Script | Purpose |
+|--------|---------|
+| `npm run db:migrate` | Create `beatober_days` table |
+| `npm run db:seed` | Seed 31 days from `content/` |
+| `node scripts/db-approve-day.mjs 1` | Approve day in Neon |
+| `./scripts/upload-beat.sh` | Blob upload + Neon `audio_url` |
 
 ## Analytics
 
-Enable **Web Analytics** in the Vercel project dashboard. Custom events: `day_view`, `strudel_play`, `play_beat` (see `src/lib/analytics.ts`).
+Enable **Web Analytics** in Vercel project settings. Events: `day_view`, `strudel_play`, `play_beat`.
 
 ## Font
 
 `public/fonts/LEDLIGHT.otf` — Billy Argel *Ledlight* (personal use). See `public/fonts/README.txt`.
-
-## Deploy
-
-Own git remote + Vercel root = this folder. Enable Vercel Web Analytics in the project dashboard.

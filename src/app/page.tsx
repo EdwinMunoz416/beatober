@@ -1,11 +1,10 @@
 import { BeatoberHome } from "@/components/BeatoberHome";
-import { loadAllPatterns, loadManifest } from "@/lib/content";
+import { loadBeatoberState } from "@/lib/day-store";
 
 export const dynamic = "force-dynamic";
 
-export default function Home() {
-  const manifest = loadManifest();
-  const patterns = loadAllPatterns(manifest);
+export default async function Home() {
+  const { manifest, patterns } = await loadBeatoberState();
   const authorMode = process.env.NEXT_PUBLIC_BEATOBER_AUTHOR === "1";
 
   return (

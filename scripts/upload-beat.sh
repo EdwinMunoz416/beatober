@@ -21,14 +21,14 @@ if [[ ! -f "$FILE" ]]; then
   exit 1
 fi
 
-if [[ -z "${BLOB_READ_WRITE_TOKEN:-}" ]]; then
-  echo "Set BLOB_READ_WRITE_TOKEN (Vercel project env or .env.local)." >&2
-  exit 1
-fi
-
 PATHNAME="beatober/${YEAR}/day-${DAY_PADDED}.mp3"
 echo "Uploading to blob://${PATHNAME} …"
-BLOB_OUT="$(npx vercel@latest blob put "$FILE" --pathname "$PATHNAME" --rw-token "$BLOB_READ_WRITE_TOKEN")"
+if [[ -n "${BLOB_READ_WRITE_TOKEN:-}" ]]; then
+  BLOB_OUT="$(npx vercel@latest blob put "$FILE" --pathname "$PATHNAME" --rw-token "$BLOB_READ_WRITE_TOKEN")"
+else
+  # Linked project + vercel env pull → OIDC / BLOB_STORE_ID
+  BLOB_OUT="$(npx vercel@latest blob put "$FILE" --pathname "$PATHNAME")"
+fi
 URL="$(node -e "
 const line = process.argv[1];
 const m = line.match(/https:\\/\\/[^\\s]+/);
@@ -38,7 +38,10 @@ console.log(m[0]);
 
 echo "URL: $URL"
 
-node <<NODE
+if [[ -n "${DATABASE_URL:-}${POSTGRES_URL:-}" ]]; then
+  node "$ROOT/scripts/db-set-audio-url.mjs" "$DAY" "$URL"
+else
+  node <<NODE
 const fs = require("fs");
 const path = require("path");
 const manifestPath = path.join("$ROOT", "content", "manifest.json");
@@ -56,5 +59,4 @@ else manifest.days.push({ ...base, audioUrl: "$URL" });
 fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\\n");
 console.log("Updated content/manifest.json for day", day);
 NODE
-
-echo "Commit manifest + push to deploy, or run in author mode with BEATOBER_AUTHOR_SECRET for API."
+fi
