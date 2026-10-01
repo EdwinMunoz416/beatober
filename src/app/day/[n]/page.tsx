@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BeatoberShell } from "@/components/BeatoberShell";
-import { loadBeatoberState } from "@/lib/day-store";
+import { loadBeatoberStateSafe } from "@/lib/day-store";
 import { dayPath, parseDayParam, siteBaseUrl } from "@/lib/day-routes";
 
 export const dynamic = "force-dynamic";
@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const day = parseDayParam(n);
   if (day === null) return { title: "beatober" };
 
-  const { manifest } = await loadBeatoberState();
+  const { manifest } = await loadBeatoberStateSafe();
   const entry = manifest.days.find((d) => d.day === day);
   const title = entry?.title ?? `Day ${day}`;
   const base = siteBaseUrl();
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: `Strudel pattern and beat — October day ${day}.`,
     openGraph: {
       title: `${title} · beatober`,
-      description: `October ${manifest.month} day ${day} — studio-daze`,
+      description: `October ${day}, ${manifest.year} — studio-daze beatober`,
       url,
       siteName: "studio-daze beatober",
       type: "website",

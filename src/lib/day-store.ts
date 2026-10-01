@@ -31,6 +31,7 @@ async function loadFromDb(manifest: Manifest): Promise<{
   patterns: Record<number, string>;
 } | null> {
   if (!dbConfigured()) return null;
+  try {
   const sql = getSql();
   const rows = (await sql`
     SELECT day, approved, title, strudel_file, audio_url, pattern
@@ -54,6 +55,9 @@ async function loadFromDb(manifest: Manifest): Promise<{
   }
 
   return { days, patterns };
+  } catch {
+    return null;
+  }
 }
 
 export async function loadBeatoberState(): Promise<{
@@ -69,6 +73,19 @@ export async function loadBeatoberState(): Promise<{
     };
   }
   return { manifest, patterns: loadAllPatterns(manifest) };
+}
+
+/** File fallback if Neon is unreachable (avoids 500 on /day/N). */
+export async function loadBeatoberStateSafe(): Promise<{
+  manifest: Manifest;
+  patterns: Record<number, string>;
+}> {
+  try {
+    return await loadBeatoberState();
+  } catch {
+    const manifest = loadManifest();
+    return { manifest, patterns: loadAllPatterns(manifest) };
+  }
 }
 
 export async function upsertDay(

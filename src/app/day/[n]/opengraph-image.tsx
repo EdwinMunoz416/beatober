@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { loadBeatoberState } from "@/lib/day-store";
+import { loadBeatoberStateSafe } from "@/lib/day-store";
 import { parseDayParam } from "@/lib/day-routes";
 
 export const size = { width: 1200, height: 630 };
@@ -10,7 +10,7 @@ type Props = { params: Promise<{ n: string }> };
 export default async function OgImage({ params }: Props) {
   const { n } = await params;
   const day = parseDayParam(n) ?? 1;
-  const { manifest } = await loadBeatoberState();
+  const { manifest } = await loadBeatoberStateSafe();
   const entry = manifest.days.find((d) => d.day === day);
   const title = entry?.title ?? `Day ${day}`;
   const pad = String(day).padStart(2, "0");
