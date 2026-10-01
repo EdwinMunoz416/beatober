@@ -27,11 +27,10 @@ export default async function OgImage({ params }: Props) {
   const day = parseDayParam(n) ?? 1;
   const manifest = loadManifest();
   const entry = manifest.days.find((d) => d.day === day);
-  const title = entry?.title;
+  const theme = entry?.title ?? `day ${day}`;
   const pad = String(day).padStart(2, "0");
-  const [ledFont, modernMedium, modernBold] = await Promise.all([
+  const [ledFont, modernBold] = await Promise.all([
     loadFontFile("public/fonts/LEDLIGHT.otf"),
-    loadFontFile("public/fonts/SpaceGrotesk-500.woff"),
     loadFontFile("public/fonts/SpaceGrotesk-700.woff"),
   ]);
 
@@ -47,7 +46,6 @@ export default async function OgImage({ params }: Props) {
           alignItems: "center",
           backgroundColor: "#0c0d10",
           color: WHITE,
-          fontFamily: MODERN_FONT,
         }}
       >
         <div
@@ -73,42 +71,18 @@ export default async function OgImage({ params }: Props) {
         >
           {pad}
         </div>
-        {title ? (
-          <div
-            style={{
-              fontFamily: MODERN_FONT,
-              fontSize: 34,
-              fontWeight: 500,
-              marginTop: 16,
-              color: WHITE,
-              letterSpacing: -0.5,
-            }}
-          >
-            {title}
-          </div>
-        ) : (
-          <div
-            style={{
-              fontFamily: MODERN_FONT,
-              fontSize: 34,
-              fontWeight: 500,
-              marginTop: 16,
-              color: WHITE,
-            }}
-          >
-            {`Day ${pad}`}
-          </div>
-        )}
         <div
           style={{
-            fontFamily: MODERN_FONT,
-            fontSize: 20,
-            fontWeight: 500,
-            marginTop: 12,
+            fontFamily: LED_FONT,
+            fontSize: 42,
+            marginTop: 20,
             color: WHITE,
+            letterSpacing: 3,
+            textAlign: "center",
+            maxWidth: 1000,
           }}
         >
-          {`October ${day}, ${manifest.year} · beatober`}
+          {theme}
         </div>
       </div>
     ),
@@ -121,12 +95,6 @@ export default async function OgImage({ params }: Props) {
           data: ledFont,
           style: "normal",
           weight: 400,
-        },
-        {
-          name: MODERN_FONT,
-          data: modernMedium,
-          style: "normal",
-          weight: 500,
         },
         {
           name: MODERN_FONT,
