@@ -1,2 +1,99 @@
-$: note("c3 eb3 g3 bb3").s("sawtooth").lpf(sine.range(400, 2400).slow(4)).gain(0.35)
-$: s("bd*2, ~ sd, ~ bd, sd").gain(0.75)
+// night drive — 32-bar (static params; explicit voicings — avoids NaN AudioParams)
+setcpm(82 / 4)
+
+const pads = note(`
+  <[c4,eb4,g4,bb4,d5] [ab3,c4,eb4,g4,bb4] [eb4,g4,bb4,d5,f5]
+   [bb3,d4,f4,ab4] [f3,ab3,c4,eb4,g4] [g3,b3,d4,f4,ab4] [c4,eb4,g4,bb4,d5]>
+`)
+
+const preDrop = "<1@2 0@999>"
+const drop = "<0@2 1@999>"
+const mainDrums = "<0@4 1@24 0@4>"
+const fullArr = "<0@12 1@16 0@4>"
+
+const lead = note(`
+  ~ ~ eb5 ~  ~ g4 ~ ~
+  ~ bb4 ~ ~  g4 ~ ~ eb4
+`.slow(2))
+
+$: stack(
+  pads
+    .s("sine")
+    .attack(0.05)
+    .release(1.6)
+    .gain(0.08)
+    .lpf(420)
+    .mask(preDrop),
+
+  pads
+    .s("triangle")
+    .attack(0.05)
+    .release(1.8)
+    .gain(0.28)
+    .lpf(950)
+    .hpf(90)
+    .room(0.35)
+    .mask(drop),
+
+  pads
+    .s("sawtooth")
+    .attack(0.05)
+    .release(1.4)
+    .gain(0.1)
+    .lpf(650)
+    .hpf(180)
+    .room(0.2)
+    .mask(drop),
+
+  note("<c2 ab1 eb2 bb1 f1 g1 c2>")
+    .struct("x ~ ~ x ~ ~ x ~")
+    .s("sine")
+    .attack(0.01)
+    .release(0.4)
+    .gain(0.45)
+    .lpf(360)
+    .mask(drop),
+
+  s("bd")
+    .bank("RolandTR808")
+    .struct("~ x ~ ~")
+    .gain(0.7)
+    .mask("<0@2 1@2 0@999>"),
+
+  s("bd")
+    .bank("RolandTR808")
+    .struct("x ~ ~ ~ ~ ~ x ~")
+    .gain(0.72)
+    .mask(mainDrums),
+
+  s("sd")
+    .bank("RolandTR808")
+    .struct("~ ~ x ~ ~ ~ x ~")
+    .gain(0.58)
+    .hpf(220)
+    .mask(mainDrums),
+
+  s("hh")
+    .bank("RolandTR808")
+    .struct("[x x]*8")
+    .gain(0.2)
+    .hpf(900)
+    .mask(fullArr),
+
+  s("cp")
+    .bank("RolandTR808")
+    .struct("x*8")
+    .gain(0.08)
+    .hpf(2000)
+    .mask(mainDrums),
+
+  lead
+    .s("sine")
+    .struct("~ ~ x ~ ~ x ~ ~")
+    .attack(0.02)
+    .release(0.5)
+    .gain(0.15)
+    .lpf(2600)
+    .room(0.3)
+    .mask(fullArr),
+)

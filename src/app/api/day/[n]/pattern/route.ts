@@ -3,7 +3,28 @@ import { writeFileSync } from "node:fs";
 import { authorOk } from "@/lib/author";
 import { loadManifest, patternPath } from "@/lib/content";
 import { dbConfigured } from "@/lib/db";
-import { upsertDay } from "@/lib/day-store";
+import { loadPublicPatternForDay, upsertDay } from "@/lib/day-store";
+
+export async function GET(
+  _request: Request,
+  ctx: { params: Promise<{ n: string }> },
+) {
+  const { n } = await ctx.params;
+  const day = Number.parseInt(n, 10);
+  if (!Number.isFinite(day) || day < 1 || day > 31) {
+    return NextResponse.json({ error: "Invalid day" }, { status: 400 });
+  }
+
+  try {
+    const code = await loadPublicPatternForDay(day);
+    return NextResponse.json(
+      { day, code },
+      { headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300" } },
+    );
+  } catch {
+    return NextResponse.json({ error: "Pattern unavailable" }, { status: 503 });
+  }
+}
 
 export async function POST(
   request: Request,

@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type CSSProperties,
 } from "react";
@@ -22,8 +23,11 @@ import { BeatAudio } from "@/components/BeatAudio";
 import { StrudelErrorBoundary } from "@/components/StrudelErrorBoundary";
 import { StrudelRepl } from "@/components/StrudelRepl";
 import { StrudelVisualBootstrap } from "@/components/StrudelVisualBootstrap";
+import { StrudelWarmBoot } from "@/components/StrudelWarmBoot";
 import { StudioDazeHeader } from "@/components/StudioDazeHeader";
 import { trackEvent } from "@/lib/analytics";
+import { stopStrudelForDayChange } from "@/lib/strudel-playback-control";
+import { useDayPattern } from "@/lib/use-day-pattern";
 
 type Props = {
   manifest: Manifest;
@@ -42,10 +46,13 @@ export function BeatoberHome({
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
-  const calendar: BeatoberCalendar = {
-    year: manifest.year,
-    month: manifest.month,
-  };
+  const calendar: BeatoberCalendar = useMemo(
+    () => ({
+      year: manifest.year,
+      month: manifest.month,
+    }),
+    [manifest.year, manifest.month],
+  );
 
   const initialDay = useMemo(() => {
     if (
@@ -64,10 +71,21 @@ export function BeatoberHome({
   }, [manifest.days, calendar, nowIso, canPublish, initialSelectedDay]);
 
   const [viewDay, setViewDay] = useState(initialDay);
+  const [prevInitialDay, setPrevInitialDay] = useState(initialDay);
+  if (initialDay !== prevInitialDay) {
+    setPrevInitialDay(initialDay);
+    setViewDay(initialDay);
+  }
   const [playbackWorkspaceBg, setPlaybackWorkspaceBg] = useState<
     string | undefined
   >(undefined);
+  const [prevInitialForBg, setPrevInitialForBg] = useState(initialDay);
+  if (initialDay !== prevInitialForBg) {
+    setPrevInitialForBg(initialDay);
+    setPlaybackWorkspaceBg(undefined);
+  }
   const days = manifest.days;
+  const prevInitialStopRef = useRef(initialDay);
 
   const handleStrudelPlayback = useCallback(
     (playing: boolean, day: number) => {
@@ -78,7 +96,9 @@ export function BeatoberHome({
   );
 
   useEffect(() => {
-    setViewDay(initialDay);
+    if (prevInitialStopRef.current === initialDay) return;
+    stopStrudelForDayChange();
+    prevInitialStopRef.current = initialDay;
   }, [initialDay]);
 
   const now = new Date(nowIso);
@@ -91,6 +111,9 @@ export function BeatoberHome({
   };
 
   const handleFocusDay = (day: number) => {
+    if (day === viewDay) return;
+    stopStrudelForDayChange();
+    setPlaybackWorkspaceBg(undefined);
     setViewDay(day);
     const entry = days.find((d) => d.day === day);
     const locked = isDayLocked(
@@ -127,14 +150,28 @@ export function BeatoberHome({
     canPublish,
   );
   const showStrudel = !viewLocked || canPublish;
-  const publishedCode = patterns[entry.day] ?? "";
+  const {
+    code: publishedCode,
+    loading: patternLoading,
+    error: patternError,
+    retry: retryPattern,
+  } = useDayPattern({
+    viewDay: entry.day,
+    initialPatterns: patterns,
+    enabled: showStrudel,
+  });
   const hydraEnabled = !viewLocked;
 
   return (
     <div
       className={`beatober-page${hydraEnabled ? " beatober-page--hydra" : ""}${!viewLocked ? " beatober-page--strudel-draw" : ""}`}
     >
-      {!viewLocked ? <StrudelVisualBootstrap /> : null}
+      {!viewLocked ? (
+        <>
+          <StrudelVisualBootstrap />
+          <StrudelWarmBoot />
+        </>
+      ) : null}
       <div
         className={`beatober-workspace${playbackWorkspaceBg ? " beatober-workspace--playback-bg" : ""}`}
         style={
@@ -157,6 +194,7 @@ export function BeatoberHome({
         <div className="beatober-main">
           {entry.audioUrl ? (
             <BeatAudio
+              key={entry.day}
               day={entry.day}
               audioUrl={entry.audioUrl}
               title={entry.title}
@@ -165,8 +203,12 @@ export function BeatoberHome({
           {showStrudel ? (
             <StrudelErrorBoundary>
               <StrudelRepl
+                key={entry.day}
                 day={entry.day}
                 publishedCode={publishedCode}
+                patternLoading={patternLoading}
+                patternError={patternError}
+                onRetryPattern={retryPattern}
                 comingSoon={viewLocked && canPublish}
                 canPublish={canPublish}
                 onPlaybackChange={handleStrudelPlayback}

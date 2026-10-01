@@ -6,6 +6,7 @@ import {
   type Manifest,
 } from "@/lib/content";
 import { dbConfigured, getSql } from "@/lib/db";
+import { resolveShellViewDay } from "@/lib/resolve-shell-day";
 
 type DbRow = {
   day: number;
@@ -31,20 +32,124 @@ function rowToEntry(row: DbRow, manifest: Manifest): DayEntry {
   };
 }
 
+function patternFromRow(row: DbRow, manifest: Manifest): string {
+  const trimmed = row.pattern?.trim();
+  if (trimmed) return trimmed;
+  const entry = rowToEntry(row, manifest);
+  return loadPattern(entry.strudelFile);
+}
+
+function patternForManifestDay(manifest: Manifest, day: number): string {
+  const entry =
+    manifest.days.find((d) => d.day === day) ??
+    manifest.days[0] ?? {
+      day,
+      approved: false,
+      strudelFile: `${String(day).padStart(2, "0")}.strudel`,
+    };
+  return loadPattern(entry.strudelFile);
+}
+
+async function loadDayRowsFromDb(): Promise<DbRow[] | null> {
+  if (!dbConfigured()) return null;
+  try {
+    const sql = getSql();
+    const rows = (await sql`
+      SELECT day, approved, title, strudel_file, audio_url, pattern
+      FROM beatober_days
+      ORDER BY day
+    `) as DbRow[];
+    return rows.length === 0 ? null : rows;
+  } catch {
+    return null;
+  }
+}
+
+async function loadDaysFromDb(manifest: Manifest): Promise<DayEntry[] | null> {
+  const rows = await loadDayRowsFromDb();
+  if (!rows) return null;
+  return rows.map((row) => rowToEntry(row, manifest));
+}
+
+/** Public pattern text for one day (Neon → git file fallback). */
+export async function loadPublicPatternForDay(day: number): Promise<string> {
+  const manifest = loadManifest();
+  if (day < 1 || day > 31) {
+    throw new Error("Invalid day");
+  }
+
+  if (dbConfigured()) {
+    try {
+      const sql = getSql();
+      const rows = (await sql`
+        SELECT day, approved, title, strudel_file, audio_url, pattern
+        FROM beatober_days
+        WHERE day = ${day}
+        LIMIT 1
+      `) as DbRow[];
+      const row = rows[0];
+      if (row) return patternFromRow(row, manifest);
+    } catch {
+      /* fall through to file */
+    }
+  }
+
+  return patternForManifestDay(manifest, day);
+}
+
+async function mergedManifest(): Promise<Manifest> {
+  const manifest = loadManifest();
+  const daysFromDb = await loadDaysFromDb(manifest);
+  return daysFromDb ? { ...manifest, days: daysFromDb } : manifest;
+}
+
+export async function loadBeatoberStateForViewDay(viewDay: number): Promise<{
+  manifest: Manifest;
+  patterns: Record<number, string>;
+}> {
+  const manifest = await mergedManifest();
+  const safeDay =
+    viewDay >= 1 && viewDay <= 31
+      ? viewDay
+      : (manifest.days[0]?.day ?? 1);
+  const pattern = await loadPublicPatternForDay(safeDay);
+  return {
+    manifest,
+    patterns: { [safeDay]: pattern },
+  };
+}
+
+/** Fast shell: calendar metadata + one pattern for the selected day. */
+export async function loadBeatoberShellState(
+  now: Date,
+  canPublish: boolean,
+  initialSelectedDay?: number,
+): Promise<{
+  manifest: Manifest;
+  patterns: Record<number, string>;
+  viewDay: number;
+}> {
+  const manifest = await mergedManifest();
+  const viewDay = resolveShellViewDay(
+    manifest,
+    now,
+    canPublish,
+    initialSelectedDay,
+  );
+  const pattern = await loadPublicPatternForDay(viewDay);
+  return {
+    manifest,
+    patterns: { [viewDay]: pattern },
+    viewDay,
+  };
+}
+
 async function loadFromDb(manifest: Manifest): Promise<{
   days: DayEntry[];
   patterns: Record<number, string>;
 } | null> {
-  if (!dbConfigured()) return null;
-  try {
-  const sql = getSql();
-  const rows = (await sql`
-    SELECT day, approved, title, strudel_file, audio_url, pattern
-    FROM beatober_days
-    ORDER BY day
-  `) as DbRow[];
-
-  if (rows.length === 0) return null;
+  const rows = await loadDayRowsFromDb();
+  if (!rows) return null;
 
   const days: DayEntry[] = [];
   const patterns: Record<number, string> = {};
@@ -60,9 +165,6 @@ async function loadFromDb(manifest: Manifest): Promise<{
   }
 
   return { days, patterns };
-  } catch {
-    return null;
-  }
 }
 
 export async function loadBeatoberState(): Promise<{

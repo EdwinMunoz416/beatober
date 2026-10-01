@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ReplTransport } from "@/components/ReplTransport";
 import { StrudelCodeEditor } from "@/components/StrudelCodeEditor";
 import { trackEvent } from "@/lib/analytics";
@@ -9,11 +9,15 @@ import {
   strudelErrorKindLabel,
 } from "@/lib/strudel-runtime-errors";
 import { ensureStrudelAudioReady } from "@/lib/strudel-audio";
+import { registerStrudelPlaybackStop } from "@/lib/strudel-playback-control";
 import { useStrudelSession } from "@/lib/strudel-session";
 
 type Props = {
   day: number;
   publishedCode: string;
+  patternLoading?: boolean;
+  patternError?: string | null;
+  onRetryPattern?: () => void;
   comingSoon?: boolean;
   /** Author or admin — edit canonical pattern + server save */
   canPublish: boolean;
@@ -29,6 +33,9 @@ function errorMessage(err: unknown): string {
 export function StrudelRepl({
   day,
   publishedCode,
+  patternLoading = false,
+  patternError = null,
+  onRetryPattern,
   comingSoon = false,
   canPublish,
   onPlaybackChange,
@@ -41,12 +48,31 @@ export function StrudelRepl({
     ensureApi,
     evaluate,
     hush,
+    hushSync,
+    retryBoot,
   } = useStrudelSession();
   const [code, setCode] = useState(publishedCode);
   const [busy, setBusy] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [saveHint, setSaveHint] = useState<string | null>(null);
   const [editorInstance, setEditorInstance] = useState(0);
+  const playingRef = useRef(false);
+  useEffect(() => {
+    playingRef.current = playing;
+  }, [playing]);
+
+  const [prevPublished, setPrevPublished] = useState({
+    publishedCode,
+    canPublish,
+  });
+  if (
+    publishedCode !== prevPublished.publishedCode ||
+    canPublish !== prevPublished.canPublish
+  ) {
+    setPrevPublished({ publishedCode, canPublish });
+    setCode(publishedCode);
+    setEditorInstance((v) => v + 1);
+  }
 
   const readOnly = !canPublish;
 
@@ -57,18 +83,37 @@ export function StrudelRepl({
     [day, onPlaybackChange],
   );
 
+  const stopPlayback = useCallback(
+    (opts?: { trackStop?: boolean }) => {
+      const wasPlaying = playingRef.current;
+      setPlaying(false);
+      setBusy(false);
+      notifyPlayback(false);
+      clearRuntimeError();
+      hushSync();
+      void hush();
+      if (opts?.trackStop && wasPlaying) {
+        trackEvent("strudel_stop", { day });
+      }
+    },
+    [clearRuntimeError, day, hush, hushSync, notifyPlayback],
+  );
+
   useEffect(() => {
-    setCode(publishedCode);
-    setEditorInstance((v) => v + 1);
-    setPlaying(false);
-    notifyPlayback(false);
-    clearRuntimeError();
-    void hush();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- hush on day/publish change only
-  }, [day, publishedCode, canPublish]);
+    return registerStrudelPlaybackStop(() => {
+      stopPlayback({ trackStop: true });
+    });
+  }, [stopPlayback]);
+
+  useEffect(() => {
+    return () => {
+      stopPlayback();
+    };
+  }, [stopPlayback]);
 
   const runEvaluate = useCallback(async () => {
     if (comingSoon && !canPublish) return;
+    if (patternLoading || patternError) return;
     setBusy(true);
     clearRuntimeError();
     try {
@@ -105,14 +150,13 @@ export function StrudelRepl({
     ensureApi,
     evaluate,
     notifyPlayback,
+    patternError,
+    patternLoading,
   ]);
 
   const runHush = useCallback(() => {
-    void hush();
-    if (playing) trackEvent("strudel_stop", { day });
-    setPlaying(false);
-    notifyPlayback(false);
-  }, [day, hush, notifyPlayback, playing]);
+    stopPlayback({ trackStop: true });
+  }, [stopPlayback]);
 
   const persistPattern = useCallback(async () => {
     if (!canPublish) return;
@@ -147,8 +191,9 @@ export function StrudelRepl({
     return () => window.removeEventListener("keydown", onKey);
   }, [persistPattern]);
 
-  const bootLabel =
-    status === "loading"
+  const bootLabel = patternLoading
+    ? "Loading pattern…"
+    : status === "loading"
       ? "Loading sounds…"
       : status === "error"
         ? (bootError ?? "Boot failed")
@@ -156,18 +201,6 @@ export function StrudelRepl({
 
   return (
     <section className="repl repl--codemirror" aria-label={`Strudel pattern day ${day}`}>
-      <ReplTransport
-        playing={playing}
-        busy={busy}
-        playDisabled={
-          busy || status === "loading" || (comingSoon && !canPublish)
-        }
-        stopDisabled={!playing}
-        bootLabel={bootLabel}
-        saveHint={saveHint}
-        onPlay={() => void runEvaluate()}
-        onStop={runHush}
-      />
       <div className="repl-editor repl-editor--cm">
         <StrudelCodeEditor
           instanceKey={`${day}-${editorInstance}`}
@@ -177,11 +210,41 @@ export function StrudelRepl({
           onEvaluate={() => void runEvaluate()}
           onStop={runHush}
         />
+        <ReplTransport
+          playing={playing}
+          busy={busy}
+          playDisabled={
+            busy ||
+            patternLoading ||
+            Boolean(patternError) ||
+            status === "loading" ||
+            (comingSoon && !canPublish)
+          }
+          stopDisabled={!playing}
+          bootLabel={bootLabel}
+          saveHint={saveHint}
+          onPlay={() => void runEvaluate()}
+          onStop={runHush}
+        />
       </div>
+      {patternError ? (
+        <p className="repl-error" role="alert">
+          <strong>Pattern</strong>
+          <span className="repl-error-msg">{patternError}</span>
+          {onRetryPattern ? (
+            <button type="button" className="repl-btn" onClick={onRetryPattern}>
+              Retry load
+            </button>
+          ) : null}
+        </p>
+      ) : null}
       {bootError && status === "error" ? (
         <p className="repl-error" role="alert">
           <strong>{strudelErrorKindLabel("boot")}</strong>
           <span className="repl-error-msg">{bootError}</span>
+          <button type="button" className="repl-btn" onClick={retryBoot}>
+            Retry engine
+          </button>
         </p>
       ) : null}
       {runtimeError ? (

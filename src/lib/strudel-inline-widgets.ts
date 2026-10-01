@@ -62,7 +62,7 @@ export async function ensureStrudelInlineWidgets(): Promise<void> {
   });
 
   register("_spiral", (id, options, pat) => {
-    let size = (options.size as number) || 275;
+    const size = (options.size as number) || 275;
     const opts = { width: size, height: size, ...options, size: size / 5 };
     const ctx = getCanvasWidget(id, opts).getContext("2d")!;
     return pat.tag(id).spiral({ ...opts, ctx, id });
@@ -75,14 +75,14 @@ export async function ensureStrudelInlineWidgets(): Promise<void> {
   });
 
   register("_pitchwheel", (id, options, pat) => {
-    let size = (options.size as number) || 200;
+    const size = (options.size as number) || 200;
     const opts = { width: size, height: size, ...options, size: size / 5 };
     const ctx = getCanvasWidget(id, opts).getContext("2d")!;
     return pat.tag(id).pitchwheel({ ...opts, ctx, id });
   });
 
   register("_spectrum", (id, options, pat) => {
-    let size = (options.size as number) || 200;
+    const size = (options.size as number) || 200;
     const opts = { width: size, height: size, ...options, size: size / 5 };
     const ctx = getCanvasWidget(id, opts).getContext("2d")!;
     return pat.tag(id).spectrum({ ...opts, ctx, id });

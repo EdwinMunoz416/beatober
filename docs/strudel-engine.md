@@ -4,10 +4,11 @@ Headless **`@strudel/web`** with a strudel.cc-style **prebake** (samples, synths
 
 ## Boot
 
-- `useStrudelSession` → `initStrudel({ prebake, id, onEvalError, onUpdateState, … })`
-- `StrudelVisualBootstrap` → `#test-canvas` draw layer, CM widget types (`._pianoroll`, `._scope`, …), draw theme synced to site CSS
+- **Singleton** `ensureStrudelBoot()` in `strudel-boot.ts` (survives day remounts) → `initStrudel({ prebake, id, onEvalError, onUpdateState, … })`
+- `StrudelVisualBootstrap` + **`StrudelWarmBoot`** on playable days — prebake in the background so visitors’ first Play is ready
+- `useStrudelSession` subscribes to boot status; **Retry engine** clears and re-runs boot on failure
 - Prebake: `evalScope(draw, tonal, webaudio, beatoberHydraScope)` + `loadBeatoberSamples()`
-- First Play shows **Loading sounds…** until prebake finishes
+- Toolbar shows **Loading sounds…** while prebake runs (warm boot usually finishes before Play)
 - **Web Audio:** Play awaits `initAudio()` so AudioWorklets load before synths / `._spectrum()` / `._scope()` (avoids `AudioWorkletGlobalScope` errors)
 
 ## Pattern / playback UI
