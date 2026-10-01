@@ -54,7 +54,7 @@ html {
   max-width: 960px;
   min-height: 0;
   margin: 0 auto;
-  padding: clamp(1rem, 2.5vw, 2.5rem) 1.25rem clamp(0.75rem, 2vh, 1.5rem);
+  padding: 0;
 }
 
 .site-header {
