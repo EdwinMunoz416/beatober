@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
     "@strudel/draw",
     "@strudel/hydra",
     "@strudel/soundfonts",
+    "@strudel/codemirror",
     "hydra-synth",
   ],
 };

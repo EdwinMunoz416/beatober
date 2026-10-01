@@ -33,6 +33,24 @@ declare module "@strudel/draw" {
 
 declare module "@strudel/tonal";
 
+declare module "@strudel/codemirror" {
+  import type { EditorView, ViewUpdate } from "@codemirror/view";
+
+  export const defaultSettings: Record<string, unknown>;
+  export const codemirrorSettings: {
+    get(): Record<string, unknown>;
+    set(value: Record<string, unknown>): void;
+  };
+  export function initEditor(options: {
+    initialCode?: string;
+    onChange?: (update: ViewUpdate) => void;
+    onEvaluate?: () => void;
+    onStop?: () => void;
+    root: HTMLElement;
+    mondo?: boolean;
+  }): EditorView;
+}
+
 declare module "hydra-synth" {
   const Hydra: new (opts: Record<string, unknown>) => unknown;
   export default Hydra;

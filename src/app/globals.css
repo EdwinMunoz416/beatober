@@ -316,6 +316,38 @@ html {
   overflow: hidden;
 }
 
+.repl-editor--cm {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.repl-cm-host {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.repl-cm-host .cm-editor {
+  height: 100%;
+  background: transparent;
+}
+
+.repl-cm-host .cm-scroller {
+  font-family: var(--mono);
+  line-height: 1.45;
+}
+
+.repl--codemirror .repl-editor {
+  background: var(--bg);
+  border: none;
+}
+
+.repl--codemirror.repl {
+  border: none;
+  background: var(--bg);
+}
+
 .repl-highlight,
 .repl-textarea {
   position: absolute;

@@ -1,16 +1,10 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type KeyboardEvent,
-} from "react";
+import { useCallback, useEffect, useState } from "react";
+import { StrudelCodeEditor } from "@/components/StrudelCodeEditor";
 import { trackEvent } from "@/lib/analytics";
 import { clearRemix, loadRemix, saveRemix } from "@/lib/remix-storage";
 import { useStrudelSession } from "@/lib/strudel-session";
-import { highlightStrudel } from "@/lib/strudel-highlight";
 
 type Props = {
   day: number;
@@ -54,8 +48,7 @@ export function StrudelRepl({
   const [playing, setPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saveHint, setSaveHint] = useState<string | null>(null);
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  const highlightRef = useRef<HTMLPreElement | null>(null);
+  const [editorInstance, setEditorInstance] = useState(0);
 
   const readOnly = comingSoon && !canPublish;
   const editable = canPublish || remixMode;
@@ -63,6 +56,7 @@ export function StrudelRepl({
   useEffect(() => {
     const next = initialEditorCode(day, publishedCode, canPublish, remixMode);
     setCode(next);
+    setEditorInstance((v) => v + 1);
     setPlaying(false);
     setError(null);
     void hush();
@@ -72,14 +66,6 @@ export function StrudelRepl({
     if (!remixMode || canPublish) return;
     saveRemix(day, code);
   }, [code, day, remixMode, canPublish]);
-
-  const syncScroll = useCallback(() => {
-    const ta = textareaRef.current;
-    const hl = highlightRef.current;
-    if (!ta || !hl) return;
-    hl.scrollTop = ta.scrollTop;
-    hl.scrollLeft = ta.scrollLeft;
-  }, []);
 
   const runEvaluate = useCallback(async () => {
     if (comingSoon && !canPublish) return;
@@ -130,37 +116,26 @@ export function StrudelRepl({
   const resetRemix = useCallback(() => {
     clearRemix(day);
     setCode(publishedCode);
+    setEditorInstance((v) => v + 1);
     setError(null);
     void hush();
     setPlaying(false);
   }, [day, hush, publishedCode]);
 
-  const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    const mod = e.metaKey || e.ctrlKey;
-    if (mod && e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      void runEvaluate();
-    }
-    if (mod && e.shiftKey && e.key === "Enter") {
-      e.preventDefault();
-      void runEvaluate();
-    }
-    if (mod && e.key === ".") {
-      e.preventDefault();
-      runHush();
-    }
-    if (mod && e.key === "s") {
-      e.preventDefault();
-      void persistPattern();
-    }
-  };
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const mod = e.metaKey || e.ctrlKey;
+      if (mod && e.key === "s") {
+        e.preventDefault();
+        void persistPattern();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [persistPattern]);
 
   const remixDirty =
     remixMode && !canPublish && code.trim() !== publishedCode.trim();
-
-  const highlightHtml = code
-    ? highlightStrudel(code)
-    : `<span class="tok-placeholder">// strudel pattern</span>`;
 
   const bootLabel =
     status === "loading"
@@ -170,7 +145,7 @@ export function StrudelRepl({
         : null;
 
   return (
-    <section className="repl" aria-label={`Strudel pattern day ${day}`}>
+    <section className="repl repl--codemirror" aria-label={`Strudel pattern day ${day}`}>
       <div className="repl-toolbar">
         <span className="repl-label">
           day {String(day).padStart(2, "0")}
@@ -190,11 +165,7 @@ export function StrudelRepl({
           ) : null}
           {saveHint ? <span className="repl-hint">{saveHint}</span> : null}
           {remixDirty ? (
-            <button
-              type="button"
-              className="repl-btn"
-              onClick={resetRemix}
-            >
+            <button type="button" className="repl-btn" onClick={resetRemix}>
               Reset
             </button>
           ) : null}
@@ -218,31 +189,22 @@ export function StrudelRepl({
           </button>
         </div>
       </div>
-      <div className="repl-editor">
-        <pre
-          ref={highlightRef}
-          className="repl-highlight"
-          aria-hidden
-          dangerouslySetInnerHTML={{ __html: highlightHtml }}
-        />
-        <textarea
-          ref={textareaRef}
-          className="repl-textarea"
-          value={code}
-          readOnly={readOnly || !editable}
-          spellCheck={false}
-          autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="off"
-          onChange={(e) => setCode(e.target.value)}
-          onScroll={syncScroll}
-          onKeyDown={onKeyDown}
-        />
+      <div className="repl-editor repl-editor--cm">
+        {editable || readOnly ? (
+          <StrudelCodeEditor
+            instanceKey={`${day}-${editorInstance}`}
+            initialCode={code}
+            readOnly={readOnly}
+            onCodeChange={setCode}
+            onEvaluate={() => void runEvaluate()}
+            onStop={runHush}
+          />
+        ) : null}
       </div>
       {error ? <p className="repl-error">{error}</p> : null}
       {editable ? (
         <p className="repl-keys">
-          ⌘/Ctrl+Enter play · ⌘/Ctrl+Shift+Enter play · ⌘/Ctrl+. stop
+          Ctrl/⌘+Enter play · Ctrl/⌘+. stop
           {canPublish ? " · ⌘/Ctrl+S save (login at /admin in production)" : ""}
           {remixMode && !canPublish
             ? " · edits stay in this browser only"

@@ -1,6 +1,6 @@
 # Strudel engine (studiodaze-beatober)
 
-Headless **`@strudel/web`** with a strudel.cc-style **prebake** (samples, synths, soundfonts, Hydra). No MiniREPL / SuperDirt.
+Headless **`@strudel/web`** with a strudel.cc-style **prebake** (samples, synths, soundfonts, Hydra). Editor: **`@strudel/codemirror`** (`initEditor`) — autocomplete, pattern highlight, flash, line numbers; your toolbar/layout unchanged. No MiniREPL / SuperDirt.
 
 ## Boot
 
