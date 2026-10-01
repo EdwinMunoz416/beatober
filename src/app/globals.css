@@ -16,7 +16,7 @@
   --accent: #ff3ec8;
   --accent-cyan: #5ef0ff;
   --title-glow: #c41e1e;
-  --repl-height: min(62vh, 520px);
+  --workspace-min: 16rem;
   --day-col: 10.75rem;
   --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
 }
@@ -27,16 +27,19 @@
   box-sizing: border-box;
 }
 
-html,
-body {
-  margin: 0;
-  min-height: 100%;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--mono);
+html {
+  height: 100%;
 }
 
-body {
+.beatober-body {
+  margin: 0;
+  min-height: 100%;
+  min-height: 100dvh;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  color: var(--text);
+  font-family: var(--mono);
   background:
     radial-gradient(ellipse 80% 50% at 50% -20%, #1a0c0e 0%, transparent 55%),
     radial-gradient(ellipse 60% 40% at 80% 100%, #120808 0%, transparent 50%),
@@ -44,14 +47,20 @@ body {
 }
 
 .beatober-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   max-width: 960px;
+  min-height: 0;
   margin: 0 auto;
-  padding: 2.5rem 1.25rem 3rem;
+  padding: clamp(1rem, 2.5vw, 2.5rem) 1.25rem clamp(0.75rem, 2vh, 1.5rem);
 }
 
 .site-header {
+  flex-shrink: 0;
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: clamp(0.75rem, 2vh, 1.75rem);
 }
 
 /* Matches OG preview: black Ledlight + 2px white stroke halo (no pill) */
@@ -76,15 +85,17 @@ body {
 }
 
 .beatober-workspace {
+  flex: 1;
   display: grid;
   grid-template-columns: var(--day-col) 1fr;
   gap: 0.75rem;
   align-items: stretch;
-  min-height: var(--repl-height);
+  min-height: var(--workspace-min);
 }
 
 .day-list {
-  height: var(--repl-height);
+  height: 100%;
+  min-height: 0;
   border: 1px solid var(--surface-border);
   background: var(--surface);
   border-radius: 4px;
@@ -187,7 +198,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  min-height: var(--repl-height);
+  min-height: 0;
+  height: 100%;
 }
 
 .author-bar {
