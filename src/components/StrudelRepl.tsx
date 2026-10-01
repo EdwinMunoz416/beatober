@@ -7,6 +7,7 @@ import {
   useState,
   type KeyboardEvent,
 } from "react";
+import { trackEvent } from "@/lib/analytics";
 import { highlightStrudel } from "@/lib/strudel-highlight";
 
 type StrudelApi = {
@@ -82,6 +83,7 @@ export function StrudelRepl({
       const api = await ensureApi();
       await api.evaluate(code, true);
       setPlaying(true);
+      trackEvent("strudel_play", { day });
     } catch (err) {
       setError(errorMessage(err));
       setPlaying(false);

@@ -1,11 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { DayEntry, Manifest } from "@/lib/content";
 import { defaultSelectedDay, type BeatoberCalendar } from "@/lib/day-access";
 import { DayList } from "@/components/DayList";
+import { BeatAudio } from "@/components/BeatAudio";
 import { StrudelRepl } from "@/components/StrudelRepl";
 import { StudioDazeHeader } from "@/components/StudioDazeHeader";
+import { trackEvent } from "@/lib/analytics";
 
 type Props = {
   manifest: Manifest;
@@ -33,6 +35,15 @@ export function BeatoberHome({
 
   const [selectedDay, setSelectedDay] = useState(initialDay);
   const [days, setDays] = useState<DayEntry[]>(manifest.days);
+
+  const selectDay = (day: number) => {
+    setSelectedDay(day);
+    trackEvent("day_view", { day });
+  };
+
+  useEffect(() => {
+    trackEvent("day_view", { day: initialDay });
+  }, [initialDay]);
 
   const now = new Date(nowIso);
   const entry = days.find((d) => d.day === selectedDay) ?? days[0]!;
@@ -67,7 +78,7 @@ export function BeatoberHome({
           nowIso={nowIso}
           authorMode={authorMode}
           selectedDay={selectedDay}
-          onSelect={setSelectedDay}
+          onSelect={selectDay}
         />
         <div className="beatober-main">
           {authorMode ? (
@@ -84,6 +95,13 @@ export function BeatoberHome({
                 Public unlock: approved + calendar day {entry.day}
               </span>
             </div>
+          ) : null}
+          {entry.audioUrl ? (
+            <BeatAudio
+              day={entry.day}
+              audioUrl={entry.audioUrl}
+              title={entry.title}
+            />
           ) : null}
           <StrudelRepl
             day={entry.day}
