@@ -52,7 +52,7 @@ export function ensureStrudelVisuals(): Promise<void> {
 
       cm.initTheme("strudelTheme");
       draw.setTheme({
-        background: cssVar("--bg", "#0c0d10"),
+        background: "transparent",
         foreground: cssVar("--accent-cyan", "#5ef0ff"),
         caret: cssVar("--accent", "#ff3ec8"),
         selection: "rgba(94, 240, 255, 0.25)",

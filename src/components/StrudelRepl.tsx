@@ -169,18 +169,6 @@ export function StrudelRepl({
   return (
     <section className="repl repl--codemirror" aria-label={`Strudel pattern day ${day}`}>
       <div className="repl-toolbar">
-        <span className="repl-label">
-          day {String(day).padStart(2, "0")}
-          {comingSoon && !canPublish
-            ? " · coming soon"
-            : canPublish
-              ? " · author"
-              : remixMode
-                ? remixDirty
-                  ? " · local remix"
-                  : " · remix"
-                : ""}
-        </span>
         <div className="repl-actions">
           {bootLabel ? (
             <span className="repl-hint repl-hint--boot">{bootLabel}</span>
@@ -245,18 +233,6 @@ export function StrudelRepl({
           </div>
           <pre className="repl-error-msg">{runtimeError.message}</pre>
         </div>
-      ) : null}
-      {editable ? (
-        <p className="repl-keys">
-          Ctrl/⌘+Enter play · Ctrl/⌘+. stop
-          {canPublish ? " · ⌘/Ctrl+S save (login at /admin in production)" : ""}
-          {remixMode && !canPublish
-            ? " · edits stay in this browser only"
-            : ""}
-          {
-            " · visuals: all(pianoroll), ._pianoroll(), ._scope(), ._spectrum(), Hydra"
-          }
-        </p>
       ) : null}
     </section>
   );

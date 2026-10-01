@@ -4,10 +4,39 @@ import { useCallback, useEffect, useState } from "react";
 import { AdminLoginForm } from "@/components/AdminLoginForm";
 import type { AdminMetrics, MetricsAudience } from "@/lib/analytics-query";
 import Link from "next/link";
+import {
+  isDayLocked,
+  type BeatoberCalendar,
+} from "@/lib/day-access";
 
 type Props = {
   initialAuthed: boolean;
 };
+
+type AdminDay = {
+  day: number;
+  title?: string;
+  approved: boolean;
+  audioUrl: string | null;
+};
+
+type AdminDaysPayload = {
+  year: number;
+  month: number;
+  days: AdminDay[];
+};
+
+function publicStatus(
+  entry: AdminDay,
+  calendar: BeatoberCalendar,
+  now: Date,
+): string {
+  if (isDayLocked(entry.day, entry.approved, calendar, now, false)) {
+    if (!entry.approved) return "Locked · not approved";
+    return "Locked · calendar";
+  }
+  return "Live";
+}
 
 function Stat({
   label,
@@ -35,6 +64,27 @@ export function AdminControlRoom({ initialAuthed }: Props) {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [audience, setAudience] = useState<MetricsAudience>("visitor");
+  const [schedule, setSchedule] = useState<AdminDaysPayload | null>(null);
+  const [scheduleError, setScheduleError] = useState<string | null>(null);
+  const [togglingDay, setTogglingDay] = useState<number | null>(null);
+
+  const loadSchedule = useCallback(async () => {
+    setScheduleError(null);
+    try {
+      const res = await fetch("/api/admin/days", { credentials: "include" });
+      if (res.status === 401) {
+        setAuthed(false);
+        return;
+      }
+      if (!res.ok) {
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(data.error ?? res.statusText);
+      }
+      setSchedule((await res.json()) as AdminDaysPayload);
+    } catch (err) {
+      setScheduleError(err instanceof Error ? err.message : String(err));
+    }
+  }, []);
 
   const loadMetrics = useCallback(async () => {
     setRefreshing(true);
@@ -62,6 +112,45 @@ export function AdminControlRoom({ initialAuthed }: Props) {
   useEffect(() => {
     if (authed) void loadMetrics();
   }, [authed, audience, loadMetrics]);
+
+  useEffect(() => {
+    if (authed) void loadSchedule();
+  }, [authed, loadSchedule]);
+
+  const toggleDayApproved = async (day: number, approved: boolean) => {
+    setTogglingDay(day);
+    setScheduleError(null);
+    try {
+      const res = await fetch(`/api/day/${day}/approve`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ approved }),
+      });
+      if (res.status === 401) {
+        setAuthed(false);
+        return;
+      }
+      if (!res.ok) {
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(data.error ?? "Could not update approval");
+      }
+      setSchedule((prev) =>
+        prev
+          ? {
+              ...prev,
+              days: prev.days.map((d) =>
+                d.day === day ? { ...d, approved } : d,
+              ),
+            }
+          : prev,
+      );
+    } catch (err) {
+      setScheduleError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setTogglingDay(null);
+    }
+  };
 
   const login = async () => {
     setLoginError(null);
@@ -147,6 +236,73 @@ export function AdminControlRoom({ initialAuthed }: Props) {
       </header>
 
       {loadError ? <p className="ctrl-error">{loadError}</p> : null}
+      {scheduleError ? <p className="ctrl-error">{scheduleError}</p> : null}
+
+      <section className="ctrl-panel">
+        <h2 className="ctrl-panel-title">Day approval</h2>
+        <p className="ctrl-note ctrl-note--inset">
+          Public unlock = approved and calendar date reached. Toggle here after
+          login (replaces the removed author bar).
+        </p>
+        <div className="ctrl-table-wrap">
+          <table className="ctrl-table">
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Title</th>
+                <th>Public</th>
+                <th>Beat</th>
+                <th>Approve</th>
+              </tr>
+            </thead>
+            <tbody>
+              {!schedule ? (
+                <tr>
+                  <td colSpan={5} className="ctrl-empty">
+                    Loading schedule…
+                  </td>
+                </tr>
+              ) : (
+                schedule.days.map((row) => {
+                  const calendar: BeatoberCalendar = {
+                    year: schedule.year,
+                    month: schedule.month,
+                  };
+                  const status = publicStatus(row, calendar, new Date());
+                  return (
+                    <tr key={row.day}>
+                      <td>
+                        <Link href={`/day/${row.day}`} className="ctrl-link">
+                          {String(row.day).padStart(2, "0")}
+                        </Link>
+                      </td>
+                      <td>{row.title ?? "—"}</td>
+                      <td>{status}</td>
+                      <td>{row.audioUrl ? "yes" : "—"}</td>
+                      <td>
+                        <button
+                          type="button"
+                          className="ctrl-btn ctrl-btn--compact"
+                          disabled={togglingDay === row.day}
+                          onClick={() =>
+                            void toggleDayApproved(row.day, !row.approved)
+                          }
+                        >
+                          {togglingDay === row.day
+                            ? "…"
+                            : row.approved
+                              ? "Revoke"
+                              : "Approve"}
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
 
       {metrics ? (
         <>

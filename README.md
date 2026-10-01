@@ -59,7 +59,8 @@ Strudel engine details: **`docs/strudel-engine.md`** (prebake, Hydra, soundfonts
 |--------|---------|
 | `npm run db:migrate` | Create `beatober_days` table |
 | `npm run db:seed` | Seed 31 days from `content/` |
-| `node scripts/db-approve-day.mjs 1` | Approve day in Neon |
+| **`/admin`** → Day approval table | Approve/revoke (Neon or `content/manifest.json`) |
+| `node scripts/db-approve-day.mjs 1` | Approve day in Neon (CLI) |
 | `./scripts/upload-beat.sh` | Blob upload + Neon `audio_url` |
 | `./scripts/publish-day.sh` | Pattern + optional `--approve` + `--audio` |
 

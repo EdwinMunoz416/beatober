@@ -43,7 +43,7 @@ Hush / stop clears Hydra, draw animations, and mini highlights.
 |------|----------|
 | **Public, unlocked** | **Local remix** — `sessionStorage` per day; Reset restores published pattern |
 | **Author** | `NEXT_PUBLIC_BEATOBER_AUTHOR=1` and/or **`/admin` login** — edit + ⌘S save to Neon/git |
-| **Locked (public)** | Coming-soon placeholder; no Play |
+| **Locked (public)** | **Coming soon** panel only (no Strudel); optional `audioUrl` teaser above |
 
 ## Production save auth
 
