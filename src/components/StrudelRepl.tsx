@@ -16,7 +16,7 @@ type StrudelApi = {
   hush: () => void;
 };
 
-export type StrudelReplProps = {
+type Props = {
   day: number;
   initialCode: string;
   readOnly: boolean;
@@ -31,14 +31,14 @@ function errorMessage(err: unknown): string {
   return String(err);
 }
 
-export function useStrudelRepl({
+export function StrudelRepl({
   day,
   initialCode,
   readOnly,
   comingSoon = false,
   authorMode,
   onCodeChange,
-}: StrudelReplProps) {
+}: Props) {
   const [code, setCode] = useState(initialCode);
   const [busy, setBusy] = useState(false);
   const [playing, setPlaying] = useState(false);
@@ -143,102 +143,37 @@ export function useStrudelRepl({
     ? highlightStrudel(code)
     : `<span class="tok-placeholder">// strudel pattern</span>`;
 
-  return {
-    controls: {
-      day,
-      comingSoon,
-      readOnly,
-      authorMode,
-      busy,
-      playing,
-      saveHint,
-      onPlay: runEvaluate,
-      onStop: runHush,
-    },
-    editor: {
-      day,
-      code,
-      readOnly,
-      authorMode,
-      error,
-      highlightHtml,
-      textareaRef,
-      highlightRef,
-      syncScroll,
-      onKeyDown,
-      onCodeChange: (next: string) => {
-        setCode(next);
-        onCodeChange?.(next);
-      },
-      showKeys: !readOnly || authorMode,
-    },
-  };
-}
-
-type ControlsProps = ReturnType<typeof useStrudelRepl>["controls"];
-
-export function StrudelReplControls({
-  day,
-  comingSoon,
-  readOnly,
-  authorMode,
-  busy,
-  playing,
-  saveHint,
-  onPlay,
-  onStop,
-}: ControlsProps) {
-  return (
-    <div className="repl-transport" aria-label={`Playback day ${day}`}>
-      <span className="repl-label">
-        day {String(day).padStart(2, "0")}
-        {comingSoon
-          ? " · coming soon"
-          : readOnly && !authorMode
-            ? " · listen"
-            : ""}
-      </span>
-      <div className="repl-actions">
-        {saveHint ? <span className="repl-hint">{saveHint}</span> : null}
-        <button
-          type="button"
-          className="repl-btn repl-btn--primary"
-          disabled={busy || comingSoon}
-          onClick={() => void onPlay()}
-        >
-          {busy ? "…" : "Play"}
-        </button>
-        <button
-          type="button"
-          className="repl-btn"
-          disabled={!playing}
-          onClick={onStop}
-        >
-          Stop
-        </button>
-      </div>
-    </div>
-  );
-}
-
-type EditorProps = ReturnType<typeof useStrudelRepl>["editor"];
-
-export function StrudelReplEditor({
-  day,
-  code,
-  readOnly,
-  authorMode,
-  error,
-  highlightHtml,
-  textareaRef,
-  highlightRef,
-  syncScroll,
-  onKeyDown,
-  onCodeChange,
-  showKeys,
-}: EditorProps) {
   return (
     <section className="repl" aria-label={`Strudel pattern day ${day}`}>
+      <div className="repl-toolbar">
+        <span className="repl-label">
+          day {String(day).padStart(2, "0")}
+          {comingSoon
+            ? " · coming soon"
+            : readOnly && !authorMode
+              ? " · listen"
+              : ""}
+        </span>
+        <div className="repl-actions">
+          {saveHint ? <span className="repl-hint">{saveHint}</span> : null}
+          <button
+            type="button"
+            className="repl-btn repl-btn--primary"
+            disabled={busy || comingSoon}
+            onClick={() => void runEvaluate()}
+          >
+            {busy ? "…" : "Play"}
+          </button>
+          <button
+            type="button"
+            className="repl-btn"
+            disabled={!playing}
+            onClick={runHush}
+          >
+            Stop
+          </button>
+        </div>
+      </div>
       <div className="repl-editor">
         <pre
           ref={highlightRef}
@@ -255,28 +190,22 @@ export function StrudelReplEditor({
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"
-          onChange={(e) => onCodeChange(e.target.value)}
+          onChange={(e) => {
+            const next = e.target.value;
+            setCode(next);
+            onCodeChange?.(next);
+          }}
           onScroll={syncScroll}
           onKeyDown={onKeyDown}
         />
       </div>
       {error ? <p className="repl-error">{error}</p> : null}
-      {showKeys ? (
+      {!readOnly || authorMode ? (
         <p className="repl-keys">
           ⌘/Ctrl+Enter play · ⌘/Ctrl+. stop
           {authorMode ? " · ⌘/Ctrl+S save" : ""}
         </p>
       ) : null}
     </section>
-  );
-}
-
-export function StrudelRepl(props: StrudelReplProps) {
-  const { controls, editor } = useStrudelRepl(props);
-  return (
-    <>
-      <StrudelReplControls {...controls} />
-      <StrudelReplEditor {...editor} />
-    </>
   );
 }
