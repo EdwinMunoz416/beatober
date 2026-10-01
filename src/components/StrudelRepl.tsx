@@ -20,6 +20,7 @@ type Props = {
   day: number;
   initialCode: string;
   readOnly: boolean;
+  comingSoon?: boolean;
   authorMode: boolean;
   onCodeChange?: (code: string) => void;
 };
@@ -34,6 +35,7 @@ export function StrudelRepl({
   day,
   initialCode,
   readOnly,
+  comingSoon = false,
   authorMode,
   onCodeChange,
 }: Props) {
@@ -77,6 +79,7 @@ export function StrudelRepl({
   }, []);
 
   const runEvaluate = useCallback(async () => {
+    if (comingSoon) return;
     setBusy(true);
     setError(null);
     try {
@@ -92,7 +95,7 @@ export function StrudelRepl({
     } finally {
       setBusy(false);
     }
-  }, [code, ensureApi]);
+  }, [code, comingSoon, day, ensureApi]);
 
   const runHush = useCallback(() => {
     apiRef.current?.hush();
@@ -145,14 +148,18 @@ export function StrudelRepl({
       <div className="repl-toolbar">
         <span className="repl-label">
           day {String(day).padStart(2, "0")}
-          {readOnly && !authorMode ? " · listen" : ""}
+          {comingSoon
+            ? " · coming soon"
+            : readOnly && !authorMode
+              ? " · listen"
+              : ""}
         </span>
         <div className="repl-actions">
           {saveHint ? <span className="repl-hint">{saveHint}</span> : null}
           <button
             type="button"
             className="repl-btn repl-btn--primary"
-            disabled={busy}
+            disabled={busy || comingSoon}
             onClick={() => void runEvaluate()}
           >
             {busy ? "…" : "Play"}

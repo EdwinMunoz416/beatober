@@ -4,7 +4,12 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { dayPath } from "@/lib/day-routes";
 import type { DayEntry, Manifest } from "@/lib/content";
-import { defaultSelectedDay, type BeatoberCalendar } from "@/lib/day-access";
+import {
+  defaultSelectedDay,
+  isDayLocked,
+  type BeatoberCalendar,
+} from "@/lib/day-access";
+import { comingSoonPattern } from "@/lib/coming-soon-pattern";
 import { DayOptionWheel } from "@/components/DayOptionWheel";
 import { BeatAudio } from "@/components/BeatAudio";
 import { StrudelRepl } from "@/components/StrudelRepl";
@@ -49,19 +54,37 @@ export function BeatoberHome({
     );
   }, [manifest.days, calendar, nowIso, authorMode, initialSelectedDay]);
 
-  const [selectedDay, setSelectedDay] = useState(initialDay);
+  const [viewDay, setViewDay] = useState(initialDay);
   const [days, setDays] = useState<DayEntry[]>(manifest.days);
 
   useEffect(() => {
-    setSelectedDay(initialDay);
+    setViewDay(initialDay);
   }, [initialDay]);
 
-  const selectDay = (day: number) => {
-    setSelectedDay(day);
+  const now = new Date(nowIso);
+
+  const pushPlayableDay = (day: number) => {
     const target = dayPath(day);
     if (pathname !== target) {
       router.push(target);
     }
+  };
+
+  const handleFocusDay = (day: number) => {
+    setViewDay(day);
+    const entry = days.find((d) => d.day === day);
+    const locked = isDayLocked(
+      day,
+      entry?.approved ?? false,
+      calendar,
+      now,
+      authorMode,
+    );
+    if (locked) {
+      trackEvent("day_locked_interaction", { day });
+      return;
+    }
+    pushPlayableDay(day);
   };
 
   useEffect(() => {
@@ -71,13 +94,22 @@ export function BeatoberHome({
   }, [pathname]);
 
   useEffect(() => {
-    trackEvent("day_view", { day: selectedDay });
-    trackEvent("day_select", { day: selectedDay });
-  }, [selectedDay]); // once per selection / initial day
+    trackEvent("day_view", { day: viewDay });
+    trackEvent("day_select", { day: viewDay });
+  }, [viewDay]);
 
-  const now = new Date(nowIso);
-  const entry = days.find((d) => d.day === selectedDay) ?? days[0]!;
-  const replReadOnly = !authorMode;
+  const entry = days.find((d) => d.day === viewDay) ?? days[0]!;
+  const viewLocked = isDayLocked(
+    entry.day,
+    entry.approved,
+    calendar,
+    now,
+    authorMode,
+  );
+  const replCode = viewLocked
+    ? comingSoonPattern(entry.day, entry.title)
+    : (patterns[entry.day] ?? "");
+  const replReadOnly = viewLocked || !authorMode;
 
   const toggleApprove = async () => {
     const next = !entry.approved;
@@ -108,11 +140,8 @@ export function BeatoberHome({
           calendar={calendar}
           nowIso={nowIso}
           authorMode={authorMode}
-          selectedDay={selectedDay}
-          onSelect={selectDay}
-          onLockedDay={(day) =>
-            trackEvent("day_locked_interaction", { day })
-          }
+          focusDay={viewDay}
+          onFocusDay={handleFocusDay}
         />
         <div className="beatober-main">
           {authorMode ? (
@@ -130,7 +159,7 @@ export function BeatoberHome({
               </span>
             </div>
           ) : null}
-          {entry.audioUrl ? (
+          {entry.audioUrl && !viewLocked ? (
             <BeatAudio
               day={entry.day}
               audioUrl={entry.audioUrl}
@@ -139,8 +168,9 @@ export function BeatoberHome({
           ) : null}
           <StrudelRepl
             day={entry.day}
-            initialCode={patterns[entry.day] ?? ""}
+            initialCode={replCode}
             readOnly={replReadOnly}
+            comingSoon={viewLocked}
             authorMode={authorMode}
           />
         </div>

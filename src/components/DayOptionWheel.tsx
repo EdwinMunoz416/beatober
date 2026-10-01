@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import type { DayEntry } from "@/lib/content";
 import type { BeatoberCalendar } from "@/lib/day-access";
 import { isDayLocked } from "@/lib/day-access";
@@ -11,9 +11,8 @@ type Props = {
   calendar: BeatoberCalendar;
   nowIso: string;
   authorMode: boolean;
-  selectedDay: number;
-  onSelect: (day: number) => void;
-  onLockedDay?: (day: number) => void;
+  focusDay: number;
+  onFocusDay: (day: number) => void;
 };
 
 export function DayOptionWheel({
@@ -21,9 +20,8 @@ export function DayOptionWheel({
   calendar,
   nowIso,
   authorMode,
-  selectedDay,
-  onSelect,
-  onLockedDay,
+  focusDay,
+  onFocusDay,
 }: Props) {
   const now = new Date(nowIso);
   const sorted = useMemo(
@@ -49,24 +47,9 @@ export function DayOptionWheel({
     [sorted, calendar, now],
   );
 
-  const selectedIndex = Math.max(
+  const focusIndex = Math.max(
     0,
-    sorted.findIndex((d) => d.day === selectedDay),
-  );
-
-  const isLockedIndex = useCallback(
-    (index: number) => {
-      const entry = sorted[index];
-      if (!entry) return true;
-      return isDayLocked(
-        entry.day,
-        entry.approved,
-        calendar,
-        now,
-        authorMode,
-      );
-    },
-    [sorted, calendar, now, authorMode],
+    sorted.findIndex((d) => d.day === focusDay),
   );
 
   return (
@@ -74,7 +57,7 @@ export function DayOptionWheel({
       <OptionWheel
         className="beatober-day-wheel"
         items={labels}
-        selected={selectedIndex}
+        selected={focusIndex}
         loop={false}
         fontSize={0.82}
         spacing={1.55}
@@ -85,17 +68,16 @@ export function DayOptionWheel({
         inset={12}
         textColor="#8b919e"
         activeColor="#5ef0ff"
-        commitChange={(index) => !isLockedIndex(index)}
         onChange={(index) => {
           const entry = sorted[index];
           if (!entry) return;
-          onSelect(entry.day);
+          onFocusDay(entry.day);
         }}
         itemClassName={(index) =>
           lockedByIndex[index] ? "option-wheel__item--locked" : undefined
         }
       />
-      <p className="day-wheel-hint">Scroll or drag · ↑↓ · locked = preview only</p>
+      <p className="day-wheel-hint">Scroll or drag · ↑↓</p>
     </nav>
   );
 }
