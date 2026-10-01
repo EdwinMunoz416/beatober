@@ -108,7 +108,7 @@ html {
 
 .beatober-day-wheel {
   flex: 1;
-  min-height: 0;
+  min-height: max(12rem, 28vh);
 }
 
 .day-wheel-hint {

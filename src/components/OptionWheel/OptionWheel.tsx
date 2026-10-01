@@ -23,6 +23,8 @@ export interface OptionWheelProps {
   /** Controlled selection index (0-based). */
   selected?: number;
   onChange?: (index: number, item: string) => void;
+  /** When false, the wheel moves visually but onChange is not fired (e.g. locked days). */
+  commitChange?: (index: number) => boolean;
   itemClassName?: (index: number) => string | undefined;
   textColor?: string;
   activeColor?: string;
@@ -67,6 +69,7 @@ export default function OptionWheel({
   defaultSelected = 0,
   selected,
   onChange,
+  commitChange,
   itemClassName,
   textColor = "#a6a6a6",
   activeColor = "#ffffff",
@@ -96,8 +99,10 @@ export default function OptionWheel({
   const lastRef = useRef(0);
   const cfgRef = useRef<WheelConfig>({} as WheelConfig);
   const onChangeRef = useRef(onChange);
+  const commitChangeRef = useRef(commitChange);
   const selectedRef = useRef(initial);
   const wheelTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wheelAccumRef = useRef(0);
   const dragRef = useRef<{ y: number; start: number; id: number } | null>(
     null,
   );
@@ -114,6 +119,7 @@ export default function OptionWheel({
       : 16;
 
   onChangeRef.current = onChange;
+  commitChangeRef.current = commitChange;
   cfgRef.current = {
     count: items.length,
     items,
@@ -217,8 +223,12 @@ export default function OptionWheel({
       if (idx !== selectedRef.current) {
         selectedRef.current = idx;
         setSelectedIndex(idx);
-        onChangeRef.current?.(idx, cfg.items[idx] ?? "");
-        playTick();
+        const allow =
+          commitChangeRef.current?.(idx) ?? true;
+        if (allow) {
+          onChangeRef.current?.(idx, cfg.items[idx] ?? "");
+          playTick();
+        }
       }
       startLoop();
     },
@@ -230,15 +240,26 @@ export default function OptionWheel({
     if (!el) return;
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
+      e.stopPropagation();
       const cfg = cfgRef.current;
+      if (cfg.count < 1 || cfg.rowH < 1) return;
       const delta = e.deltaMode === 1 ? e.deltaY * 24 : e.deltaY;
-      const step = Math.max(-1, Math.min(1, delta / cfg.rowH));
-      applyTarget(targetRef.current + step, false);
+      wheelAccumRef.current += delta;
+      let steps = Math.trunc(wheelAccumRef.current / cfg.rowH);
+      if (steps === 0 && Math.abs(wheelAccumRef.current) >= cfg.rowH * 0.35) {
+        steps = wheelAccumRef.current > 0 ? 1 : -1;
+        wheelAccumRef.current = 0;
+      } else if (steps !== 0) {
+        wheelAccumRef.current -= steps * cfg.rowH;
+      }
+      if (steps !== 0) {
+        applyTarget(targetRef.current + steps, false);
+      }
       if (wheelTimerRef.current) clearTimeout(wheelTimerRef.current);
-      wheelTimerRef.current = setTimeout(
-        () => applyTarget(targetRef.current, true),
-        140,
-      );
+      wheelTimerRef.current = setTimeout(() => {
+        wheelAccumRef.current = 0;
+        applyTarget(targetRef.current, true);
+      }, 140);
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => {
@@ -324,6 +345,9 @@ export default function OptionWheel({
   useEffect(() => {
     if (selected === undefined) return;
     const idx = Math.min(Math.max(selected, 0), Math.max(items.length - 1, 0));
+    if (Math.round(targetRef.current) === idx && selectedRef.current === idx) {
+      return;
+    }
     selectedRef.current = idx;
     setSelectedIndex(idx);
     posRef.current = idx;
