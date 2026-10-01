@@ -21,10 +21,16 @@ export function BeatAudio({ day, audioUrl, title }: Props) {
         src={audioUrl}
         aria-label={title ?? `Beat day ${day}`}
         onPlay={() => {
-          if (playedRef.current) return;
-          playedRef.current = true;
-          trackEvent("play_beat", { day });
+          if (!playedRef.current) {
+            playedRef.current = true;
+            trackEvent("play_beat", { day });
+            trackEvent("beat_play", { day });
+          } else {
+            trackEvent("beat_play", { day, repeat: true });
+          }
         }}
+        onEnded={() => trackEvent("beat_ended", { day })}
+        onError={() => trackEvent("beat_error", { day })}
       />
     </div>
   );

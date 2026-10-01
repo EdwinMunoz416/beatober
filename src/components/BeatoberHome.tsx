@@ -41,10 +41,16 @@ export function BeatoberHome({
   const selectDay = (day: number) => {
     setSelectedDay(day);
     trackEvent("day_view", { day });
+    trackEvent("day_select", { day });
   };
 
   useEffect(() => {
+    trackEvent("page_view", { surface: "home" });
+  }, []);
+
+  useEffect(() => {
     trackEvent("day_view", { day: initialDay });
+    trackEvent("day_select", { day: initialDay });
   }, [initialDay]);
 
   const now = new Date(nowIso);
@@ -82,6 +88,9 @@ export function BeatoberHome({
           authorMode={authorMode}
           selectedDay={selectedDay}
           onSelect={selectDay}
+          onLockedDay={(day) =>
+            trackEvent("day_locked_interaction", { day })
+          }
         />
         <div className="beatober-main">
           {authorMode ? (

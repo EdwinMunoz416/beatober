@@ -1,18 +1,64 @@
 import { track as vercelTrack } from "@vercel/analytics";
+import type { AnalyticsEventName, AnalyticsProps } from "@/lib/analytics-events";
+import { getSessionId, getVisitorId, referrerBucket } from "@/lib/visitor-id";
 
-type Props = Record<string, string | number | boolean | null | undefined>;
-
-/** Custom events (requires Web Analytics enabled on the Vercel project). */
-export function trackEvent(name: string, properties?: Props): void {
-  if (typeof window === "undefined") return;
-  if (process.env.NODE_ENV === "development") {
-    console.debug("[analytics]", name, properties);
-  }
+function cleanProps(
+  properties?: AnalyticsProps,
+): Record<string, string | number | boolean | null> {
   const clean: Record<string, string | number | boolean | null> = {};
   if (properties) {
     for (const [k, v] of Object.entries(properties)) {
       if (v !== undefined) clean[k] = v;
     }
   }
-  vercelTrack(name, clean);
+  return clean;
+}
+
+function dayFromProps(props?: AnalyticsProps): number | undefined {
+  const d = props?.day;
+  if (typeof d === "number" && d >= 1 && d <= 31) return d;
+  return undefined;
+}
+
+/** Dual sink: Vercel Web Analytics + Neon via /api/events. */
+export function trackEvent(name: AnalyticsEventName, properties?: AnalyticsProps): void {
+  if (typeof window === "undefined") return;
+
+  const clean = cleanProps(properties);
+  if (process.env.NODE_ENV === "development") {
+    console.debug("[analytics]", name, clean);
+  }
+
+  try {
+    vercelTrack(name, clean);
+  } catch {
+    /* Vercel script optional in dev */
+  }
+
+  const body = {
+    eventName: name,
+    visitorId: getVisitorId(),
+    sessionId: getSessionId(),
+    day: dayFromProps(properties),
+    props: clean,
+    path: window.location.pathname,
+    referrerBucket: referrerBucket(),
+  };
+
+  try {
+    const payload = JSON.stringify(body);
+    if (navigator.sendBeacon) {
+      const blob = new Blob([payload], { type: "application/json" });
+      navigator.sendBeacon("/api/events", blob);
+    } else {
+      void fetch("/api/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+        keepalive: true,
+      });
+    }
+  } catch {
+    /* non-fatal */
+  }
 }

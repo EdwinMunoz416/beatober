@@ -85,8 +85,10 @@ export function StrudelRepl({
       setPlaying(true);
       trackEvent("strudel_play", { day });
     } catch (err) {
-      setError(errorMessage(err));
+      const msg = errorMessage(err);
+      setError(msg);
       setPlaying(false);
+      trackEvent("strudel_error", { day, error: msg.slice(0, 120) });
     } finally {
       setBusy(false);
     }
@@ -94,8 +96,9 @@ export function StrudelRepl({
 
   const runHush = useCallback(() => {
     apiRef.current?.hush();
+    if (playing) trackEvent("strudel_stop", { day });
     setPlaying(false);
-  }, []);
+  }, [day, playing]);
 
   const persistPattern = useCallback(async () => {
     if (!authorMode) return;

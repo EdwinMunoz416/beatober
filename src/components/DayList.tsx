@@ -11,6 +11,7 @@ type Props = {
   authorMode: boolean;
   selectedDay: number;
   onSelect: (day: number) => void;
+  onLockedDay?: (day: number) => void;
 };
 
 export function DayList({
@@ -20,6 +21,7 @@ export function DayList({
   authorMode,
   selectedDay,
   onSelect,
+  onLockedDay,
 }: Props) {
   const now = new Date(nowIso);
 
@@ -49,9 +51,8 @@ export function DayList({
                 ]
                   .filter(Boolean)
                   .join(" ")}
-                disabled={!canSelect}
                 aria-current={selected ? "true" : undefined}
-                aria-disabled={locked && !authorMode}
+                aria-disabled={locked && !authorMode ? true : undefined}
                 title={
                   locked
                     ? authorMode
@@ -59,7 +60,10 @@ export function DayList({
                       : "Locked until approved and release day"
                     : d.title ?? `Day ${d.day}`
                 }
-                onClick={() => canSelect && onSelect(d.day)}
+                onClick={() => {
+                  if (canSelect) onSelect(d.day);
+                  else onLockedDay?.(d.day);
+                }}
               >
                 <span className="day-chip-num">{String(d.day).padStart(2, "0")}</span>
                 {locked ? (

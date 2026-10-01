@@ -25,4 +25,28 @@ await sql`
   )
 `;
 
-console.log("beatober_days schema applied.");
+await sql`
+  CREATE TABLE IF NOT EXISTS analytics_events (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    event_name TEXT NOT NULL,
+    visitor_id TEXT,
+    session_id TEXT,
+    day SMALLINT CHECK (day IS NULL OR (day >= 1 AND day <= 31)),
+    props JSONB NOT NULL DEFAULT '{}'::jsonb,
+    path TEXT,
+    referrer_bucket TEXT
+  )
+`;
+
+await sql`
+  CREATE INDEX IF NOT EXISTS analytics_events_created_at_idx
+  ON analytics_events (created_at DESC)
+`;
+
+await sql`
+  CREATE INDEX IF NOT EXISTS analytics_events_event_name_idx
+  ON analytics_events (event_name)
+`;
+
+console.log("beatober_days + analytics_events schema applied.");
