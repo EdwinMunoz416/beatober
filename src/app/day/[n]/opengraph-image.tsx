@@ -10,9 +10,8 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 const LED_FONT = "Ledlight";
-const WHITE = "#ffffff";
+const TEXT = "#000000";
 const PAGE_BG = "#0c0d10";
-const TEXT_BACKDROP = "rgba(12, 13, 16, 0.92)";
 const PREVIEW_BG = "public/og/preview-background.png";
 
 /** Matches former day number block (fontSize 120, lineHeight 1). */
@@ -30,24 +29,6 @@ async function loadPreviewBackgroundDataUrl(): Promise<string> {
   const path = join(process.cwd(), PREVIEW_BG);
   const buf = await readFile(path);
   return `data:image/png;base64,${buf.toString("base64")}`;
-}
-
-function TextPlate({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        backgroundColor: TEXT_BACKDROP,
-        paddingLeft: 28,
-        paddingRight: 28,
-        paddingTop: 6,
-        paddingBottom: 6,
-      }}
-    >
-      {children}
-    </div>
-  );
 }
 
 /** OG card — sync manifest only (no Neon); Satori-safe styles. */
@@ -70,78 +51,66 @@ export default async function OgImage({ params }: Props) {
           height: "100%",
           display: "flex",
           flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          position: "relative",
           backgroundColor: PAGE_BG,
-          color: WHITE,
+          color: TEXT,
         }}
       >
+        <img
+          src={bgSrc}
+          alt=""
+          width={1200}
+          height={630}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "contain",
+          }}
+        />
         <div
           style={{
+            position: "relative",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            width: "100%",
-            backgroundColor: PAGE_BG,
-            paddingTop: 22,
-            paddingBottom: 18,
+            justifyContent: "center",
           }}
         >
-          <TextPlate>
-            <div
-              style={{
-                fontFamily: LED_FONT,
-                fontSize: 56,
-                color: WHITE,
-                letterSpacing: 4,
-              }}
-            >
-              studio-daze
-            </div>
-          </TextPlate>
+          <div
+            style={{
+              fontFamily: LED_FONT,
+              fontSize: 56,
+              color: TEXT,
+              marginBottom: 24,
+              letterSpacing: 4,
+            }}
+          >
+            studio-daze
+          </div>
           <div
             style={{
               height: NUMBER_SLOT_HEIGHT,
               flexShrink: 0,
-              width: "100%",
-              backgroundColor: PAGE_BG,
             }}
           />
-          <TextPlate>
-            <div
-              style={{
-                fontFamily: LED_FONT,
-                fontSize: 42,
-                color: WHITE,
-                letterSpacing: 3,
-                textAlign: "center",
-                maxWidth: 1000,
-              }}
-            >
-              {theme}
-            </div>
-          </TextPlate>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "center",
-            width: "100%",
-            minHeight: 0,
-            backgroundColor: PAGE_BG,
-          }}
-        >
-          <img
-            src={bgSrc}
-            alt=""
-            width={1200}
-            height={400}
+          <div
             style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "contain",
+              fontFamily: LED_FONT,
+              fontSize: 42,
+              marginTop: 20,
+              color: TEXT,
+              letterSpacing: 3,
+              textAlign: "center",
+              maxWidth: 1000,
             }}
-          />
+          >
+            {theme}
+          </div>
         </div>
       </div>
     ),
