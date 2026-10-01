@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { AdminMetrics } from "@/lib/analytics-query";
+import { AdminLoginForm } from "@/components/AdminLoginForm";
+import type { AdminMetrics, MetricsAudience } from "@/lib/analytics-query";
 import Link from "next/link";
 
 type Props = {
@@ -33,12 +34,15 @@ export function AdminControlRoom({ initialAuthed }: Props) {
   const [metrics, setMetrics] = useState<AdminMetrics | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [audience, setAudience] = useState<MetricsAudience>("visitor");
 
   const loadMetrics = useCallback(async () => {
     setRefreshing(true);
     setLoadError(null);
     try {
-      const res = await fetch("/api/admin/metrics");
+      const res = await fetch(
+        `/api/admin/metrics?audience=${encodeURIComponent(audience)}`,
+      );
       if (res.status === 401) {
         setAuthed(false);
         return;
@@ -53,11 +57,11 @@ export function AdminControlRoom({ initialAuthed }: Props) {
     } finally {
       setRefreshing(false);
     }
-  }, []);
+  }, [audience]);
 
   useEffect(() => {
     if (authed) void loadMetrics();
-  }, [authed, loadMetrics]);
+  }, [authed, audience, loadMetrics]);
 
   const login = async () => {
     setLoginError(null);
@@ -89,21 +93,12 @@ export function AdminControlRoom({ initialAuthed }: Props) {
             ← site
           </Link>
         </header>
-        <div className="ctrl-login">
-          <p className="ctrl-note">Use your BEATOBER_AUTHOR_SECRET.</p>
-          <input
-            type="password"
-            className="ctrl-input"
-            placeholder="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && void login()}
-          />
-          <button type="button" className="ctrl-btn" onClick={() => void login()}>
-            Enter
-          </button>
-          {loginError ? <p className="ctrl-error">{loginError}</p> : null}
-        </div>
+        <AdminLoginForm
+          password={password}
+          error={loginError}
+          onPasswordChange={setPassword}
+          onSubmit={() => void login()}
+        />
       </div>
     );
   }
@@ -119,6 +114,18 @@ export function AdminControlRoom({ initialAuthed }: Props) {
           <p className="ctrl-subtitle">neon · 24h / 7d</p>
         </div>
         <div className="ctrl-header-actions">
+          <select
+            className="ctrl-input ctrl-select"
+            value={audience}
+            onChange={(e) =>
+              setAudience(e.target.value as MetricsAudience)
+            }
+            aria-label="Audience filter"
+          >
+            <option value="visitor">Visitors</option>
+            <option value="internal">Internal</option>
+            <option value="all">All</option>
+          </select>
           <button
             type="button"
             className="ctrl-btn"
@@ -127,6 +134,9 @@ export function AdminControlRoom({ initialAuthed }: Props) {
           >
             {refreshing ? "…" : "Refresh"}
           </button>
+          <Link href="/admin/devices" className="ctrl-link">
+            devices
+          </Link>
           <Link href="/" className="ctrl-link">
             site
           </Link>
@@ -209,6 +219,9 @@ export function AdminControlRoom({ initialAuthed }: Props) {
                   ) : null}
                   {ev.referrerBucket ? (
                     <span className="ctrl-stream-ref">{ev.referrerBucket}</span>
+                  ) : null}
+                  {ev.audience && ev.audience !== "visitor" ? (
+                    <span className="ctrl-stream-ref">{ev.audience}</span>
                   ) : null}
                 </li>
               ))}

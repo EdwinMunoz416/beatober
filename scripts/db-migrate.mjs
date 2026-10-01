@@ -49,4 +49,19 @@ await sql`
   ON analytics_events (event_name)
 `;
 
-console.log("beatober_days + analytics_events schema applied.");
+await sql`
+  ALTER TABLE analytics_events
+  ADD COLUMN IF NOT EXISTS audience TEXT NOT NULL DEFAULT 'visitor'
+`;
+
+await sql`
+  CREATE TABLE IF NOT EXISTS device_registry (
+    visitor_id TEXT PRIMARY KEY,
+    role TEXT NOT NULL CHECK (role IN ('internal', 'ignore')),
+    label TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )
+`;
+
+console.log("beatober schema applied (days, analytics, devices).");

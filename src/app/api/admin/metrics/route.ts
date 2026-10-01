@@ -1,9 +1,17 @@
 import { NextResponse } from "next/server";
+import {
+  fetchAdminMetrics,
+  type MetricsAudience,
+} from "@/lib/analytics-query";
 import { isAdminSession } from "@/lib/admin-auth";
-import { fetchAdminMetrics } from "@/lib/analytics-query";
 import { dbConfigured } from "@/lib/db";
 
-export async function GET() {
+function parseAudience(raw: string | null): MetricsAudience {
+  if (raw === "internal" || raw === "all") return raw;
+  return "visitor";
+}
+
+export async function GET(request: Request) {
   if (!(await isAdminSession())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -14,8 +22,11 @@ export async function GET() {
     );
   }
 
+  const { searchParams } = new URL(request.url);
+  const audience = parseAudience(searchParams.get("audience"));
+
   try {
-    const metrics = await fetchAdminMetrics();
+    const metrics = await fetchAdminMetrics(audience);
     return NextResponse.json(metrics);
   } catch {
     return NextResponse.json({ error: "Query failed" }, { status: 503 });

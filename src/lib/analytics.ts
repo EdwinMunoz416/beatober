@@ -1,5 +1,10 @@
 import { track as vercelTrack } from "@vercel/analytics";
 import type { AnalyticsEventName, AnalyticsProps } from "@/lib/analytics-events";
+import {
+  getCachedAudience,
+  getCachedDeviceLabel,
+  shouldSkipTracking,
+} from "@/lib/analytics-audience-client";
 import { getSessionId, getVisitorId, referrerBucket } from "@/lib/visitor-id";
 
 function cleanProps(
@@ -10,6 +15,12 @@ function cleanProps(
     for (const [k, v] of Object.entries(properties)) {
       if (v !== undefined) clean[k] = v;
     }
+  }
+  const audience = getCachedAudience();
+  if (audience === "internal") {
+    clean.audience = "internal";
+    const label = getCachedDeviceLabel();
+    if (label) clean.device_label = label;
   }
   return clean;
 }
@@ -23,6 +34,7 @@ function dayFromProps(props?: AnalyticsProps): number | undefined {
 /** Dual sink: Vercel Web Analytics + Neon via /api/events. */
 export function trackEvent(name: AnalyticsEventName, properties?: AnalyticsProps): void {
   if (typeof window === "undefined") return;
+  if (shouldSkipTracking(window.location.pathname)) return;
 
   const clean = cleanProps(properties);
   if (process.env.NODE_ENV === "development") {

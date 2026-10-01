@@ -1,4 +1,5 @@
 import type { AnalyticsEventName, AnalyticsProps } from "@/lib/analytics-events";
+import { resolveAudience, type ResolvedAudience } from "@/lib/device-registry";
 import { dbConfigured, getSql } from "@/lib/db";
 
 export type IngestEvent = {
@@ -11,8 +12,22 @@ export type IngestEvent = {
   referrerBucket?: string;
 };
 
-export async function insertAnalyticsEvent(event: IngestEvent): Promise<void> {
-  if (!dbConfigured()) return;
+export type IngestResult = {
+  stored: boolean;
+  audience: ResolvedAudience;
+};
+
+export async function insertAnalyticsEvent(
+  event: IngestEvent,
+): Promise<IngestResult> {
+  if (!dbConfigured()) {
+    return { stored: false, audience: "visitor" };
+  }
+
+  const audience = await resolveAudience(event.visitorId);
+  if (audience === "ignore") {
+    return { stored: false, audience: "ignore" };
+  }
 
   const sql = getSql();
   const propsJson = JSON.stringify(sanitizeProps(event.props ?? {}));
@@ -25,7 +40,8 @@ export async function insertAnalyticsEvent(event: IngestEvent): Promise<void> {
       day,
       props,
       path,
-      referrer_bucket
+      referrer_bucket,
+      audience
     ) VALUES (
       ${event.eventName},
       ${event.visitorId ?? null},
@@ -33,9 +49,12 @@ export async function insertAnalyticsEvent(event: IngestEvent): Promise<void> {
       ${event.day ?? null},
       ${propsJson}::jsonb,
       ${event.path ?? null},
-      ${event.referrerBucket ?? null}
+      ${event.referrerBucket ?? null},
+      ${audience}
     )
   `;
+
+  return { stored: true, audience };
 }
 
 function sanitizeProps(props: AnalyticsProps): Record<string, string | number | boolean | null> {

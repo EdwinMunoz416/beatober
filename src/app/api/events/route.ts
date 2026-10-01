@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     typeof day === "number" && day >= 1 && day <= 31 ? day : undefined;
 
   try {
-    await insertAnalyticsEvent({
+    const result = await insertAnalyticsEvent({
       eventName,
       visitorId: typeof visitorId === "string" ? visitorId.slice(0, 64) : undefined,
       sessionId: typeof sessionId === "string" ? sessionId.slice(0, 64) : undefined,
@@ -53,9 +53,12 @@ export async function POST(request: Request) {
           ? referrerBucket.slice(0, 32)
           : undefined,
     });
+    return NextResponse.json({
+      ok: true,
+      stored: result.stored,
+      audience: result.audience,
+    });
   } catch {
     return NextResponse.json({ error: "Store failed" }, { status: 503 });
   }
-
-  return NextResponse.json({ ok: true, stored: true });
 }

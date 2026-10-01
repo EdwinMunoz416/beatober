@@ -62,7 +62,8 @@ Production author API: header `x-beatober-author: <BEATOBER_AUTHOR_SECRET>` (set
 - **Vercel Hobby Web Analytics** — same custom events via `@vercel/analytics`.
 - **Neon first-party** — `/api/events` → `analytics_events` table (richer detail, your data).
 
-**Control room:** https://beatober.vercel.app/admin — password = `BEATOBER_AUTHOR_SECRET`.
+**Control room:** https://beatober.vercel.app/admin — password = `BEATOBER_AUTHOR_SECRET`.  
+**Devices:** `/admin/devices` — tag this browser as **internal** or **ignore** (visitors-only metrics by default).
 
 Events: `page_view`, `day_view`, `day_select`, `day_locked_interaction`, `play_beat`, `beat_*`, `strudel_*`.
 
