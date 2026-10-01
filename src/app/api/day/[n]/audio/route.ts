@@ -9,7 +9,7 @@ export async function POST(
   request: Request,
   ctx: { params: Promise<{ n: string }> },
 ) {
-  if (!authorOk(request)) {
+  if (!(await authorOk(request))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

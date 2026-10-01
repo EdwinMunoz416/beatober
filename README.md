@@ -45,9 +45,13 @@ npm install
 npm run dev
 ```
 
-Author UI: `NEXT_PUBLIC_BEATOBER_AUTHOR=1` in `.env.local`.
+Author UI: `NEXT_PUBLIC_BEATOBER_AUTHOR=1` in `.env.local`, **or** log in at `/admin` (same `BEATOBER_AUTHOR_SECRET`).
 
-Production author API: header `x-beatober-author: <BEATOBER_AUTHOR_SECRET>` (set in Vercel env).
+Production author API: **`beatober_admin` cookie** after `/admin` login, **or** header `x-beatober-author: <BEATOBER_AUTHOR_SECRET>` for scripts.
+
+Public visitors can **remix** unlocked days locally (`sessionStorage`); only authors persist to Neon/git.
+
+Strudel engine details: **`docs/strudel-engine.md`** (prebake, Hydra, soundfonts).
 
 ## Scripts
 

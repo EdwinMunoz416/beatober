@@ -8,21 +8,18 @@ import {
   type KeyboardEvent,
 } from "react";
 import { trackEvent } from "@/lib/analytics";
+import { clearRemix, loadRemix, saveRemix } from "@/lib/remix-storage";
+import { useStrudelSession } from "@/lib/strudel-session";
 import { highlightStrudel } from "@/lib/strudel-highlight";
-
-type StrudelApi = {
-  initStrudel: (options?: Record<string, unknown>) => Promise<unknown> | unknown;
-  evaluate: (code: string, autoplay?: boolean) => Promise<unknown>;
-  hush: () => void;
-};
 
 type Props = {
   day: number;
-  initialCode: string;
-  readOnly: boolean;
+  publishedCode: string;
   comingSoon?: boolean;
-  authorMode: boolean;
-  onCodeChange?: (code: string) => void;
+  /** Author or admin — edit canonical pattern + server save */
+  canPublish: boolean;
+  /** Unlocked public visitor — local remix in sessionStorage */
+  remixMode: boolean;
 };
 
 function errorMessage(err: unknown): string {
@@ -31,30 +28,50 @@ function errorMessage(err: unknown): string {
   return String(err);
 }
 
+function initialEditorCode(
+  day: number,
+  publishedCode: string,
+  canPublish: boolean,
+  remixMode: boolean,
+): string {
+  if (canPublish) return publishedCode;
+  if (remixMode) return loadRemix(day) ?? publishedCode;
+  return publishedCode;
+}
+
 export function StrudelRepl({
   day,
-  initialCode,
-  readOnly,
+  publishedCode,
   comingSoon = false,
-  authorMode,
-  onCodeChange,
+  canPublish,
+  remixMode,
 }: Props) {
-  const [code, setCode] = useState(initialCode);
+  const { status, bootError, ensureApi, evaluate, hush } = useStrudelSession();
+  const [code, setCode] = useState(() =>
+    initialEditorCode(day, publishedCode, canPublish, remixMode),
+  );
   const [busy, setBusy] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saveHint, setSaveHint] = useState<string | null>(null);
-  const apiRef = useRef<StrudelApi | null>(null);
-  const bootPromiseRef = useRef<Promise<StrudelApi> | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const highlightRef = useRef<HTMLPreElement | null>(null);
 
+  const readOnly = comingSoon && !canPublish;
+  const editable = canPublish || remixMode;
+
   useEffect(() => {
-    setCode(initialCode);
+    const next = initialEditorCode(day, publishedCode, canPublish, remixMode);
+    setCode(next);
     setPlaying(false);
     setError(null);
-    void apiRef.current?.hush();
-  }, [day, initialCode]);
+    void hush();
+  }, [day, publishedCode, canPublish, remixMode, hush]);
+
+  useEffect(() => {
+    if (!remixMode || canPublish) return;
+    saveRemix(day, code);
+  }, [code, day, remixMode, canPublish]);
 
   const syncScroll = useCallback(() => {
     const ta = textareaRef.current;
@@ -64,27 +81,13 @@ export function StrudelRepl({
     hl.scrollLeft = ta.scrollLeft;
   }, []);
 
-  const ensureApi = useCallback(async (): Promise<StrudelApi> => {
-    if (apiRef.current) return apiRef.current;
-    if (!bootPromiseRef.current) {
-      bootPromiseRef.current = (async () => {
-        const { initStrudel, evaluate, hush } = await import("@strudel/web");
-        await initStrudel();
-        const api = { initStrudel, evaluate, hush };
-        apiRef.current = api;
-        return api;
-      })();
-    }
-    return bootPromiseRef.current;
-  }, []);
-
   const runEvaluate = useCallback(async () => {
-    if (comingSoon) return;
+    if (comingSoon && !canPublish) return;
     setBusy(true);
     setError(null);
     try {
-      const api = await ensureApi();
-      await api.evaluate(code, true);
+      await ensureApi();
+      await evaluate(code);
       setPlaying(true);
       trackEvent("strudel_play", { day });
     } catch (err) {
@@ -95,20 +98,21 @@ export function StrudelRepl({
     } finally {
       setBusy(false);
     }
-  }, [code, comingSoon, day, ensureApi]);
+  }, [canPublish, code, comingSoon, day, ensureApi, evaluate]);
 
   const runHush = useCallback(() => {
-    apiRef.current?.hush();
+    void hush();
     if (playing) trackEvent("strudel_stop", { day });
     setPlaying(false);
-  }, [day, playing]);
+  }, [day, hush, playing]);
 
   const persistPattern = useCallback(async () => {
-    if (!authorMode) return;
+    if (!canPublish) return;
     setSaveHint(null);
     try {
       const res = await fetch(`/api/day/${day}/pattern`, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code }),
       });
@@ -121,11 +125,23 @@ export function StrudelRepl({
     } catch (err) {
       setSaveHint(errorMessage(err));
     }
-  }, [authorMode, code, day]);
+  }, [canPublish, code, day]);
+
+  const resetRemix = useCallback(() => {
+    clearRemix(day);
+    setCode(publishedCode);
+    setError(null);
+    void hush();
+    setPlaying(false);
+  }, [day, hush, publishedCode]);
 
   const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     const mod = e.metaKey || e.ctrlKey;
-    if (mod && e.key === "Enter") {
+    if (mod && e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      void runEvaluate();
+    }
+    if (mod && e.shiftKey && e.key === "Enter") {
       e.preventDefault();
       void runEvaluate();
     }
@@ -139,27 +155,55 @@ export function StrudelRepl({
     }
   };
 
+  const remixDirty =
+    remixMode && !canPublish && code.trim() !== publishedCode.trim();
+
   const highlightHtml = code
     ? highlightStrudel(code)
     : `<span class="tok-placeholder">// strudel pattern</span>`;
+
+  const bootLabel =
+    status === "loading"
+      ? "Loading sounds…"
+      : status === "error"
+        ? (bootError ?? "Boot failed")
+        : null;
 
   return (
     <section className="repl" aria-label={`Strudel pattern day ${day}`}>
       <div className="repl-toolbar">
         <span className="repl-label">
           day {String(day).padStart(2, "0")}
-          {comingSoon
+          {comingSoon && !canPublish
             ? " · coming soon"
-            : readOnly && !authorMode
-              ? " · listen"
-              : ""}
+            : canPublish
+              ? " · author"
+              : remixMode
+                ? remixDirty
+                  ? " · local remix"
+                  : " · remix"
+                : ""}
         </span>
         <div className="repl-actions">
+          {bootLabel ? (
+            <span className="repl-hint repl-hint--boot">{bootLabel}</span>
+          ) : null}
           {saveHint ? <span className="repl-hint">{saveHint}</span> : null}
+          {remixDirty ? (
+            <button
+              type="button"
+              className="repl-btn"
+              onClick={resetRemix}
+            >
+              Reset
+            </button>
+          ) : null}
           <button
             type="button"
             className="repl-btn repl-btn--primary"
-            disabled={busy || comingSoon}
+            disabled={
+              busy || status === "loading" || (comingSoon && !canPublish)
+            }
             onClick={() => void runEvaluate()}
           >
             {busy ? "…" : "Play"}
@@ -185,25 +229,24 @@ export function StrudelRepl({
           ref={textareaRef}
           className="repl-textarea"
           value={code}
-          readOnly={readOnly}
+          readOnly={readOnly || !editable}
           spellCheck={false}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"
-          onChange={(e) => {
-            const next = e.target.value;
-            setCode(next);
-            onCodeChange?.(next);
-          }}
+          onChange={(e) => setCode(e.target.value)}
           onScroll={syncScroll}
           onKeyDown={onKeyDown}
         />
       </div>
       {error ? <p className="repl-error">{error}</p> : null}
-      {!readOnly || authorMode ? (
+      {editable ? (
         <p className="repl-keys">
-          ⌘/Ctrl+Enter play · ⌘/Ctrl+. stop
-          {authorMode ? " · ⌘/Ctrl+S save" : ""}
+          ⌘/Ctrl+Enter play · ⌘/Ctrl+Shift+Enter play · ⌘/Ctrl+. stop
+          {canPublish ? " · ⌘/Ctrl+S save (login at /admin in production)" : ""}
+          {remixMode && !canPublish
+            ? " · edits stay in this browser only"
+            : ""}
         </p>
       ) : null}
     </section>

@@ -58,6 +58,23 @@ html {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  position: relative;
+}
+
+.beatober-page--hydra .beatober-workspace,
+.beatober-page--hydra .beatober-main,
+.beatober-page--hydra .repl {
+  position: relative;
+  z-index: 1;
+}
+
+#hydra-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .site-header {
@@ -262,6 +279,13 @@ html {
 .repl-hint {
   color: var(--accent-cyan);
   margin-right: 0.25rem;
+}
+
+.repl-hint--boot {
+  color: var(--text-muted);
+  max-width: 8rem;
+  text-align: right;
+  line-height: 1.2;
 }
 
 .repl-btn {

@@ -20,7 +20,7 @@ type Props = {
   manifest: Manifest;
   patterns: Record<number, string>;
   nowIso: string;
-  authorMode: boolean;
+  canPublish: boolean;
   initialSelectedDay?: number;
 };
 
@@ -28,7 +28,7 @@ export function BeatoberHome({
   manifest,
   patterns,
   nowIso,
-  authorMode,
+  canPublish,
   initialSelectedDay,
 }: Props) {
   const router = useRouter();
@@ -50,9 +50,9 @@ export function BeatoberHome({
       manifest.days,
       calendar,
       new Date(nowIso),
-      authorMode,
+      canPublish,
     );
-  }, [manifest.days, calendar, nowIso, authorMode, initialSelectedDay]);
+  }, [manifest.days, calendar, nowIso, canPublish, initialSelectedDay]);
 
   const [viewDay, setViewDay] = useState(initialDay);
   const [days, setDays] = useState<DayEntry[]>(manifest.days);
@@ -78,7 +78,7 @@ export function BeatoberHome({
       entry?.approved ?? false,
       calendar,
       now,
-      authorMode,
+      canPublish,
     );
     if (locked) {
       trackEvent("day_locked_interaction", { day });
@@ -104,17 +104,19 @@ export function BeatoberHome({
     entry.approved,
     calendar,
     now,
-    authorMode,
+    canPublish,
   );
-  const replCode = viewLocked
+  const publishedCode = viewLocked
     ? comingSoonPattern(entry.day, entry.title)
     : (patterns[entry.day] ?? "");
-  const replReadOnly = viewLocked || !authorMode;
+  const remixMode = !viewLocked && !canPublish;
+  const hydraEnabled = !viewLocked;
 
   const toggleApprove = async () => {
     const next = !entry.approved;
     const res = await fetch(`/api/day/${entry.day}/approve`, {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ approved: next }),
     });
@@ -132,19 +134,21 @@ export function BeatoberHome({
   };
 
   return (
-    <div className="beatober-page">
+    <div
+      className={`beatober-page${hydraEnabled ? " beatober-page--hydra" : ""}`}
+    >
       <div className="beatober-workspace">
         <StudioDazeHeader />
         <DayOptionWheel
           days={days}
           calendar={calendar}
           nowIso={nowIso}
-          authorMode={authorMode}
+          authorMode={canPublish}
           focusDay={viewDay}
           onFocusDay={handleFocusDay}
         />
         <div className="beatober-main">
-          {authorMode ? (
+          {canPublish ? (
             <div className="author-bar">
               <span className="author-badge">Author</span>
               <button
@@ -168,10 +172,10 @@ export function BeatoberHome({
           ) : null}
           <StrudelRepl
             day={entry.day}
-            initialCode={replCode}
-            readOnly={replReadOnly}
+            publishedCode={publishedCode}
             comingSoon={viewLocked}
-            authorMode={authorMode}
+            canPublish={canPublish}
+            remixMode={remixMode}
           />
         </div>
       </div>
