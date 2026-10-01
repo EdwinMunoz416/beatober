@@ -16,8 +16,8 @@
   --accent: #ff3ec8;
   --accent-cyan: #5ef0ff;
   --title-glow: #c41e1e;
-  --workspace-min: 16rem;
-  --day-col: min(12rem, 32vw);
+  --day-col: clamp(10rem, 22vw, 16rem);
+  --page-gap: 0.5rem;
   --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
 }
 
@@ -38,6 +38,7 @@ html {
   height: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   color: var(--text);
   font-family: var(--mono);
   background:
@@ -47,27 +48,30 @@ html {
 }
 
 .beatober-page {
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 960px;
+  max-width: none;
   min-height: 0;
+  height: 100%;
   margin: 0;
   padding: 0;
+  overflow: hidden;
 }
 
 .site-header {
   flex-shrink: 0;
   text-align: center;
-  margin-bottom: clamp(0.75rem, 2vh, 1.75rem);
+  padding-top: clamp(0.35rem, 1.2vh, 0.85rem);
+  margin-bottom: clamp(0.25rem, 1.2vh, 0.85rem);
 }
 
 /* Matches OG preview: black Ledlight + 2px white stroke halo (no pill) */
 .site-title {
   margin: 0;
   font-family: "Ledlight", system-ui, sans-serif;
-  font-size: clamp(2.75rem, 11vw, 4.75rem);
+  font-size: clamp(1.85rem, 5.5vh, 3.75rem);
   font-weight: 400;
   letter-spacing: 0.06em;
   line-height: 1;
@@ -85,18 +89,20 @@ html {
 }
 
 .beatober-workspace {
-  flex: 1;
+  flex: 1 1 auto;
   display: grid;
-  grid-template-columns: var(--day-col) 1fr;
-  gap: 0.75rem;
+  grid-template-columns: var(--day-col) minmax(0, 1fr);
+  gap: var(--page-gap);
   align-items: stretch;
-  min-height: var(--workspace-min);
+  min-height: 0;
+  padding: 0 var(--page-gap) var(--page-gap);
+  overflow: hidden;
 }
 
 .day-wheel-panel {
   display: flex;
   flex-direction: column;
-  min-height: var(--workspace-min);
+  min-height: 0;
   height: 100%;
   min-width: 0;
   align-self: stretch;
@@ -107,8 +113,8 @@ html {
 }
 
 .beatober-day-wheel {
-  flex: 1;
-  min-height: max(12rem, 28vh);
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .day-wheel-hint {
@@ -125,21 +131,19 @@ html {
 @media (max-width: 640px) {
   .beatober-workspace {
     grid-template-columns: 1fr;
-    grid-template-rows: minmax(10rem, 34vh) minmax(var(--workspace-min), 1fr);
-  }
-
-  .day-wheel-panel {
-    max-height: 34vh;
+    grid-template-rows: minmax(0, 34%) minmax(0, 1fr);
   }
 }
 
 .beatober-main {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  min-height: var(--workspace-min);
+  gap: var(--page-gap);
+  flex: 1 1 auto;
+  min-height: 0;
   min-width: 0;
   align-self: stretch;
+  overflow: hidden;
 }
 
 .author-bar {
@@ -149,6 +153,7 @@ html {
   gap: 0.5rem 0.75rem;
   font-size: 0.7rem;
   color: var(--text-muted);
+  flex-shrink: 0;
 }
 
 .author-badge {
@@ -189,6 +194,7 @@ html {
   background: var(--bg-glow);
   border-radius: 4px;
   font-size: 0.72rem;
+  flex-shrink: 0;
 }
 
 .beat-audio-label {
@@ -205,10 +211,11 @@ html {
 }
 
 .repl {
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   min-height: 0;
+  overflow: hidden;
   border: 1px solid var(--surface-border);
   background: var(--surface);
   border-radius: 4px;
@@ -222,6 +229,7 @@ html {
   border-bottom: 1px solid var(--surface-border);
   font-size: 0.72rem;
   color: var(--text-muted);
+  flex-shrink: 0;
 }
 
 .repl-actions {
@@ -300,6 +308,7 @@ html {
   font-size: 0.72rem;
   color: #f87171;
   border-top: 1px solid var(--surface-border);
+  flex-shrink: 0;
 }
 
 .repl-keys {
@@ -307,6 +316,7 @@ html {
   padding: 0 0.55rem 0.35rem;
   font-size: 0.65rem;
   color: var(--text-muted);
+  flex-shrink: 0;
 }
 
 .tok-comment {
