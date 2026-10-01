@@ -12,7 +12,9 @@ import {
 import { comingSoonPattern } from "@/lib/coming-soon-pattern";
 import { DayOptionWheel } from "@/components/DayOptionWheel";
 import { BeatAudio } from "@/components/BeatAudio";
+import { StrudelErrorBoundary } from "@/components/StrudelErrorBoundary";
 import { StrudelRepl } from "@/components/StrudelRepl";
+import { StrudelVisualBootstrap } from "@/components/StrudelVisualBootstrap";
 import { StudioDazeHeader } from "@/components/StudioDazeHeader";
 import { trackEvent } from "@/lib/analytics";
 
@@ -135,8 +137,9 @@ export function BeatoberHome({
 
   return (
     <div
-      className={`beatober-page${hydraEnabled ? " beatober-page--hydra" : ""}`}
+      className={`beatober-page${hydraEnabled ? " beatober-page--hydra" : ""}${!viewLocked ? " beatober-page--strudel-draw" : ""}`}
     >
+      {!viewLocked ? <StrudelVisualBootstrap /> : null}
       <div className="beatober-workspace">
         <StudioDazeHeader />
         <DayOptionWheel
@@ -170,13 +173,15 @@ export function BeatoberHome({
               title={entry.title}
             />
           ) : null}
-          <StrudelRepl
-            day={entry.day}
-            publishedCode={publishedCode}
-            comingSoon={viewLocked}
-            canPublish={canPublish}
-            remixMode={remixMode}
-          />
+          <StrudelErrorBoundary>
+            <StrudelRepl
+              day={entry.day}
+              publishedCode={publishedCode}
+              comingSoon={viewLocked}
+              canPublish={canPublish}
+              remixMode={remixMode}
+            />
+          </StrudelErrorBoundary>
         </div>
       </div>
     </div>

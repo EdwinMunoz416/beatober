@@ -25,10 +25,52 @@ declare module "@strudel/soundfonts" {
 }
 
 declare module "@strudel/draw" {
+  export type StrudelDrawTheme = {
+    background?: string;
+    foreground?: string;
+    caret?: string;
+    selection?: string;
+    selectionMatch?: string;
+    lineHighlight?: string;
+    gutterBackground?: string;
+    gutterForeground?: string;
+  };
+
   export function getDrawContext(
     id?: string,
     opts?: Record<string, unknown>,
   ): CanvasRenderingContext2D | WebGLRenderingContext;
+
+  export function setTheme(theme: StrudelDrawTheme): void;
+
+  export function cleanupDraw(clearScreen?: boolean, replId?: string): void;
+
+  export class Drawer {
+    drawTime: [number, number];
+    constructor(
+      onDraw: (
+        haps: Array<{ isActive: (t: number) => boolean }>,
+        time: number,
+        drawer: Drawer,
+        painters: PainterFn[] | undefined,
+      ) => void,
+      drawTime?: [number, number],
+    );
+    setDrawTime(drawTime: [number, number]): void;
+    invalidate(
+      scheduler: { now: () => number; pattern?: unknown },
+      t?: number,
+    ): void;
+    start(scheduler: { now: () => number; pattern?: unknown }): void;
+    stop(): void;
+  }
+
+  type PainterFn = (
+    ctx: CanvasRenderingContext2D | WebGLRenderingContext,
+    time: number,
+    haps: unknown[],
+    drawTime: [number, number],
+  ) => void;
 }
 
 declare module "@strudel/tonal";
@@ -53,6 +95,9 @@ declare module "@strudel/codemirror" {
   export function flash(view: EditorView, ms?: number): void;
 
   export const defaultSettings: Record<string, unknown>;
+  export function initTheme(name: string): void;
+  export function activateTheme(name: string): void;
+
   export const codemirrorSettings: {
     get(): Record<string, unknown>;
     set(value: Record<string, unknown>): void;

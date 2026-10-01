@@ -4,6 +4,10 @@ import { useCallback, useEffect, useState } from "react";
 import { StrudelCodeEditor } from "@/components/StrudelCodeEditor";
 import { trackEvent } from "@/lib/analytics";
 import { clearRemix, loadRemix, saveRemix } from "@/lib/remix-storage";
+import {
+  getStrudelRuntimeError,
+  strudelErrorKindLabel,
+} from "@/lib/strudel-runtime-errors";
 import { useStrudelSession } from "@/lib/strudel-session";
 
 type Props = {
@@ -40,13 +44,20 @@ export function StrudelRepl({
   canPublish,
   remixMode,
 }: Props) {
-  const { status, bootError, ensureApi, evaluate, hush } = useStrudelSession();
+  const {
+    status,
+    bootError,
+    runtimeError,
+    clearRuntimeError,
+    ensureApi,
+    evaluate,
+    hush,
+  } = useStrudelSession();
   const [code, setCode] = useState(() =>
     initialEditorCode(day, publishedCode, canPublish, remixMode),
   );
   const [busy, setBusy] = useState(false);
   const [playing, setPlaying] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [saveHint, setSaveHint] = useState<string | null>(null);
   const [editorInstance, setEditorInstance] = useState(0);
 
@@ -58,7 +69,7 @@ export function StrudelRepl({
     setCode(next);
     setEditorInstance((v) => v + 1);
     setPlaying(false);
-    setError(null);
+    clearRuntimeError();
     void hush();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- hush on day/publish change only
   }, [day, publishedCode, canPublish, remixMode]);
@@ -71,21 +82,29 @@ export function StrudelRepl({
   const runEvaluate = useCallback(async () => {
     if (comingSoon && !canPublish) return;
     setBusy(true);
-    setError(null);
+    clearRuntimeError();
     try {
       await ensureApi();
-      await evaluate(code);
+      const result = await evaluate(code);
+      if (!result.ok) {
+        setPlaying(false);
+        const msg =
+          getStrudelRuntimeError()?.message ?? "Pattern could not be evaluated";
+        trackEvent("strudel_error", { day, error: msg.slice(0, 120) });
+        return;
+      }
       setPlaying(true);
       trackEvent("strudel_play", { day });
     } catch (err) {
-      const msg = errorMessage(err);
-      setError(msg);
       setPlaying(false);
-      trackEvent("strudel_error", { day, error: msg.slice(0, 120) });
+      trackEvent("strudel_error", {
+        day,
+        error: errorMessage(err).slice(0, 120),
+      });
     } finally {
       setBusy(false);
     }
-  }, [canPublish, code, comingSoon, day, ensureApi, evaluate]);
+  }, [canPublish, clearRuntimeError, code, comingSoon, day, ensureApi, evaluate]);
 
   const runHush = useCallback(() => {
     void hush();
@@ -118,10 +137,10 @@ export function StrudelRepl({
     clearRemix(day);
     setCode(publishedCode);
     setEditorInstance((v) => v + 1);
-    setError(null);
+    clearRuntimeError();
     void hush();
     setPlaying(false);
-  }, [day, hush, publishedCode]);
+  }, [clearRuntimeError, day, hush, publishedCode]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -204,7 +223,27 @@ export function StrudelRepl({
           />
         ) : null}
       </div>
-      {error ? <p className="repl-error">{error}</p> : null}
+      {bootError && status === "error" ? (
+        <p className="repl-error" role="alert">
+          <strong>{strudelErrorKindLabel("boot")}</strong>
+          <span className="repl-error-msg">{bootError}</span>
+        </p>
+      ) : null}
+      {runtimeError ? (
+        <div className="repl-error repl-error--runtime" role="alert">
+          <div className="repl-error-head">
+            <strong>{strudelErrorKindLabel(runtimeError.kind)}</strong>
+            <button
+              type="button"
+              className="repl-error-dismiss"
+              onClick={clearRuntimeError}
+            >
+              Dismiss
+            </button>
+          </div>
+          <pre className="repl-error-msg">{runtimeError.message}</pre>
+        </div>
+      ) : null}
       {editable ? (
         <p className="repl-keys">
           Ctrl/⌘+Enter play · Ctrl/⌘+. stop
@@ -212,6 +251,9 @@ export function StrudelRepl({
           {remixMode && !canPublish
             ? " · edits stay in this browser only"
             : ""}
+          {
+            " · visuals: all(pianoroll), ._pianoroll(), ._scope(), ._spectrum(), Hydra"
+          }
         </p>
       ) : null}
     </section>

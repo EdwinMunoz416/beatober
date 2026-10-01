@@ -3,6 +3,7 @@
 import type { EditorView } from "@codemirror/view";
 import { useEffect, useRef } from "react";
 import { setStrudelEditorView } from "@/lib/strudel-cm-bridge";
+import { ensureStrudelVisuals } from "@/lib/strudel-visuals";
 
 type Props = {
   /** Remount when day / reset / published seed changes */
@@ -42,6 +43,7 @@ export function StrudelCodeEditor({
     const seedDoc = initialCode;
 
     void (async () => {
+      await ensureStrudelVisuals();
       const cm = await import("@strudel/codemirror");
       const { EditorState, StateEffect } = await import("@codemirror/state");
 
@@ -54,6 +56,7 @@ export function StrudelCodeEditor({
         isLineNumbersDisplayed: true,
         isAutoCompletionEnabled: true,
         isPatternHighlightingEnabled: true,
+        isTooltipEnabled: true,
         isFlashEnabled: true,
         fontSize: 13,
         fontFamily: "var(--mono, ui-monospace, monospace)",
