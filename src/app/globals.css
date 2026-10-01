@@ -107,7 +107,7 @@ html {
   min-width: 0;
   align-self: stretch;
   border: 1px solid var(--surface-border);
-  background: var(--surface);
+  background: var(--bg);
   border-radius: 4px;
   overflow: hidden;
 }
