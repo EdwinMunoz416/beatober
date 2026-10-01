@@ -49,7 +49,7 @@ Author UI: `NEXT_PUBLIC_BEATOBER_AUTHOR=1` in `.env.local`, **or** log in at `/a
 
 Production author API: **`beatober_admin` cookie** after `/admin` login, **or** header `x-beatober-author: <BEATOBER_AUTHOR_SECRET>` for scripts.
 
-Public visitors can **remix** unlocked days locally (`sessionStorage`); only authors persist to Neon/git.
+Public visitors get **read-only** patterns on unlocked days (play only); only authors persist to Neon/git.
 
 Strudel engine details: **`docs/strudel-engine.md`** (prebake, Hydra, soundfonts).
 

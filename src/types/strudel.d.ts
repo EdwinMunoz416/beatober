@@ -14,10 +14,25 @@ declare module "@strudel/web" {
 }
 
 declare module "@strudel/webaudio" {
+  export function getAudioContext(): AudioContext;
+  export function initAudio(options?: Record<string, unknown>): Promise<void>;
   export function samples(url: string): Promise<unknown>;
   export function registerSynthSounds(): Promise<unknown>;
   export function registerZZFXSounds(): Promise<unknown>;
   export function aliasBank(url: string): Promise<unknown>;
+}
+
+declare module "@strudel/core" {
+  export class Pattern {
+    static prototype: Pattern;
+    onPaint(fn: (...args: unknown[]) => void): Pattern;
+    punchcard(options?: Record<string, unknown>): Pattern;
+  }
+  export function isPattern(value: unknown): boolean;
+}
+
+declare module "@strudel/transpiler" {
+  export function registerWidgetType(type: string): void;
 }
 
 declare module "@strudel/soundfonts" {

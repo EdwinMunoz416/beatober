@@ -1,0 +1,64 @@
+.rb-blur-text {
+  display: inline-block;
+}
+
+.rb-blur-text__segment {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(10px);
+  will-change: transform, filter, opacity;
+}
+
+.rb-blur-text--top .rb-blur-text__segment {
+  transform: translateY(-0.45em);
+}
+
+.rb-blur-text--bottom .rb-blur-text__segment {
+  transform: translateY(0.45em);
+}
+
+.rb-blur-text__segment--in {
+  animation-name: rb-blur-text-in-top;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: forwards;
+}
+
+.rb-blur-text--bottom .rb-blur-text__segment--in {
+  animation-name: rb-blur-text-in-bottom;
+}
+
+@keyframes rb-blur-text-in-top {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(-0.45em);
+  }
+  60% {
+    opacity: 0.65;
+    filter: blur(4px);
+    transform: translateY(0.04em);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes rb-blur-text-in-bottom {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(0.45em);
+  }
+  60% {
+    opacity: 0.65;
+    filter: blur(4px);
+    transform: translateY(-0.04em);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}

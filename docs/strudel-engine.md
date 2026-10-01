@@ -41,9 +41,9 @@ Hush / stop clears Hydra, draw animations, and mini highlights.
 
 | Role | Behavior |
 |------|----------|
-| **Public, unlocked** | **Local remix** — `sessionStorage` per day; Reset restores published pattern |
+| **Public, unlocked** | **Read-only** published pattern; Play / Stop only (no local edits) |
 | **Author** | `NEXT_PUBLIC_BEATOBER_AUTHOR=1` and/or **`/admin` login** — edit + ⌘S save to Neon/git |
-| **Locked (public)** | **Coming soon** panel only (no Strudel); optional `audioUrl` teaser above |
+| **Locked (public)** | **Coming soon** React Bits text panel (no Strudel); optional `audioUrl` teaser above |
 
 ## Production save auth
 

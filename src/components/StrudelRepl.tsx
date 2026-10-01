@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { ReplTransport } from "@/components/ReplTransport";
 import { StrudelCodeEditor } from "@/components/StrudelCodeEditor";
 import { trackEvent } from "@/lib/analytics";
-import { clearRemix, loadRemix, saveRemix } from "@/lib/remix-storage";
 import {
   getStrudelRuntimeError,
   strudelErrorKindLabel,
@@ -17,8 +17,7 @@ type Props = {
   comingSoon?: boolean;
   /** Author or admin — edit canonical pattern + server save */
   canPublish: boolean;
-  /** Unlocked public visitor — local remix in sessionStorage */
-  remixMode: boolean;
+  onPlaybackChange?: (playing: boolean, day: number) => void;
 };
 
 function errorMessage(err: unknown): string {
@@ -27,23 +26,12 @@ function errorMessage(err: unknown): string {
   return String(err);
 }
 
-function initialEditorCode(
-  day: number,
-  publishedCode: string,
-  canPublish: boolean,
-  remixMode: boolean,
-): string {
-  if (canPublish) return publishedCode;
-  if (remixMode) return loadRemix(day) ?? publishedCode;
-  return publishedCode;
-}
-
 export function StrudelRepl({
   day,
   publishedCode,
   comingSoon = false,
   canPublish,
-  remixMode,
+  onPlaybackChange,
 }: Props) {
   const {
     status,
@@ -54,31 +42,30 @@ export function StrudelRepl({
     evaluate,
     hush,
   } = useStrudelSession();
-  const [code, setCode] = useState(() =>
-    initialEditorCode(day, publishedCode, canPublish, remixMode),
-  );
+  const [code, setCode] = useState(publishedCode);
   const [busy, setBusy] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [saveHint, setSaveHint] = useState<string | null>(null);
   const [editorInstance, setEditorInstance] = useState(0);
 
-  const readOnly = comingSoon && !canPublish;
-  const editable = canPublish || remixMode;
+  const readOnly = !canPublish;
+
+  const notifyPlayback = useCallback(
+    (next: boolean) => {
+      onPlaybackChange?.(next, day);
+    },
+    [day, onPlaybackChange],
+  );
 
   useEffect(() => {
-    const next = initialEditorCode(day, publishedCode, canPublish, remixMode);
-    setCode(next);
+    setCode(publishedCode);
     setEditorInstance((v) => v + 1);
     setPlaying(false);
+    notifyPlayback(false);
     clearRuntimeError();
     void hush();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- hush on day/publish change only
-  }, [day, publishedCode, canPublish, remixMode]);
-
-  useEffect(() => {
-    if (!remixMode || canPublish) return;
-    saveRemix(day, code);
-  }, [code, day, remixMode, canPublish]);
+  }, [day, publishedCode, canPublish]);
 
   const runEvaluate = useCallback(async () => {
     if (comingSoon && !canPublish) return;
@@ -90,15 +77,18 @@ export function StrudelRepl({
       const result = await evaluate(code);
       if (!result.ok) {
         setPlaying(false);
+        notifyPlayback(false);
         const msg =
           getStrudelRuntimeError()?.message ?? "Pattern could not be evaluated";
         trackEvent("strudel_error", { day, error: msg.slice(0, 120) });
         return;
       }
       setPlaying(true);
+      notifyPlayback(true);
       trackEvent("strudel_play", { day });
     } catch (err) {
       setPlaying(false);
+      notifyPlayback(false);
       trackEvent("strudel_error", {
         day,
         error: errorMessage(err).slice(0, 120),
@@ -106,13 +96,23 @@ export function StrudelRepl({
     } finally {
       setBusy(false);
     }
-  }, [canPublish, clearRuntimeError, code, comingSoon, day, ensureApi, evaluate]);
+  }, [
+    canPublish,
+    clearRuntimeError,
+    code,
+    comingSoon,
+    day,
+    ensureApi,
+    evaluate,
+    notifyPlayback,
+  ]);
 
   const runHush = useCallback(() => {
     void hush();
     if (playing) trackEvent("strudel_stop", { day });
     setPlaying(false);
-  }, [day, hush, playing]);
+    notifyPlayback(false);
+  }, [day, hush, notifyPlayback, playing]);
 
   const persistPattern = useCallback(async () => {
     if (!canPublish) return;
@@ -135,15 +135,6 @@ export function StrudelRepl({
     }
   }, [canPublish, code, day]);
 
-  const resetRemix = useCallback(() => {
-    clearRemix(day);
-    setCode(publishedCode);
-    setEditorInstance((v) => v + 1);
-    clearRuntimeError();
-    void hush();
-    setPlaying(false);
-  }, [clearRuntimeError, day, hush, publishedCode]);
-
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const mod = e.metaKey || e.ctrlKey;
@@ -156,9 +147,6 @@ export function StrudelRepl({
     return () => window.removeEventListener("keydown", onKey);
   }, [persistPattern]);
 
-  const remixDirty =
-    remixMode && !canPublish && code.trim() !== publishedCode.trim();
-
   const bootLabel =
     status === "loading"
       ? "Loading sounds…"
@@ -168,50 +156,27 @@ export function StrudelRepl({
 
   return (
     <section className="repl repl--codemirror" aria-label={`Strudel pattern day ${day}`}>
-      <div className="repl-toolbar">
-        <div className="repl-actions">
-          {bootLabel ? (
-            <span className="repl-hint repl-hint--boot">{bootLabel}</span>
-          ) : null}
-          {saveHint ? <span className="repl-hint">{saveHint}</span> : null}
-          {remixDirty ? (
-            <button type="button" className="repl-btn" onClick={resetRemix}>
-              Reset
-            </button>
-          ) : null}
-          <button
-            type="button"
-            className="repl-btn repl-btn--primary"
-            disabled={
-              busy || status === "loading" || (comingSoon && !canPublish)
-            }
-            onClick={() => void runEvaluate()}
-          >
-            {busy ? "…" : "Play"}
-          </button>
-          <button
-            type="button"
-            className="repl-btn"
-            disabled={!playing}
-            onClick={runHush}
-          >
-            Stop
-          </button>
-        </div>
-      </div>
+      <ReplTransport
+        playing={playing}
+        busy={busy}
+        playDisabled={
+          busy || status === "loading" || (comingSoon && !canPublish)
+        }
+        stopDisabled={!playing}
+        bootLabel={bootLabel}
+        saveHint={saveHint}
+        onPlay={() => void runEvaluate()}
+        onStop={runHush}
+      />
       <div className="repl-editor repl-editor--cm">
-        {editable || readOnly ? (
-          <StrudelCodeEditor
-            instanceKey={`${day}-${editorInstance}`}
-            initialCode={
-              initialEditorCode(day, publishedCode, canPublish, remixMode)
-            }
-            readOnly={readOnly}
-            onCodeChange={setCode}
-            onEvaluate={() => void runEvaluate()}
-            onStop={runHush}
-          />
-        ) : null}
+        <StrudelCodeEditor
+          instanceKey={`${day}-${editorInstance}`}
+          initialCode={publishedCode}
+          readOnly={readOnly}
+          onCodeChange={setCode}
+          onEvaluate={() => void runEvaluate()}
+          onStop={runHush}
+        />
       </div>
       {bootError && status === "error" ? (
         <p className="repl-error" role="alert">

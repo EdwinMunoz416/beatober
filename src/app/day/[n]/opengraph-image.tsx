@@ -13,7 +13,6 @@ const LED_FONT = "Ledlight";
 const TEXT_FILL = "#000000";
 const TEXT_STROKE = "#ffffff";
 const PAGE_BG = "#0c0d10";
-const PREVIEW_BG = "public/og/preview-background.png";
 const STROKE = 2;
 
 /** Matches former day number block (fontSize 120, lineHeight 1). */
@@ -32,14 +31,14 @@ const STROKE_XY: [number, number][] = [
 
 type Props = { params: Promise<{ n: string }> };
 
-async function loadFontFile(relativePath: string): Promise<ArrayBuffer> {
-  const path = join(process.cwd(), relativePath);
+async function loadLedFont(): Promise<ArrayBuffer> {
+  const path = join(process.cwd(), "public", "fonts", "LEDLIGHT.otf");
   const buf = await readFile(path);
   return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
 }
 
 async function loadPreviewBackgroundDataUrl(): Promise<string> {
-  const path = join(process.cwd(), PREVIEW_BG);
+  const path = join(process.cwd(), "public", "og", "preview-background.png");
   const buf = await readFile(path);
   return `data:image/png;base64,${buf.toString("base64")}`;
 }
@@ -52,7 +51,7 @@ export default async function OgImage({ params }: Props) {
   const entry = manifest.days.find((d) => d.day === day);
   const theme = entry?.title ?? `day ${day}`;
   const [ledFont, bgSrc] = await Promise.all([
-    loadFontFile("public/fonts/LEDLIGHT.otf"),
+    loadLedFont(),
     loadPreviewBackgroundDataUrl(),
   ]);
 

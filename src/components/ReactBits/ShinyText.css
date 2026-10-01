@@ -1,0 +1,33 @@
+.rb-shiny-text {
+  display: inline-block;
+  color: color-mix(in srgb, var(--rb-shiny-base, #8b919e) 72%, transparent);
+  background: linear-gradient(
+    120deg,
+    var(--rb-shiny-base, #8b919e) 0%,
+    var(--rb-shiny-base, #8b919e) 38%,
+    var(--rb-shiny-highlight, #5ef0ff) 50%,
+    var(--rb-shiny-base, #8b919e) 62%,
+    var(--rb-shiny-base, #8b919e) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rb-shiny-text var(--rb-shiny-duration, 5s) linear infinite;
+}
+
+.rb-shiny-text--disabled {
+  animation: none;
+  -webkit-text-fill-color: var(--rb-shiny-base, #8b919e);
+  color: var(--rb-shiny-base, #8b919e);
+  background: none;
+}
+
+@keyframes rb-shiny-text {
+  0% {
+    background-position: 100% center;
+  }
+  100% {
+    background-position: -100% center;
+  }
+}

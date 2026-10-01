@@ -13,7 +13,7 @@ type InlinePat = {
 /** CM widget.mjs patches Pattern at import time — must match the Pattern class the repl evaluates. */
 export async function ensureStrudelInlineWidgets(): Promise<void> {
   const { Pattern } = await import("@strudel/core");
-  const proto = Pattern.prototype as Record<string, unknown>;
+  const proto = Pattern.prototype as unknown as Record<string, unknown>;
   if (typeof proto._punchcard === "function") return;
 
   const { registerWidgetType } = await import("@strudel/transpiler");

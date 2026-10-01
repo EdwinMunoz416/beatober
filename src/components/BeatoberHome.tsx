@@ -1,7 +1,14 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type CSSProperties,
+} from "react";
+import { workspaceBgForDay } from "@/lib/day-playback-background";
 import { dayPath } from "@/lib/day-routes";
 import type { Manifest } from "@/lib/content";
 import {
@@ -57,7 +64,18 @@ export function BeatoberHome({
   }, [manifest.days, calendar, nowIso, canPublish, initialSelectedDay]);
 
   const [viewDay, setViewDay] = useState(initialDay);
+  const [playbackWorkspaceBg, setPlaybackWorkspaceBg] = useState<
+    string | undefined
+  >(undefined);
   const days = manifest.days;
+
+  const handleStrudelPlayback = useCallback(
+    (playing: boolean, day: number) => {
+      const url = workspaceBgForDay(day);
+      setPlaybackWorkspaceBg(playing && url ? url : undefined);
+    },
+    [],
+  );
 
   useEffect(() => {
     setViewDay(initialDay);
@@ -110,7 +128,6 @@ export function BeatoberHome({
   );
   const showStrudel = !viewLocked || canPublish;
   const publishedCode = patterns[entry.day] ?? "";
-  const remixMode = !viewLocked && !canPublish;
   const hydraEnabled = !viewLocked;
 
   return (
@@ -118,7 +135,16 @@ export function BeatoberHome({
       className={`beatober-page${hydraEnabled ? " beatober-page--hydra" : ""}${!viewLocked ? " beatober-page--strudel-draw" : ""}`}
     >
       {!viewLocked ? <StrudelVisualBootstrap /> : null}
-      <div className="beatober-workspace">
+      <div
+        className={`beatober-workspace${playbackWorkspaceBg ? " beatober-workspace--playback-bg" : ""}`}
+        style={
+          playbackWorkspaceBg
+            ? ({
+                ["--workspace-playback-bg" as string]: `url("${playbackWorkspaceBg}")`,
+              } as CSSProperties)
+            : undefined
+        }
+      >
         <StudioDazeHeader />
         <DayOptionWheel
           days={days}
@@ -143,11 +169,15 @@ export function BeatoberHome({
                 publishedCode={publishedCode}
                 comingSoon={viewLocked && canPublish}
                 canPublish={canPublish}
-                remixMode={remixMode}
+                onPlaybackChange={handleStrudelPlayback}
               />
             </StrudelErrorBoundary>
           ) : (
-            <LockedDayPanel day={entry.day} title={entry.title} />
+            <LockedDayPanel
+              day={entry.day}
+              title={entry.title}
+              month={calendar.month}
+            />
           )}
         </div>
       </div>

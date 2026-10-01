@@ -58,7 +58,7 @@ export async function installGlobalDrawBridge(): Promise<void> {
   const core = await import("@strudel/core");
   const draw = await import("@strudel/draw");
 
-  const proto = core.Pattern.prototype as Record<string, unknown>;
+  const proto = core.Pattern.prototype as unknown as Record<string, unknown>;
 
   const origPianoroll = proto.pianoroll as VisualFn;
   proto.pianoroll = function (options: Record<string, unknown> = {}) {
@@ -66,22 +66,21 @@ export async function installGlobalDrawBridge(): Promise<void> {
       return origPianoroll.call(this, options);
     }
     const { __pianoroll, getDrawOptions } = draw;
-    return (this as Pat).onPaint(
-      (
-        ctx: CanvasRenderingContext2D,
-        time: number,
-        haps: unknown[],
-        drawTime: [number, number],
-      ) => {
-        __pianoroll({
-          ...options,
-          ctx,
-          time,
-          haps,
-          ...getDrawOptions(drawTime, { fold: 0, ...options }),
-        });
-      },
-    );
+    return (this as Pat).onPaint((...args: unknown[]) => {
+      const [ctx, time, haps, drawTime] = args as [
+        CanvasRenderingContext2D,
+        number,
+        unknown[],
+        [number, number],
+      ];
+      __pianoroll({
+        ...options,
+        ctx,
+        time,
+        haps,
+        ...getDrawOptions(drawTime, { fold: 0, ...options }),
+      });
+    });
   };
 
   bindGlobalDrawCtx(draw.getDrawContext, proto, "spectrum");

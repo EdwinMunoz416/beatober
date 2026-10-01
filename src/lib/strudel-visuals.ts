@@ -31,7 +31,9 @@ export async function clearGlobalPatternCanvas(): Promise<void> {
     // No repl id — `.pianoroll()` / `.draw()` use numeric rAF ids (e.g. `1`), not repl-scoped keys.
     draw.cleanupDraw(true);
     const ctx = draw.getDrawContext(STRUDEL_PATTERN_CANVAS_ID);
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    if ("clearRect" in ctx) {
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    }
   } catch {
     /* draw may not be booted */
   }
