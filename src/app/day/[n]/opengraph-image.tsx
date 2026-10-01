@@ -11,6 +11,7 @@ export const contentType = "image/png";
 
 const LED_FONT = "Ledlight";
 const WHITE = "#ffffff";
+const PAGE_BG = "#0c0d10";
 const PREVIEW_BG = "public/og/preview-background.png";
 
 /** Matches former day number block (fontSize 120, lineHeight 1). */
@@ -53,6 +54,7 @@ export default async function OgImage({ params }: Props) {
           justifyContent: "center",
           alignItems: "center",
           position: "relative",
+          backgroundColor: PAGE_BG,
           color: WHITE,
         }}
       >
@@ -67,17 +69,7 @@ export default async function OgImage({ params }: Props) {
             left: 0,
             width: "100%",
             height: "100%",
-            objectFit: "cover",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(12, 13, 16, 0.38)",
+            objectFit: "contain",
           }}
         />
         <div
