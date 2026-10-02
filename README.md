@@ -63,6 +63,8 @@ Strudel engine details: **`docs/strudel-engine.md`** (prebake, Hydra, soundfonts
 | `node scripts/db-approve-day.mjs 1` | Approve day in Neon (CLI) |
 | `./scripts/upload-beat.sh` | Blob upload + Neon `audio_url` |
 | `./scripts/publish-day.sh` | Pattern + optional `--approve` + `--audio` |
+| `npm run sync:identity-pool` | Jikan v4 → JSON seed file + upsert new rows into Neon `identity_pool` |
+| `npm run db:expand-pool` | Grow Neon `identity_pool` via Jikan (no redeploy) |
 
 Share a day: **`/day/3`** (OG image for social previews). Sitemap: `/sitemap.xml`. Admin routes are `noindex`.
 
@@ -73,6 +75,8 @@ Share a day: **`/day/3`** (OG image for social previews). Sitemap: `/sitemap.xml
 
 **Control room:** https://studiodaze-beatober.vercel.app/admin — password = `BEATOBER_AUTHOR_SECRET`.  
 **Devices:** `/admin/devices` — tag this browser as **internal** or **ignore** (visitors-only metrics by default).
+
+**Visitor identity** (admin only): see **`docs/admin-visitor-identity.md`**. Pool in Neon (`identity_pool`); grows via migrate, `db:expand-pool`, or on assign. `db:migrate` backfills + reconciles visitor rows.
 
 Events: `page_view` (`referrer_source`, `geo_country` / `geo_region` from Vercel edge on ingest), … Admin **Geography** = first-touch country, US regions, EU countries + subregions.
 

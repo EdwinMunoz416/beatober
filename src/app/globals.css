@@ -1351,6 +1351,15 @@ body.strudel-global-draw-active #test-canvas {
   color: var(--text-muted);
 }
 
+.admin-dash__people-note {
+  margin: 0.45rem 0 0;
+  max-width: 42rem;
+  font-size: 0.58rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+  opacity: 0.9;
+}
+
 .admin-dash__traffic {
   margin: 0.5rem 0 1rem;
   padding: 0.85rem 1rem;
@@ -1632,6 +1641,23 @@ body.strudel-global-draw-active #test-canvas {
   font-size: 1rem;
 }
 
+.admin-dash__avatar--compact {
+  width: 1.85rem;
+  height: 1.85rem;
+  flex-shrink: 0;
+}
+
+.admin-dash__avatar--compact .admin-dash__avatar-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.admin-dash__live-who {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
 .admin-dash__drawer-root {
   position: fixed;
   inset: 0;
@@ -1686,9 +1712,47 @@ body.strudel-global-draw-active #test-canvas {
 
 .admin-dash__drawer-sub {
   margin: 0.2rem 0 0;
+  font-size: 0.62rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.admin-dash__profile-ref {
+  font-size: 0.58rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-dash__drawer-ref-line {
+  margin: 0.25rem 0 0;
   font-size: 0.58rem;
   color: var(--text-muted);
-  word-break: break-all;
+}
+
+.admin-dash__drawer-ref-line code {
+  font-size: 0.58rem;
+  color: var(--accent-cyan);
+}
+
+.admin-dash__drawer-ref {
+  display: inline-block;
+  margin-top: 0.35rem;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 0.55rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+.admin-dash__drawer-ref:hover {
+  opacity: 1;
+  color: var(--accent-cyan);
 }
 
 .admin-dash__drawer-stats {
@@ -1847,6 +1911,26 @@ body.strudel-global-draw-active #test-canvas {
   height: 1.65rem;
 }
 
+.admin-dash__avatar--hue {
+  --visitor-avatar-hue: 190;
+  color: hsl(var(--visitor-avatar-hue), 72%, 72%);
+  background: hsla(var(--visitor-avatar-hue), 55%, 52%, 0.12);
+  border-color: hsla(var(--visitor-avatar-hue), 60%, 58%, 0.35);
+}
+
+.admin-dash__avatar--photo {
+  padding: 0;
+  overflow: hidden;
+}
+
+.admin-dash__avatar-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
 .admin-dash__profile-id-block {
   min-width: 0;
   flex: 1;
@@ -1867,6 +1951,14 @@ body.strudel-global-draw-active #test-canvas {
   font-size: 0.62rem;
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
+}
+
+.admin-dash__profile-tagline {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.62rem;
+  line-height: 1.4;
+  color: var(--text-muted);
 }
 
 .admin-dash__profile-tags {
@@ -1925,6 +2017,21 @@ body.strudel-global-draw-active #test-canvas {
 .admin-dash__profile-tag--return {
   border-color: rgba(120, 180, 255, 0.35);
   color: rgba(180, 210, 255, 0.95);
+}
+
+.admin-dash__profile-tag--anime {
+  border-color: rgba(255, 160, 220, 0.35);
+  color: rgba(255, 200, 235, 0.95);
+}
+
+.admin-dash__drawer-series {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.58rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 180, 220, 0.85);
 }
 
 .admin-dash__profile-stats div {
@@ -2382,6 +2489,11 @@ body.strudel-global-draw-active #test-canvas {
 .admin-dash__live-code {
   font-size: 0.62rem;
   color: var(--accent-cyan);
+}
+
+.admin-dash__live-name {
+  font-size: 0.68rem;
+  color: var(--text);
 }
 
 .admin-dash__live-badge {

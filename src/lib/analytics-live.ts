@@ -1,4 +1,5 @@
 import { getSql } from "@/lib/db";
+import { resolveDisplayIdentity } from "@/lib/visitor-identity-store";
 
 export type LiveAudience = "visitor" | "internal" | "all";
 
@@ -16,6 +17,9 @@ export type LiveVisitorRow = {
   geoCountry: string | null;
   geoRegion: string | null;
   lastEventName: string;
+  lockedNickname: string | null;
+  lockedShowTitle: string | null;
+  lockedAvatarUrl: string | null;
 };
 
 export type LiveSnapshot = {
@@ -41,6 +45,10 @@ type RawRow = {
   referrer_source: string | null;
   geo_country: string | null;
   geo_region: string | null;
+  locked_nickname: string | null;
+  locked_show_title: string | null;
+  locked_avatar_url: string | null;
+  locked_character_id: string | null;
 };
 
 function readActivity(props: Record<string, unknown> | null): string {
@@ -70,65 +78,80 @@ export async function fetchLiveSnapshot(
 
   if (audience === "internal") {
     rows = (await sql`
-      SELECT DISTINCT ON (visitor_id)
-        visitor_id,
-        session_id,
-        audience,
-        created_at,
-        path,
-        day,
-        event_name,
-        props,
-        referrer_source,
-        geo_country,
-        geo_region
-      FROM analytics_events
-      WHERE created_at >= now() - interval '120 seconds'
-        AND visitor_id IS NOT NULL
-        AND audience = 'internal'
-        AND event_name = 'visitor_presence'
-      ORDER BY visitor_id, created_at DESC
+      SELECT DISTINCT ON (e.visitor_id)
+        e.visitor_id,
+        e.session_id,
+        e.audience,
+        e.created_at,
+        e.path,
+        e.day,
+        e.event_name,
+        e.props,
+        e.referrer_source,
+        e.geo_country,
+        e.geo_region,
+        vn.nickname AS locked_nickname,
+        vn.show_title AS locked_show_title,
+        vn.avatar_url AS locked_avatar_url,
+        vn.character_id AS locked_character_id
+      FROM analytics_events e
+      LEFT JOIN visitor_nicknames vn ON vn.visitor_id = e.visitor_id
+      WHERE e.created_at >= now() - interval '120 seconds'
+        AND e.visitor_id IS NOT NULL
+        AND e.audience = 'internal'
+        AND e.event_name = 'visitor_presence'
+      ORDER BY e.visitor_id, e.created_at DESC
     `) as RawRow[];
   } else if (audience === "all") {
     rows = (await sql`
-      SELECT DISTINCT ON (visitor_id)
-        visitor_id,
-        session_id,
-        audience,
-        created_at,
-        path,
-        day,
-        event_name,
-        props,
-        referrer_source,
-        geo_country,
-        geo_region
-      FROM analytics_events
-      WHERE created_at >= now() - interval '120 seconds'
-        AND visitor_id IS NOT NULL
-        AND event_name = 'visitor_presence'
-      ORDER BY visitor_id, created_at DESC
+      SELECT DISTINCT ON (e.visitor_id)
+        e.visitor_id,
+        e.session_id,
+        e.audience,
+        e.created_at,
+        e.path,
+        e.day,
+        e.event_name,
+        e.props,
+        e.referrer_source,
+        e.geo_country,
+        e.geo_region,
+        vn.nickname AS locked_nickname,
+        vn.show_title AS locked_show_title,
+        vn.avatar_url AS locked_avatar_url,
+        vn.character_id AS locked_character_id
+      FROM analytics_events e
+      LEFT JOIN visitor_nicknames vn ON vn.visitor_id = e.visitor_id
+      WHERE e.created_at >= now() - interval '120 seconds'
+        AND e.visitor_id IS NOT NULL
+        AND e.event_name = 'visitor_presence'
+      ORDER BY e.visitor_id, e.created_at DESC
     `) as RawRow[];
   } else {
     rows = (await sql`
-      SELECT DISTINCT ON (visitor_id)
-        visitor_id,
-        session_id,
-        audience,
-        created_at,
-        path,
-        day,
-        event_name,
-        props,
-        referrer_source,
-        geo_country,
-        geo_region
-      FROM analytics_events
-      WHERE created_at >= now() - interval '120 seconds'
-        AND visitor_id IS NOT NULL
-        AND audience = 'visitor'
-        AND event_name = 'visitor_presence'
-      ORDER BY visitor_id, created_at DESC
+      SELECT DISTINCT ON (e.visitor_id)
+        e.visitor_id,
+        e.session_id,
+        e.audience,
+        e.created_at,
+        e.path,
+        e.day,
+        e.event_name,
+        e.props,
+        e.referrer_source,
+        e.geo_country,
+        e.geo_region,
+        vn.nickname AS locked_nickname,
+        vn.show_title AS locked_show_title,
+        vn.avatar_url AS locked_avatar_url,
+        vn.character_id AS locked_character_id
+      FROM analytics_events e
+      LEFT JOIN visitor_nicknames vn ON vn.visitor_id = e.visitor_id
+      WHERE e.created_at >= now() - interval '120 seconds'
+        AND e.visitor_id IS NOT NULL
+        AND e.audience = 'visitor'
+        AND e.event_name = 'visitor_presence'
+      ORDER BY e.visitor_id, e.created_at DESC
     `) as RawRow[];
   }
 
@@ -137,6 +160,12 @@ export async function fetchLiveSnapshot(
   const visitors: LiveVisitorRow[] = rows.map((row) => {
     const at = new Date(row.created_at).getTime();
     const props = parseProps(row.props);
+    const display = resolveDisplayIdentity({
+      nickname: row.locked_nickname,
+      show_title: row.locked_show_title,
+      avatar_url: row.locked_avatar_url,
+      character_id: row.locked_character_id,
+    });
     return {
       visitorId: row.visitor_id,
       displayId: `${row.visitor_id.slice(0, 8)}…`,
@@ -151,6 +180,9 @@ export async function fetchLiveSnapshot(
       geoCountry: row.geo_country,
       geoRegion: row.geo_region,
       lastEventName: row.event_name,
+      lockedNickname: display.nickname,
+      lockedShowTitle: display.showTitle,
+      lockedAvatarUrl: display.avatarUrl,
     };
   });
 

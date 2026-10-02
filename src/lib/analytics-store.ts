@@ -1,6 +1,7 @@
 import type { AnalyticsEventName, AnalyticsProps } from "@/lib/analytics-events";
 import { resolveAudience, type ResolvedAudience } from "@/lib/device-registry";
 import { dbConfigured, getSql } from "@/lib/db";
+import { ensureVisitorIdentity } from "@/lib/visitor-identity-store";
 
 export type IngestEvent = {
   eventName: AnalyticsEventName;
@@ -62,6 +63,10 @@ export async function insertAnalyticsEvent(
       ${audience}
     )
   `;
+
+  if (event.visitorId) {
+    await ensureVisitorIdentity(event.visitorId);
+  }
 
   return { stored: true, audience };
 }

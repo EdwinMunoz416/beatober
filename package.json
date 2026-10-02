@@ -9,7 +9,10 @@
     "lint": "eslint",
     "postinstall": "node ./scripts/patch-strudel-clockworker.mjs",
     "db:migrate": "node ./scripts/db-migrate.mjs",
-    "db:seed": "node ./scripts/db-seed.mjs"
+    "db:expand-pool": "node ./scripts/expand-identity-pool.mjs",
+    "db:seed": "node ./scripts/db-seed.mjs",
+    "sync:anime-names": "node ./scripts/sync-identity-pool.mjs",
+    "sync:identity-pool": "node ./scripts/sync-identity-pool.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",

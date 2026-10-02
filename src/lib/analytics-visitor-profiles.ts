@@ -1,4 +1,5 @@
 import { getSql } from "@/lib/db";
+import { resolveDisplayIdentity } from "@/lib/visitor-identity-store";
 
 type MetricsAudience = "visitor" | "internal" | "all";
 
@@ -11,6 +12,8 @@ export type VisitorProfile = {
   firstSeenAt: string;
   lastSeenAt: string;
   sessions: number;
+  /** Distinct calendar days with any event (7d window). */
+  activeDays: number;
   eventCount: number;
   pageViews: number;
   postsTouched: number;
@@ -37,6 +40,9 @@ export type VisitorProfile = {
   geoRegion: string | null;
   lastGeoCountry: string | null;
   lastGeoRegion: string | null;
+  lockedNickname: string | null;
+  lockedShowTitle: string | null;
+  lockedAvatarUrl: string | null;
 };
 
 type ProfileRow = {
@@ -47,6 +53,7 @@ type ProfileRow = {
   first_seen: Date;
   last_seen: Date;
   sessions: number;
+  active_days: number;
   event_count: number;
   page_views: number;
   posts_touched: number;
@@ -71,6 +78,10 @@ type ProfileRow = {
   page_engagement_ms: string | number | null;
   locked_taps: number;
   locked_scrolls: number;
+  locked_nickname: string | null;
+  locked_show_title: string | null;
+  locked_avatar_url: string | null;
+  locked_character_id: string | null;
 };
 
 export async function fetchVisitorProfiles(
@@ -89,9 +100,14 @@ export async function fetchVisitorProfiles(
         e.audience,
         MAX(dr.label) AS device_label,
         MAX(dr.role) AS device_role,
+        MAX(vn.nickname) AS locked_nickname,
+        MAX(vn.show_title) AS locked_show_title,
+        MAX(vn.avatar_url) AS locked_avatar_url,
+        MAX(vn.character_id) AS locked_character_id,
         MIN(e.created_at) AS first_seen,
         MAX(e.created_at) AS last_seen,
         COUNT(DISTINCT e.session_id)::int AS sessions,
+        COUNT(DISTINCT (e.created_at AT TIME ZONE 'UTC')::date)::int AS active_days,
         COUNT(*)::int AS event_count,
         COUNT(*) FILTER (WHERE e.event_name = 'page_view')::int AS page_views,
         COUNT(DISTINCT e.day) FILTER (WHERE e.day IS NOT NULL)::int AS posts_touched,
@@ -155,6 +171,7 @@ export async function fetchVisitorProfiles(
           FILTER (WHERE e.path IS NOT NULL))[1] AS last_path
       FROM analytics_events e
       LEFT JOIN device_registry dr ON dr.visitor_id = e.visitor_id
+      LEFT JOIN visitor_nicknames vn ON vn.visitor_id = e.visitor_id
       WHERE e.visitor_id IS NOT NULL
         AND e.created_at >= now() - interval '7 days'
         AND e.audience = 'internal'
@@ -169,9 +186,14 @@ export async function fetchVisitorProfiles(
         e.audience,
         MAX(dr.label) AS device_label,
         MAX(dr.role) AS device_role,
+        MAX(vn.nickname) AS locked_nickname,
+        MAX(vn.show_title) AS locked_show_title,
+        MAX(vn.avatar_url) AS locked_avatar_url,
+        MAX(vn.character_id) AS locked_character_id,
         MIN(e.created_at) AS first_seen,
         MAX(e.created_at) AS last_seen,
         COUNT(DISTINCT e.session_id)::int AS sessions,
+        COUNT(DISTINCT (e.created_at AT TIME ZONE 'UTC')::date)::int AS active_days,
         COUNT(*)::int AS event_count,
         COUNT(*) FILTER (WHERE e.event_name = 'page_view')::int AS page_views,
         COUNT(DISTINCT e.day) FILTER (WHERE e.day IS NOT NULL)::int AS posts_touched,
@@ -234,6 +256,7 @@ export async function fetchVisitorProfiles(
           FILTER (WHERE e.path IS NOT NULL))[1] AS last_path
       FROM analytics_events e
       LEFT JOIN device_registry dr ON dr.visitor_id = e.visitor_id
+      LEFT JOIN visitor_nicknames vn ON vn.visitor_id = e.visitor_id
       WHERE e.visitor_id IS NOT NULL
         AND e.created_at >= now() - interval '7 days'
       GROUP BY e.visitor_id, e.audience
@@ -247,9 +270,14 @@ export async function fetchVisitorProfiles(
         e.audience,
         MAX(dr.label) AS device_label,
         MAX(dr.role) AS device_role,
+        MAX(vn.nickname) AS locked_nickname,
+        MAX(vn.show_title) AS locked_show_title,
+        MAX(vn.avatar_url) AS locked_avatar_url,
+        MAX(vn.character_id) AS locked_character_id,
         MIN(e.created_at) AS first_seen,
         MAX(e.created_at) AS last_seen,
         COUNT(DISTINCT e.session_id)::int AS sessions,
+        COUNT(DISTINCT (e.created_at AT TIME ZONE 'UTC')::date)::int AS active_days,
         COUNT(*)::int AS event_count,
         COUNT(*) FILTER (WHERE e.event_name = 'page_view')::int AS page_views,
         COUNT(DISTINCT e.day) FILTER (WHERE e.day IS NOT NULL)::int AS posts_touched,
@@ -313,6 +341,7 @@ export async function fetchVisitorProfiles(
           FILTER (WHERE e.path IS NOT NULL))[1] AS last_path
       FROM analytics_events e
       LEFT JOIN device_registry dr ON dr.visitor_id = e.visitor_id
+      LEFT JOIN visitor_nicknames vn ON vn.visitor_id = e.visitor_id
       WHERE e.visitor_id IS NOT NULL
         AND e.created_at >= now() - interval '7 days'
         AND e.audience = 'visitor'
@@ -472,6 +501,13 @@ function mapProfile(row: ProfileRow): VisitorProfile {
   const spanMs =
     new Date(row.last_seen).getTime() - new Date(row.first_seen).getTime();
 
+  const display = resolveDisplayIdentity({
+    nickname: row.locked_nickname,
+    show_title: row.locked_show_title,
+    avatar_url: row.locked_avatar_url,
+    character_id: row.locked_character_id,
+  });
+
   return {
     visitorId: row.visitor_id,
     displayId: `${row.visitor_id.slice(0, 8)}…`,
@@ -481,6 +517,7 @@ function mapProfile(row: ProfileRow): VisitorProfile {
     firstSeenAt: new Date(row.first_seen).toISOString(),
     lastSeenAt: new Date(row.last_seen).toISOString(),
     sessions: row.sessions,
+    activeDays: row.active_days ?? 1,
     eventCount: row.event_count ?? 0,
     pageViews: row.page_views,
     postsTouched: row.posts_touched,
@@ -500,7 +537,10 @@ function mapProfile(row: ProfileRow): VisitorProfile {
     beatLoopCompletes: row.beat_loop_completes ?? 0,
     patternErrors: row.pattern_errors ?? 0,
     shareLandings: row.share_landings ?? 0,
-    isReturning: row.sessions >= 2 || spanMs >= 86_400_000,
+    isReturning:
+      (row.active_days ?? 1) >= 2 ||
+      row.sessions >= 2 ||
+      spanMs >= 86_400_000,
     topDay: row.top_day,
     strudelPlays: row.strudel_plays ?? 0,
     audioPlays: row.audio_plays ?? 0,
@@ -512,5 +552,8 @@ function mapProfile(row: ProfileRow): VisitorProfile {
     geoRegion: row.geo_region,
     lastGeoCountry: row.last_geo_country,
     lastGeoRegion: row.last_geo_region,
+    lockedNickname: display.nickname,
+    lockedShowTitle: display.showTitle,
+    lockedAvatarUrl: display.avatarUrl,
   };
 }

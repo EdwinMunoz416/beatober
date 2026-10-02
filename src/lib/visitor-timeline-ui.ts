@@ -8,6 +8,29 @@ export type SessionBlock = {
   engagementMs: number;
 };
 
+function sessionStartLabel(events: VisitorTimelineEvent[]): string {
+  const times = events.map((ev) => new Date(ev.at).getTime());
+  const start = new Date(Math.min(...times));
+  return start.toLocaleString(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+function visitBlockLabel(
+  events: VisitorTimelineEvent[],
+  index: number,
+  total: number,
+): string {
+  const when = sessionStartLabel(events);
+  if (index === 0) return `Latest visit · ${when}`;
+  if (index === total - 1 && total > 1) return `First visit · ${when}`;
+  return `Earlier visit · ${when}`;
+}
+
 /** Preserve API order (newest events first); bucket by session id. */
 export function groupTimelineBySession(
   events: VisitorTimelineEvent[],
@@ -24,7 +47,9 @@ export function groupTimelineBySession(
     map.get(key)!.push(ev);
   }
 
-  return order.map((key) => {
+  const total = order.length;
+
+  return order.map((key, index) => {
     const list = map.get(key)!;
     let listenMs = 0;
     let engagementMs = 0;
@@ -36,9 +61,13 @@ export function groupTimelineBySession(
         engagementMs += ev.durationMs;
       }
     }
+    const label =
+      key === "__none__"
+        ? `Activity · ${sessionStartLabel(list)}`
+        : visitBlockLabel(list, index, total);
     return {
       sessionKey: key,
-      label: key === "__none__" ? "Unknown session" : `${key.slice(0, 8)}…`,
+      label,
       events: list,
       listenMs,
       engagementMs,

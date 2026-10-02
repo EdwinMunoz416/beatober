@@ -1,5 +1,12 @@
 #!/usr/bin/env node
+import { loadEnvLocal } from "./load-env-local.mjs";
+
+loadEnvLocal();
+
 import { neon } from "@neondatabase/serverless";
+import { backfillVisitorNicknames } from "./backfill-visitor-nicknames.mjs";
+import { reconcileVisitorIdentities } from "./reconcile-visitor-identities.mjs";
+import { ensureIdentityPoolCapacity } from "./identity-pool-db.mjs";
 
 const url =
   process.env.DATABASE_URL ??
@@ -90,5 +97,48 @@ await sql`
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
   )
 `;
+
+await sql`
+  CREATE TABLE IF NOT EXISTS visitor_nicknames (
+    visitor_id TEXT PRIMARY KEY,
+    nickname TEXT NOT NULL,
+    show_title TEXT NOT NULL,
+    assigned_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )
+`;
+
+await sql`
+  ALTER TABLE visitor_nicknames
+  ADD COLUMN IF NOT EXISTS avatar_url TEXT
+`;
+
+await sql`
+  ALTER TABLE visitor_nicknames
+  ADD COLUMN IF NOT EXISTS character_id TEXT
+`;
+
+try {
+  await sql`
+    CREATE UNIQUE INDEX IF NOT EXISTS visitor_nicknames_character_id_unique
+    ON visitor_nicknames (character_id)
+    WHERE character_id IS NOT NULL
+  `;
+} catch (err) {
+  if (err?.code !== "23505") throw err;
+}
+
+await ensureIdentityPoolCapacity(sql, { minFree: 15, targetNew: 40 });
+
+await backfillVisitorNicknames(sql);
+await reconcileVisitorIdentities(sql);
+
+try {
+  await sql`
+    CREATE UNIQUE INDEX IF NOT EXISTS visitor_nicknames_nickname_lower_unique
+    ON visitor_nicknames (lower(btrim(nickname)))
+  `;
+} catch (err) {
+  if (err?.code !== "23505") throw err;
+}
 
 console.log("[db-migrate] Schema applied.");

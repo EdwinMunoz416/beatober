@@ -8,16 +8,18 @@ import type {
   VisitorTimelineEvent,
 } from "@/lib/analytics-visitor-profiles";
 import { groupTimelineBySession } from "@/lib/visitor-timeline-ui";
-import { VisitorUserIcon } from "@/components/VisitorUserIcon";
+import { VisitorAvatar } from "@/components/VisitorAvatar";
 import { formatGeoChip } from "@/lib/geo-display";
 import { formatReferrerTrail } from "@/lib/referrer-display";
 import {
+  formatActiveDays,
   formatDurationMs,
   formatRelative,
   formatWhen,
   profileDisplayName,
+  profileSeriesLabel,
+  visitorStoryLine,
 } from "@/lib/visitor-profile-ui";
-
 type Props = {
   profile: VisitorProfile;
   audience: MetricsAudience;
@@ -44,8 +46,29 @@ export function AdminVisitorProfileDrawer({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const name = profileDisplayName(profile.displayId, profile.deviceLabel);
+  const name = profileDisplayName(profile.deviceLabel, profile.lockedNickname);
+  const series = profileSeriesLabel(
+    profile.deviceLabel,
+    profile.lockedShowTitle,
+  );
+  const story = visitorStoryLine({
+    lastPath: profile.lastPath,
+    topDay: profile.topDay,
+    lastReferrerSource: profile.lastReferrerSource,
+    geoCountry: profile.lastGeoCountry ?? profile.geoCountry,
+    geoRegion: profile.lastGeoRegion ?? profile.geoRegion,
+    playedBeat: profile.playedBeat,
+    isReturning: profile.isReturning,
+  });
   const sessions = useMemo(() => groupTimelineBySession(events), [events]);
+
+  const copyReference = async () => {
+    try {
+      await navigator.clipboard.writeText(profile.visitorId);
+    } catch {
+      /* ignore */
+    }
+  };
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -109,14 +132,27 @@ export function AdminVisitorProfileDrawer({
       >
         <header className="admin-dash__drawer-head">
           <div className="admin-dash__drawer-identity">
-            <div className="admin-dash__avatar admin-dash__avatar--lg" aria-hidden>
-              <VisitorUserIcon className="admin-dash__avatar-icon admin-dash__avatar-icon--lg" />
-            </div>
+            <VisitorAvatar
+              visitorId={profile.visitorId}
+              avatarUrl={profile.lockedAvatarUrl}
+              alt={name}
+              large
+            />
             <div>
               <h2 id="visitor-drawer-title" className="admin-dash__drawer-title">
                 {name}
+                {series ? (
+                  <span className="admin-dash__drawer-series">{series}</span>
+                ) : null}
               </h2>
-              <p className="admin-dash__drawer-sub">{profile.visitorId}</p>
+              <p className="admin-dash__drawer-sub">{story}</p>
+              <button
+                type="button"
+                className="admin-dash__drawer-ref"
+                onClick={() => void copyReference()}
+              >
+                Copy technical reference
+              </button>
             </div>
           </div>
           <button
@@ -142,8 +178,12 @@ export function AdminVisitorProfileDrawer({
             <dd>{formatRelative(profile.lastSeenAt)}</dd>
           </div>
           <div>
-            <dt>Sessions</dt>
-            <dd>{profile.sessions}</dd>
+            <dt>Active days</dt>
+            <dd>{formatActiveDays(profile.activeDays)}</dd>
+          </div>
+          <div>
+            <dt>Page views</dt>
+            <dd>{profile.pageViews > 0 ? profile.pageViews : "—"}</dd>
           </div>
           <div>
             <dt>Beat listen</dt>
@@ -248,7 +288,7 @@ export function AdminVisitorProfileDrawer({
 
         <section className="admin-dash__drawer-timeline-wrap">
           <h3 className="admin-dash__drawer-section-title">
-            Activity by session · 30 days
+            Visits · 30 days
           </h3>
           {loading ? (
             <p className="admin-dash__empty">Loading timeline…</p>

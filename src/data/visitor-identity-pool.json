@@ -1,0 +1,1128 @@
+{
+  "version": 1,
+  "source": "Jikan v4 (https://api.jikan.moe)",
+  "syncedAt": "2026-10-02T20:25:04.824Z",
+  "allocation": "first-free character_id in pool order (unique globally)",
+  "pool": [
+    {
+      "characterId": "legacy:naruto:naruto-uzumaki",
+      "malCharacterId": null,
+      "name": "Naruto Uzumaki",
+      "seriesKey": "naruto",
+      "seriesTitle": "Naruto",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b17-phjcWCkRuIhu.png"
+    },
+    {
+      "characterId": "legacy:jjk:yuji-itadori",
+      "malCharacterId": null,
+      "name": "Yuji Itadori",
+      "seriesKey": "jjk",
+      "seriesTitle": "Jujutsu Kaisen",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b127212-FVm2tD0erQ5B.png"
+    },
+    {
+      "characterId": "legacy:dbz:son-goku",
+      "malCharacterId": null,
+      "name": "Son Goku",
+      "seriesKey": "dbz",
+      "seriesTitle": "Dragon Ball Z",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/246-wsRRr6z1kii8.png"
+    },
+    {
+      "characterId": "legacy:one-piece:luffy",
+      "malCharacterId": null,
+      "name": "Luffy",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b40-MNypXsxSRb1R.png"
+    },
+    {
+      "characterId": "legacy:evangelion:shinji-ikari",
+      "malCharacterId": null,
+      "name": "Shinji Ikari",
+      "seriesKey": "evangelion",
+      "seriesTitle": "Neon Genesis Evangelion",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b89-ZtZhXkh1rITn.png"
+    },
+    {
+      "characterId": "legacy:mha:izuku-midoriya",
+      "malCharacterId": null,
+      "name": "Izuku Midoriya",
+      "seriesKey": "mha",
+      "seriesTitle": "My Hero Academia",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b89028-8w1I9o1ISHMg.png"
+    },
+    {
+      "characterId": "legacy:seven-deadly-sins:meliodas",
+      "malCharacterId": null,
+      "name": "Meliodas",
+      "seriesKey": "seven-deadly-sins",
+      "seriesTitle": "The Seven Deadly Sins",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b72921-XDHNd1wflN6P.png"
+    },
+    {
+      "characterId": "legacy:aot:eren-yeager",
+      "malCharacterId": null,
+      "name": "Eren Yeager",
+      "seriesKey": "aot",
+      "seriesTitle": "Attack on Titan",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b40882-dsj7IP943WFF.jpg"
+    },
+    {
+      "characterId": "legacy:naruto:sasuke-uchiha",
+      "malCharacterId": null,
+      "name": "Sasuke Uchiha",
+      "seriesKey": "naruto",
+      "seriesTitle": "Naruto",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b13-SISLEw1oAD7a.png"
+    },
+    {
+      "characterId": "legacy:jjk:megumi-fushiguro",
+      "malCharacterId": null,
+      "name": "Megumi Fushiguro",
+      "seriesKey": "jjk",
+      "seriesTitle": "Jujutsu Kaisen",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b126635-L0y3I92JSUkN.png"
+    },
+    {
+      "characterId": "legacy:dbz:vegeta",
+      "malCharacterId": null,
+      "name": "Vegeta",
+      "seriesKey": "dbz",
+      "seriesTitle": "Dragon Ball Z",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b913-NIFkKazWM8VO.png"
+    },
+    {
+      "characterId": "legacy:one-piece:zoro",
+      "malCharacterId": null,
+      "name": "Zoro",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b62-S7oAeA9WInjV.png"
+    },
+    {
+      "characterId": "legacy:evangelion:rei-ayanami",
+      "malCharacterId": null,
+      "name": "Rei Ayanami",
+      "seriesKey": "evangelion",
+      "seriesTitle": "Neon Genesis Evangelion",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/86-cA1zL7fyls8E.jpg"
+    },
+    {
+      "characterId": "legacy:mha:katsuki-bakugo",
+      "malCharacterId": null,
+      "name": "Katsuki Bakugo",
+      "seriesKey": "mha",
+      "seriesTitle": "My Hero Academia",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b88892-bdOha3lNcaN6.png"
+    },
+    {
+      "characterId": "legacy:seven-deadly-sins:elizabeth-liones",
+      "malCharacterId": null,
+      "name": "Elizabeth Liones",
+      "seriesKey": "seven-deadly-sins",
+      "seriesTitle": "The Seven Deadly Sins",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b72923-Hidpb955mwMW.png"
+    },
+    {
+      "characterId": "legacy:aot:mikasa-ackerman",
+      "malCharacterId": null,
+      "name": "Mikasa Ackerman",
+      "seriesKey": "aot",
+      "seriesTitle": "Attack on Titan",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b40881-F3gr1PkreDvj.png"
+    },
+    {
+      "characterId": "legacy:naruto:sakura-haruno",
+      "malCharacterId": null,
+      "name": "Sakura Haruno",
+      "seriesKey": "naruto",
+      "seriesTitle": "Naruto",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b145-IorfpI8arxeX.png"
+    },
+    {
+      "characterId": "legacy:jjk:nobara-kugisaki",
+      "malCharacterId": null,
+      "name": "Nobara Kugisaki",
+      "seriesKey": "jjk",
+      "seriesTitle": "Jujutsu Kaisen",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b133700-f6sOO3TcgLV6.png"
+    },
+    {
+      "characterId": "legacy:dbz:son-gohan",
+      "malCharacterId": null,
+      "name": "Son Gohan",
+      "seriesKey": "dbz",
+      "seriesTitle": "Dragon Ball Z",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b2093-kdFZhqcNSsqW.png"
+    },
+    {
+      "characterId": "legacy:one-piece:nami",
+      "malCharacterId": null,
+      "name": "Nami",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b723-vp5hPptgnNEC.png"
+    },
+    {
+      "characterId": "legacy:evangelion:asuka",
+      "malCharacterId": null,
+      "name": "Asuka",
+      "seriesKey": "evangelion",
+      "seriesTitle": "Neon Genesis Evangelion",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b94-d631a3Z2KPvd.png"
+    },
+    {
+      "characterId": "legacy:mha:shoto-todoroki",
+      "malCharacterId": null,
+      "name": "Shoto Todoroki",
+      "seriesKey": "mha",
+      "seriesTitle": "My Hero Academia",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b89220-KNBwaVFAR8FD.png"
+    },
+    {
+      "characterId": "legacy:seven-deadly-sins:ban",
+      "malCharacterId": null,
+      "name": "Ban",
+      "seriesKey": "seven-deadly-sins",
+      "seriesTitle": "The Seven Deadly Sins",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b77605-NrjhQwZwgJ3l.png"
+    },
+    {
+      "characterId": "legacy:aot:armin-arlert",
+      "malCharacterId": null,
+      "name": "Armin Arlert",
+      "seriesKey": "aot",
+      "seriesTitle": "Attack on Titan",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b46494-g7xYYuBtYPnO.png"
+    },
+    {
+      "characterId": "legacy:naruto:kakashi-hatake",
+      "malCharacterId": null,
+      "name": "Kakashi Hatake",
+      "seriesKey": "naruto",
+      "seriesTitle": "Naruto",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b85-mkVBh2yjxjmx.png"
+    },
+    {
+      "characterId": "legacy:jjk:satoru-gojo",
+      "malCharacterId": null,
+      "name": "Satoru Gojo",
+      "seriesKey": "jjk",
+      "seriesTitle": "Jujutsu Kaisen",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b127691-9zqh1xpIubn7.png"
+    },
+    {
+      "characterId": "legacy:dbz:piccolo",
+      "malCharacterId": null,
+      "name": "Piccolo",
+      "seriesKey": "dbz",
+      "seriesTitle": "Dragon Ball Z",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b914-KuS8AWjqBrqa.jpg"
+    },
+    {
+      "characterId": "legacy:one-piece:sanji",
+      "malCharacterId": null,
+      "name": "Sanji",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b305-6lisPmHtCnLT.png"
+    },
+    {
+      "characterId": "legacy:evangelion:misato-katsuragi",
+      "malCharacterId": null,
+      "name": "Misato Katsuragi",
+      "seriesKey": "evangelion",
+      "seriesTitle": "Neon Genesis Evangelion",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b1259-afTQkZ5SVMOn.png"
+    },
+    {
+      "characterId": "legacy:mha:ochaco-uraraka",
+      "malCharacterId": null,
+      "name": "Ochaco Uraraka",
+      "seriesKey": "mha",
+      "seriesTitle": "My Hero Academia",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b89221-gSF2a4gPbG4m.png"
+    },
+    {
+      "characterId": "legacy:seven-deadly-sins:king",
+      "malCharacterId": null,
+      "name": "King",
+      "seriesKey": "seven-deadly-sins",
+      "seriesTitle": "The Seven Deadly Sins",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b83801-52RnDXQDZ1I7.png"
+    },
+    {
+      "characterId": "legacy:aot:levi-ackerman",
+      "malCharacterId": null,
+      "name": "Levi Ackerman",
+      "seriesKey": "aot",
+      "seriesTitle": "Attack on Titan",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b40881-F3gr1PkreDvj.png"
+    },
+    {
+      "characterId": "legacy:naruto:shikamaru-nara",
+      "malCharacterId": null,
+      "name": "Shikamaru Nara",
+      "seriesKey": "naruto",
+      "seriesTitle": "Naruto",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b2007-QaesJlIZDifj.jpg"
+    },
+    {
+      "characterId": "legacy:jjk:maki-zenin",
+      "malCharacterId": null,
+      "name": "Maki Zenin",
+      "seriesKey": "jjk",
+      "seriesTitle": "Jujutsu Kaisen",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b134167-5TCytk45YByD.png"
+    },
+    {
+      "characterId": "legacy:dbz:trunks",
+      "malCharacterId": null,
+      "name": "Trunks",
+      "seriesKey": "dbz",
+      "seriesTitle": "Dragon Ball Z",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b2707-YKWmn4q87oF8.png"
+    },
+    {
+      "characterId": "legacy:one-piece:robin",
+      "malCharacterId": null,
+      "name": "Robin",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b61-ywXUyyocEEqt.png"
+    },
+    {
+      "characterId": "legacy:evangelion:kaworu-nagisa",
+      "malCharacterId": null,
+      "name": "Kaworu Nagisa",
+      "seriesKey": "evangelion",
+      "seriesTitle": "Neon Genesis Evangelion",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b1261-HYRv3HpsSL92.jpg"
+    },
+    {
+      "characterId": "legacy:mha:tenya-iida",
+      "malCharacterId": null,
+      "name": "Tenya Iida",
+      "seriesKey": "mha",
+      "seriesTitle": "My Hero Academia",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b89222-TL8MQM3wJgEB.png"
+    },
+    {
+      "characterId": "legacy:seven-deadly-sins:diane",
+      "malCharacterId": null,
+      "name": "Diane",
+      "seriesKey": "seven-deadly-sins",
+      "seriesTitle": "The Seven Deadly Sins",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b74653-XpMcsLVZBnkZ.jpg"
+    },
+    {
+      "characterId": "legacy:aot:erwin-smith",
+      "malCharacterId": null,
+      "name": "Erwin Smith",
+      "seriesKey": "aot",
+      "seriesTitle": "Attack on Titan",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b46496-Mu86MENd5wNB.png"
+    },
+    {
+      "characterId": "legacy:naruto:rock-lee",
+      "malCharacterId": null,
+      "name": "Rock Lee",
+      "seriesKey": "naruto",
+      "seriesTitle": "Naruto",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b306-oUTOO45xInXt.png"
+    },
+    {
+      "characterId": "legacy:jjk:toge-inumaki",
+      "malCharacterId": null,
+      "name": "Toge Inumaki",
+      "seriesKey": "jjk",
+      "seriesTitle": "Jujutsu Kaisen",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b157115-kdhRYQdVhH95.png"
+    },
+    {
+      "characterId": "legacy:dbz:bulma",
+      "malCharacterId": null,
+      "name": "Bulma",
+      "seriesKey": "dbz",
+      "seriesTitle": "Dragon Ball Z",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b678-2YCe13F0tFos.jpg"
+    },
+    {
+      "characterId": "legacy:one-piece:chopper",
+      "malCharacterId": null,
+      "name": "Chopper",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b309-H64NhbJ2ywIQ.jpg"
+    },
+    {
+      "characterId": "legacy:evangelion:gendo-ikari",
+      "malCharacterId": null,
+      "name": "Gendo Ikari",
+      "seriesKey": "evangelion",
+      "seriesTitle": "Neon Genesis Evangelion",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b89-ZtZhXkh1rITn.png"
+    },
+    {
+      "characterId": "legacy:mha:eijiro-kirishima",
+      "malCharacterId": null,
+      "name": "Eijiro Kirishima",
+      "seriesKey": "mha",
+      "seriesTitle": "My Hero Academia",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b89243-R2WJlNuj3aEs.jpg"
+    },
+    {
+      "characterId": "legacy:seven-deadly-sins:gowther",
+      "malCharacterId": null,
+      "name": "Gowther",
+      "seriesKey": "seven-deadly-sins",
+      "seriesTitle": "The Seven Deadly Sins",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b88823-Oppzl2h6OhO8.png"
+    },
+    {
+      "characterId": "legacy:aot:hange-zoe",
+      "malCharacterId": null,
+      "name": "Hange Zoe",
+      "seriesKey": "aot",
+      "seriesTitle": "Attack on Titan",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b71121-7R7CnQd3lHgt.png"
+    },
+    {
+      "characterId": "legacy:naruto:gaara",
+      "malCharacterId": null,
+      "name": "Gaara",
+      "seriesKey": "naruto",
+      "seriesTitle": "Naruto",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b1662-4E5J0LX9jZKZ.png"
+    },
+    {
+      "characterId": "legacy:jjk:panda",
+      "malCharacterId": null,
+      "name": "Panda",
+      "seriesKey": "jjk",
+      "seriesTitle": "Jujutsu Kaisen",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b137974-9qnK3DPrvLKh.jpg"
+    },
+    {
+      "characterId": "legacy:dbz:android-18",
+      "malCharacterId": null,
+      "name": "Android 18",
+      "seriesKey": "dbz",
+      "seriesTitle": "Dragon Ball Z",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b4318-HfIy9rOIOZXM.png"
+    },
+    {
+      "characterId": "legacy:one-piece:usopp",
+      "malCharacterId": null,
+      "name": "Usopp",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b724-GFGgI9AJQkfy.jpg"
+    },
+    {
+      "characterId": "legacy:evangelion:ritsuko-akagi",
+      "malCharacterId": null,
+      "name": "Ritsuko Akagi",
+      "seriesKey": "evangelion",
+      "seriesTitle": "Neon Genesis Evangelion",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/1251-gLa2Arv5E8a9.png"
+    },
+    {
+      "characterId": "legacy:mha:tsuyu-asui",
+      "malCharacterId": null,
+      "name": "Tsuyu Asui",
+      "seriesKey": "mha",
+      "seriesTitle": "My Hero Academia",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b89223-5762vburxnlz.png"
+    },
+    {
+      "characterId": "legacy:seven-deadly-sins:merlin",
+      "malCharacterId": null,
+      "name": "Merlin",
+      "seriesKey": "seven-deadly-sins",
+      "seriesTitle": "The Seven Deadly Sins",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b89180-rN6OVPki8h3V.png"
+    },
+    {
+      "characterId": "legacy:aot:jean-kirstein",
+      "malCharacterId": null,
+      "name": "Jean Kirstein",
+      "seriesKey": "aot",
+      "seriesTitle": "Attack on Titan",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b46498-ritqAj9FW6jX.png"
+    },
+    {
+      "characterId": "legacy:naruto:tenten",
+      "malCharacterId": null,
+      "name": "Tenten",
+      "seriesKey": "naruto",
+      "seriesTitle": "Naruto",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b3710-OmDNYKi0Xfjk.png"
+    },
+    {
+      "characterId": "legacy:jjk:kento-nanami",
+      "malCharacterId": null,
+      "name": "Kento Nanami",
+      "seriesKey": "jjk",
+      "seriesTitle": "Jujutsu Kaisen",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b133704-8wLTGjc234q2.png"
+    },
+    {
+      "characterId": "legacy:dbz:chi-chi",
+      "malCharacterId": null,
+      "name": "Chi Chi",
+      "seriesKey": "dbz",
+      "seriesTitle": "Dragon Ball Z",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/2102.jpg"
+    },
+    {
+      "characterId": "legacy:one-piece:franky",
+      "malCharacterId": null,
+      "name": "Franky",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/n64-ChX6ZzHHjXqA.png"
+    },
+    {
+      "characterId": "legacy:evangelion:toji-suzuhara",
+      "malCharacterId": null,
+      "name": "Toji Suzuhara",
+      "seriesKey": "evangelion",
+      "seriesTitle": "Neon Genesis Evangelion",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b1262-srj1373Rz8dI.png"
+    },
+    {
+      "characterId": "legacy:mha:momo-yaoyorozu",
+      "malCharacterId": null,
+      "name": "Momo Yaoyorozu",
+      "seriesKey": "mha",
+      "seriesTitle": "My Hero Academia",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b89241-Q8KzAfX4Qe2y.png"
+    },
+    {
+      "characterId": "legacy:seven-deadly-sins:hawk",
+      "malCharacterId": null,
+      "name": "Hawk",
+      "seriesKey": "seven-deadly-sins",
+      "seriesTitle": "The Seven Deadly Sins",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/n86683-ZXPoLZnKqNtx.png"
+    },
+    {
+      "characterId": "legacy:aot:sasha-blouse",
+      "malCharacterId": null,
+      "name": "Sasha Blouse",
+      "seriesKey": "aot",
+      "seriesTitle": "Attack on Titan",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b45887-QPtJH0KwqthW.jpg"
+    },
+    {
+      "characterId": "legacy:naruto:ino-yamanaka",
+      "malCharacterId": null,
+      "name": "Ino Yamanaka",
+      "seriesKey": "naruto",
+      "seriesTitle": "Naruto",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b2009-H7n38Ns1fr0Y.jpg"
+    },
+    {
+      "characterId": "legacy:jjk:suguru-geto",
+      "malCharacterId": null,
+      "name": "Suguru Geto",
+      "seriesKey": "jjk",
+      "seriesTitle": "Jujutsu Kaisen",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b133699-FCnXaISgazAi.png"
+    },
+    {
+      "characterId": "legacy:dbz:goten",
+      "malCharacterId": null,
+      "name": "Goten",
+      "seriesKey": "dbz",
+      "seriesTitle": "Dragon Ball Z",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/2551.jpg"
+    },
+    {
+      "characterId": "legacy:one-piece:brook",
+      "malCharacterId": null,
+      "name": "Brook",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b5627-av8oD3zhKvDl.png"
+    },
+    {
+      "characterId": "legacy:evangelion:kaji",
+      "malCharacterId": null,
+      "name": "Kaji",
+      "seriesKey": "evangelion",
+      "seriesTitle": "Neon Genesis Evangelion",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b1260-QCPCuARGDhqK.jpg"
+    },
+    {
+      "characterId": "legacy:mha:denki-kaminari",
+      "malCharacterId": null,
+      "name": "Denki Kaminari",
+      "seriesKey": "mha",
+      "seriesTitle": "My Hero Academia",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b89249-Ygc30RlYoFta.png"
+    },
+    {
+      "characterId": "legacy:seven-deadly-sins:gilthunder",
+      "malCharacterId": null,
+      "name": "Gilthunder",
+      "seriesKey": "seven-deadly-sins",
+      "seriesTitle": "The Seven Deadly Sins",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b74285-qGwNsXKYRPcC.png"
+    },
+    {
+      "characterId": "legacy:aot:connie-springer",
+      "malCharacterId": null,
+      "name": "Connie Springer",
+      "seriesKey": "aot",
+      "seriesTitle": "Attack on Titan",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/n46486-izhPjzut6WCZ.png"
+    },
+    {
+      "characterId": "legacy:naruto:choji-akimichi",
+      "malCharacterId": null,
+      "name": "Choji Akimichi",
+      "seriesKey": "naruto",
+      "seriesTitle": "Naruto",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/n2008-j1oCafEGZucg.png"
+    },
+    {
+      "characterId": "legacy:jjk:yuta-okkotsu",
+      "malCharacterId": null,
+      "name": "Yuta Okkotsu",
+      "seriesKey": "jjk",
+      "seriesTitle": "Jujutsu Kaisen",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b129571-GHJk7gviHOOw.jpg"
+    },
+    {
+      "characterId": "legacy:dbz:videl",
+      "malCharacterId": null,
+      "name": "Videl",
+      "seriesKey": "dbz",
+      "seriesTitle": "Dragon Ball Z",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b2111-9XqkV0tpjRPB.png"
+    },
+    {
+      "characterId": "legacy:one-piece:jinbe",
+      "malCharacterId": null,
+      "name": "Jinbe",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b18938-yZANEfjsVhW4.png"
+    },
+    {
+      "characterId": "legacy:evangelion:fuyutsuki",
+      "malCharacterId": null,
+      "name": "Fuyutsuki",
+      "seriesKey": "evangelion",
+      "seriesTitle": "Neon Genesis Evangelion",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b1253-4VmJuD5jUSvJ.png"
+    },
+    {
+      "characterId": "legacy:mha:kyoka-jiro",
+      "malCharacterId": null,
+      "name": "Kyoka Jiro",
+      "seriesKey": "mha",
+      "seriesTitle": "My Hero Academia",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b89243-R2WJlNuj3aEs.jpg"
+    },
+    {
+      "characterId": "legacy:seven-deadly-sins:howzer",
+      "malCharacterId": null,
+      "name": "Howzer",
+      "seriesKey": "seven-deadly-sins",
+      "seriesTitle": "The Seven Deadly Sins",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/86685-EVUJUHwElo95.png"
+    },
+    {
+      "characterId": "legacy:aot:reiner-braun",
+      "malCharacterId": null,
+      "name": "Reiner Braun",
+      "seriesKey": "aot",
+      "seriesTitle": "Attack on Titan",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b46484-P6A2GjNQn49F.png"
+    },
+    {
+      "characterId": "legacy:naruto:kiba-inuzuka",
+      "malCharacterId": null,
+      "name": "Kiba Inuzuka",
+      "seriesKey": "naruto",
+      "seriesTitle": "Naruto",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/n3495-dtw0gHa5SOo6.png"
+    },
+    {
+      "characterId": "legacy:jjk:mahito",
+      "malCharacterId": null,
+      "name": "Mahito",
+      "seriesKey": "jjk",
+      "seriesTitle": "Jujutsu Kaisen",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b133702-Y7JRG5vAvjIL.png"
+    },
+    {
+      "characterId": "legacy:dbz:yamcha",
+      "malCharacterId": null,
+      "name": "Yamcha",
+      "seriesKey": "dbz",
+      "seriesTitle": "Dragon Ball Z",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b4014-of2ONLvA7T8p.jpg"
+    },
+    {
+      "characterId": "legacy:one-piece:shanks",
+      "malCharacterId": null,
+      "name": "Shanks",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b727-wUJx7M1z5xON.png"
+    },
+    {
+      "characterId": "legacy:evangelion:kensuke-aida",
+      "malCharacterId": null,
+      "name": "Kensuke Aida",
+      "seriesKey": "evangelion",
+      "seriesTitle": "Neon Genesis Evangelion",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b1250-GU74dqhQEaUN.png"
+    },
+    {
+      "characterId": "legacy:mha:mina-ashido",
+      "malCharacterId": null,
+      "name": "Mina Ashido",
+      "seriesKey": "mha",
+      "seriesTitle": "My Hero Academia",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b89247-hu5MCqfoN82E.png"
+    },
+    {
+      "characterId": "legacy:seven-deadly-sins:guila",
+      "malCharacterId": null,
+      "name": "Guila",
+      "seriesKey": "seven-deadly-sins",
+      "seriesTitle": "The Seven Deadly Sins",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/n86665-ZbYVIjmbyfl9.jpg"
+    },
+    {
+      "characterId": "legacy:aot:bertholdt-hoover",
+      "malCharacterId": null,
+      "name": "Bertholdt Hoover",
+      "seriesKey": "aot",
+      "seriesTitle": "Attack on Titan",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b46488-wm6HvkdkHoZu.jpg"
+    },
+    {
+      "characterId": "legacy:naruto:shino-aburame",
+      "malCharacterId": null,
+      "name": "Shino Aburame",
+      "seriesKey": "naruto",
+      "seriesTitle": "Naruto",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/n3428-KVeHMgx0xMqO.png"
+    },
+    {
+      "characterId": "legacy:jjk:toji-fushiguro",
+      "malCharacterId": null,
+      "name": "Toji Fushiguro",
+      "seriesKey": "jjk",
+      "seriesTitle": "Jujutsu Kaisen",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b126635-L0y3I92JSUkN.png"
+    },
+    {
+      "characterId": "legacy:dbz:tien-shinhan",
+      "malCharacterId": null,
+      "name": "Tien Shinhan",
+      "seriesKey": "dbz",
+      "seriesTitle": "Dragon Ball Z",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b5499-Cn9kTD2J9dU5.png"
+    },
+    {
+      "characterId": "legacy:one-piece:ace",
+      "malCharacterId": null,
+      "name": "Ace",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b2072-Lc6jEdsueJUK.jpg"
+    },
+    {
+      "characterId": "legacy:evangelion:hikari-horaki",
+      "malCharacterId": null,
+      "name": "Hikari Horaki",
+      "seriesKey": "evangelion",
+      "seriesTitle": "Neon Genesis Evangelion",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b1254-Ps0twCqNZZH2.png"
+    },
+    {
+      "characterId": "legacy:mha:fumikage-tokoyami",
+      "malCharacterId": null,
+      "name": "Fumikage Tokoyami",
+      "seriesKey": "mha",
+      "seriesTitle": "My Hero Academia",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b89898-yAYDmPQPSOTV.png"
+    },
+    {
+      "characterId": "legacy:seven-deadly-sins:jericho",
+      "malCharacterId": null,
+      "name": "Jericho",
+      "seriesKey": "seven-deadly-sins",
+      "seriesTitle": "The Seven Deadly Sins",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/86699-oRLKbh6x7ijB.jpg"
+    },
+    {
+      "characterId": "legacy:aot:annie-leonhart",
+      "malCharacterId": null,
+      "name": "Annie Leonhart",
+      "seriesKey": "aot",
+      "seriesTitle": "Attack on Titan",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b46490-tan274Ifc1Jf.jpg"
+    },
+    {
+      "characterId": "legacy:naruto:jiraiya",
+      "malCharacterId": null,
+      "name": "Jiraiya",
+      "seriesKey": "naruto",
+      "seriesTitle": "Naruto",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b2423-RO5MyoXSA9OL.png"
+    },
+    {
+      "characterId": "legacy:jjk:mai-zenin",
+      "malCharacterId": null,
+      "name": "Mai Zenin",
+      "seriesKey": "jjk",
+      "seriesTitle": "Jujutsu Kaisen",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b134168-FdWz5w2LqpeF.jpg"
+    },
+    {
+      "characterId": "legacy:dbz:android-17",
+      "malCharacterId": null,
+      "name": "Android 17",
+      "seriesKey": "dbz",
+      "seriesTitle": "Dragon Ball Z",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b2147-AQ0iJ9QEmwPf.png"
+    },
+    {
+      "characterId": "legacy:one-piece:sabo",
+      "malCharacterId": null,
+      "name": "Sabo",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b32893-3weZS61cdwLD.png"
+    },
+    {
+      "characterId": "legacy:evangelion:naoko-akagi",
+      "malCharacterId": null,
+      "name": "Naoko Akagi",
+      "seriesKey": "evangelion",
+      "seriesTitle": "Neon Genesis Evangelion",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/19207-ouxkWAjw2nyF.png"
+    },
+    {
+      "characterId": "legacy:mha:shota-aizawa",
+      "malCharacterId": null,
+      "name": "Shota Aizawa",
+      "seriesKey": "mha",
+      "seriesTitle": "My Hero Academia",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b89225-XBgvUhI9naVI.png"
+    },
+    {
+      "characterId": "legacy:seven-deadly-sins:elaine",
+      "malCharacterId": null,
+      "name": "Elaine",
+      "seriesKey": "seven-deadly-sins",
+      "seriesTitle": "The Seven Deadly Sins",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/86681-6kx3mfwNhraK.png"
+    },
+    {
+      "characterId": "legacy:aot:zeke-yeager",
+      "malCharacterId": null,
+      "name": "Zeke Yeager",
+      "seriesKey": "aot",
+      "seriesTitle": "Attack on Titan",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b40882-dsj7IP943WFF.jpg"
+    },
+    {
+      "characterId": "legacy:naruto:tsunade",
+      "malCharacterId": null,
+      "name": "Tsunade",
+      "seriesKey": "naruto",
+      "seriesTitle": "Naruto",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b2767-r61Cj9v8I0wl.png"
+    },
+    {
+      "characterId": "legacy:jjk:utahime-iori",
+      "malCharacterId": null,
+      "name": "Utahime Iori",
+      "seriesKey": "jjk",
+      "seriesTitle": "Jujutsu Kaisen",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b157864-rejVYNx0kQZr.jpg"
+    },
+    {
+      "characterId": "legacy:dbz:cell",
+      "malCharacterId": null,
+      "name": "Cell",
+      "seriesKey": "dbz",
+      "seriesTitle": "Dragon Ball Z",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/3908.jpg"
+    },
+    {
+      "characterId": "legacy:one-piece:law",
+      "malCharacterId": null,
+      "name": "Law",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b13767-U604OJN9dxCn.jpg"
+    },
+    {
+      "characterId": "legacy:evangelion:yui-ikari",
+      "malCharacterId": null,
+      "name": "Yui Ikari",
+      "seriesKey": "evangelion",
+      "seriesTitle": "Neon Genesis Evangelion",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/1258-FiCAgSWsP2Xz.png"
+    },
+    {
+      "characterId": "legacy:mha:shigaraki",
+      "malCharacterId": null,
+      "name": "Shigaraki",
+      "seriesKey": "mha",
+      "seriesTitle": "My Hero Academia",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b89226-qGXqFthO4SM3.jpg"
+    },
+    {
+      "characterId": "legacy:seven-deadly-sins:dreyfus",
+      "malCharacterId": null,
+      "name": "Dreyfus",
+      "seriesKey": "seven-deadly-sins",
+      "seriesTitle": "The Seven Deadly Sins",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/86677-TVr1h1HFTZ43.png"
+    },
+    {
+      "characterId": "legacy:aot:gabi-braun",
+      "malCharacterId": null,
+      "name": "Gabi Braun",
+      "seriesKey": "aot",
+      "seriesTitle": "Attack on Titan",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b46484-P6A2GjNQn49F.png"
+    },
+    {
+      "characterId": "legacy:naruto:orochimaru",
+      "malCharacterId": null,
+      "name": "Orochimaru",
+      "seriesKey": "naruto",
+      "seriesTitle": "Naruto",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/n2455-V9tLMS3TIgJW.png"
+    },
+    {
+      "characterId": "legacy:jjk:hanami",
+      "malCharacterId": null,
+      "name": "Hanami",
+      "seriesKey": "jjk",
+      "seriesTitle": "Jujutsu Kaisen",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b172743-4Y5SXqED6A3G.jpg"
+    },
+    {
+      "characterId": "legacy:dbz:raditz",
+      "malCharacterId": null,
+      "name": "Raditz",
+      "seriesKey": "dbz",
+      "seriesTitle": "Dragon Ball Z",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/6155.jpg"
+    },
+    {
+      "characterId": "legacy:one-piece:hancock",
+      "malCharacterId": null,
+      "name": "Hancock",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b16342-kVOF6V5Q94go.png"
+    },
+    {
+      "characterId": "legacy:evangelion:maya-ibuki",
+      "malCharacterId": null,
+      "name": "Maya Ibuki",
+      "seriesKey": "evangelion",
+      "seriesTitle": "Neon Genesis Evangelion",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/1256-7NjpwB5vSlPZ.png"
+    },
+    {
+      "characterId": "legacy:aot:ymir",
+      "malCharacterId": null,
+      "name": "Ymir",
+      "seriesKey": "aot",
+      "seriesTitle": "Attack on Titan",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b71479-huCD908XIdqv.png"
+    },
+    {
+      "characterId": "legacy:naruto:itachi-uchiha",
+      "malCharacterId": null,
+      "name": "Itachi Uchiha",
+      "seriesKey": "naruto",
+      "seriesTitle": "Naruto",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b14-9Kb1E5oel1ke.png"
+    },
+    {
+      "characterId": "legacy:jjk:dagon",
+      "malCharacterId": null,
+      "name": "Dagon",
+      "seriesKey": "jjk",
+      "seriesTitle": "Jujutsu Kaisen",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b204383-5oTlVPpaCnM2.jpg"
+    },
+    {
+      "characterId": "legacy:dbz:nappa",
+      "malCharacterId": null,
+      "name": "Nappa",
+      "seriesKey": "dbz",
+      "seriesTitle": "Dragon Ball Z",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/5224.jpg"
+    },
+    {
+      "characterId": "legacy:one-piece:mihawk",
+      "malCharacterId": null,
+      "name": "Mihawk",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/n2064-OpnF4nLi6bvL.png"
+    },
+    {
+      "characterId": "legacy:evangelion:shigeru-aoba",
+      "malCharacterId": null,
+      "name": "Shigeru Aoba",
+      "seriesKey": "evangelion",
+      "seriesTitle": "Neon Genesis Evangelion",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/1252-gSQPK15PSOl9.png"
+    },
+    {
+      "characterId": "legacy:aot:hitch-dreyse",
+      "malCharacterId": null,
+      "name": "Hitch Dreyse",
+      "seriesKey": "aot",
+      "seriesTitle": "Attack on Titan",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b86017-m6vXFRKWMwUo.jpg"
+    },
+    {
+      "characterId": "legacy:naruto:might-guy",
+      "malCharacterId": null,
+      "name": "Might Guy",
+      "seriesKey": "naruto",
+      "seriesTitle": "Naruto",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b307-xieUEdhdTVwQ.png"
+    },
+    {
+      "characterId": "legacy:jjk:naobito-zenin",
+      "malCharacterId": null,
+      "name": "Naobito Zenin",
+      "seriesKey": "jjk",
+      "seriesTitle": "Jujutsu Kaisen",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b188432-WePQBJsEuSts.png"
+    },
+    {
+      "characterId": "legacy:dbz:dende",
+      "malCharacterId": null,
+      "name": "Dende",
+      "seriesKey": "dbz",
+      "seriesTitle": "Dragon Ball Z",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/6273.jpg"
+    },
+    {
+      "characterId": "legacy:one-piece:buggy",
+      "malCharacterId": null,
+      "name": "Buggy",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/n725-g04AaiaK5f9B.png"
+    },
+    {
+      "characterId": "legacy:aot:moblit-berner",
+      "malCharacterId": null,
+      "name": "Moblit Berner",
+      "seriesKey": "aot",
+      "seriesTitle": "Attack on Titan",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/n127573-VSYSvQ1VK1c7.jpg"
+    },
+    {
+      "characterId": "legacy:naruto:pain",
+      "malCharacterId": null,
+      "name": "Pain",
+      "seriesKey": "naruto",
+      "seriesTitle": "Naruto",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b3180-ITMGBLWNBOgV.png"
+    },
+    {
+      "characterId": "legacy:jjk:naoya-zenin",
+      "malCharacterId": null,
+      "name": "Naoya Zenin",
+      "seriesKey": "jjk",
+      "seriesTitle": "Jujutsu Kaisen",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b134167-5TCytk45YByD.png"
+    },
+    {
+      "characterId": "legacy:one-piece:crocodile",
+      "malCharacterId": null,
+      "name": "Crocodile",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b2749-e8ebEBN1SlS2.png"
+    },
+    {
+      "characterId": "legacy:naruto:madara-uchiha",
+      "malCharacterId": null,
+      "name": "Madara Uchiha",
+      "seriesKey": "naruto",
+      "seriesTitle": "Naruto",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b13-SISLEw1oAD7a.png"
+    },
+    {
+      "characterId": "legacy:jjk:kinji-hakari",
+      "malCharacterId": null,
+      "name": "Kinji Hakari",
+      "seriesKey": "jjk",
+      "seriesTitle": "Jujutsu Kaisen",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b197584-fK7Jc6DLfx7e.jpg"
+    },
+    {
+      "characterId": "legacy:one-piece:doflamingo",
+      "malCharacterId": null,
+      "name": "Doflamingo",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b2754-B4gGSlNYgsyh.jpg"
+    },
+    {
+      "characterId": "legacy:naruto:obito-uchiha",
+      "malCharacterId": null,
+      "name": "Obito Uchiha",
+      "seriesKey": "naruto",
+      "seriesTitle": "Naruto",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b13-SISLEw1oAD7a.png"
+    },
+    {
+      "characterId": "legacy:one-piece:kaido",
+      "malCharacterId": null,
+      "name": "Kaido",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b46109-MT7Hm4Bk93In.png"
+    },
+    {
+      "characterId": "legacy:one-piece:big-mom",
+      "malCharacterId": null,
+      "name": "Big Mom",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b126184-QZ8JNecT5wQc.png"
+    },
+    {
+      "characterId": "legacy:one-piece:marco",
+      "malCharacterId": null,
+      "name": "Marco",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b9323-tGArly93xBZv.png"
+    },
+    {
+      "characterId": "legacy:one-piece:yamato",
+      "malCharacterId": null,
+      "name": "Yamato",
+      "seriesKey": "one-piece",
+      "seriesTitle": "One Piece",
+      "imageUrl": "https://s4.anilist.co/file/anilistcdn/character/medium/b176840-8KRqXXLJeLOg.png"
+    }
+  ]
+}

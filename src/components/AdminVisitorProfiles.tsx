@@ -2,16 +2,19 @@
 
 import { useState } from "react";
 import { AdminVisitorProfileDrawer } from "@/components/AdminVisitorProfileDrawer";
-import { VisitorUserIcon } from "@/components/VisitorUserIcon";
+import { VisitorAvatar } from "@/components/VisitorAvatar";
 import type { AdminMetrics, MetricsAudience } from "@/lib/analytics-query";
 import type { VisitorProfile } from "@/lib/analytics-visitor-profiles";
 import { formatGeoChip } from "@/lib/geo-display";
 import { formatReferrerTrail } from "@/lib/referrer-display";
 import {
+  formatActiveDays,
   formatDurationMs,
   formatRelative,
   formatWhen,
   profileDisplayName,
+  profileSeriesLabel,
+  visitorStoryLine,
 } from "@/lib/visitor-profile-ui";
 
 type Props = {
@@ -33,8 +36,14 @@ export function AdminVisitorProfiles({ metrics, loading, audience }: Props) {
           <p className="admin-dash__people-desc">
             {loading && !metrics
               ? "Loading…"
-              : `${visitors.length} active browsers shown · ${total7d} with site visits in 7d · click a profile for full timeline`}
+              : `${visitors.length} browsers shown · ${total7d} touched the site in 7d · open a card for their story`}
           </p>
+          {visitors.length > 0 ? (
+            <p className="admin-dash__people-note">
+              Each browser gets a unique character on first visit (locked in the
+              database). Incognito or another device is a separate character.
+            </p>
+          ) : null}
         </div>
       </header>
 
@@ -72,7 +81,17 @@ function VisitorCard({
   profile: VisitorProfile;
   onOpen: () => void;
 }) {
-  const name = profileDisplayName(v.displayId, v.deviceLabel);
+  const name = profileDisplayName(v.deviceLabel, v.lockedNickname);
+  const series = profileSeriesLabel(v.deviceLabel, v.lockedShowTitle);
+  const story = visitorStoryLine({
+    lastPath: v.lastPath,
+    topDay: v.topDay,
+    lastReferrerSource: v.lastReferrerSource,
+    geoCountry: v.lastGeoCountry ?? v.geoCountry,
+    geoRegion: v.lastGeoRegion ?? v.geoRegion,
+    playedBeat: v.playedBeat,
+    isReturning: v.isReturning,
+  });
   const lastActive = formatRelative(v.lastSeenAt);
   const firstSeen = formatWhen(v.firstSeenAt);
   const daysSummary =
@@ -93,13 +112,23 @@ function VisitorCard({
     <li className="admin-dash__profile-cell">
       <button type="button" className="admin-dash__profile" onClick={onOpen}>
         <div className="admin-dash__profile-top">
-          <div className="admin-dash__avatar" aria-hidden>
-            <VisitorUserIcon className="admin-dash__avatar-icon" />
-          </div>
+          <VisitorAvatar
+            visitorId={v.visitorId}
+            avatarUrl={v.lockedAvatarUrl}
+            alt={name}
+          />
           <div className="admin-dash__profile-id-block">
             <span className="admin-dash__profile-name">{name}</span>
-            <span className="admin-dash__profile-handle">{v.displayId}</span>
+            <span className="admin-dash__profile-tagline">{story}</span>
             <div className="admin-dash__profile-tags">
+              {series ? (
+                <span
+                  className="admin-dash__profile-tag admin-dash__profile-tag--anime"
+                  title="Series"
+                >
+                  {series}
+                </span>
+              ) : null}
               <span
                 className="admin-dash__profile-tag"
                 title={`First: ${v.referrerSource} · Latest: ${v.lastReferrerSource}`}
@@ -140,12 +169,18 @@ function VisitorCard({
             <dd title={v.lastSeenAt}>{lastActive}</dd>
           </div>
           <div>
-            <dt>Sessions</dt>
-            <dd>{v.sessions}</dd>
+            <dt>Active days</dt>
+            <dd title="Distinct calendar days with activity (7d)">
+              {formatActiveDays(v.activeDays)}
+            </dd>
           </div>
           <div>
-            <dt>Posts</dt>
-            <dd>{v.postsTouched}</dd>
+            <dt>Page views</dt>
+            <dd>{v.pageViews > 0 ? v.pageViews : "—"}</dd>
+          </div>
+          <div>
+            <dt>Beats</dt>
+            <dd>{v.postsTouched > 0 ? v.postsTouched : "—"}</dd>
           </div>
           <div>
             <dt>Listen</dt>

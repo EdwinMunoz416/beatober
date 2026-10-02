@@ -7,6 +7,8 @@ import type { LiveSnapshot } from "@/lib/analytics-live";
 import type { LiveAudience } from "@/lib/analytics-live";
 import { formatLiveActivity } from "@/lib/live-activity-display";
 import { formatReferrerSource } from "@/lib/referrer-display";
+import { VisitorAvatar } from "@/components/VisitorAvatar";
+import { profileDisplayName } from "@/lib/visitor-profile-ui";
 
 type Props = {
   initialAuthed: boolean;
@@ -155,7 +157,7 @@ export function AdminLiveDashboard({ initialAuthed }: Props) {
             <thead>
               <tr>
                 <th scope="col">Last seen</th>
-                <th scope="col">Visitor</th>
+                <th scope="col">Who</th>
                 <th scope="col">Activity</th>
                 <th scope="col">Page</th>
                 <th scope="col">Source</th>
@@ -169,7 +171,17 @@ export function AdminLiveDashboard({ initialAuthed }: Props) {
                     {v.secondsAgo < 5 ? "now" : `${v.secondsAgo}s ago`}
                   </td>
                   <td>
-                    <code className="admin-dash__live-code">{v.displayId}</code>
+                    <div className="admin-dash__live-who">
+                      <VisitorAvatar
+                        visitorId={v.visitorId}
+                        avatarUrl={v.lockedAvatarUrl}
+                        alt={profileDisplayName(null, v.lockedNickname)}
+                        compact
+                      />
+                      <span className="admin-dash__live-name">
+                        {profileDisplayName(null, v.lockedNickname)}
+                      </span>
+                    </div>
                     {v.audience !== "visitor" ? (
                       <span className="admin-dash__live-badge">{v.audience}</span>
                     ) : null}

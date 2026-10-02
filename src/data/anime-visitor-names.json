@@ -1,0 +1,836 @@
+{
+  "version": 3,
+  "source": "AniList GraphQL (https://anilist.co)",
+  "syncedAt": "2026-10-02T20:04:56.471Z",
+  "interleave": "round-robin by character index across shows (see visitor-nickname.ts)",
+  "shows": [
+    {
+      "key": "naruto",
+      "title": "Naruto",
+      "anilistId": 20,
+      "apiTitle": "Naruto",
+      "characters": [
+        {
+          "name": "Naruto Uzumaki",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b17-phjcWCkRuIhu.png"
+        },
+        {
+          "name": "Sasuke Uchiha",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b13-SISLEw1oAD7a.png"
+        },
+        {
+          "name": "Sakura Haruno",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b145-IorfpI8arxeX.png"
+        },
+        {
+          "name": "Kakashi Hatake",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b85-mkVBh2yjxjmx.png"
+        },
+        {
+          "name": "Hinata Hyuga",
+          "imageMedium": null
+        },
+        {
+          "name": "Shikamaru Nara",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b2007-QaesJlIZDifj.jpg"
+        },
+        {
+          "name": "Rock Lee",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b306-oUTOO45xInXt.png"
+        },
+        {
+          "name": "Gaara",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b1662-4E5J0LX9jZKZ.png"
+        },
+        {
+          "name": "Neji Hyuga",
+          "imageMedium": null
+        },
+        {
+          "name": "Tenten",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b3710-OmDNYKi0Xfjk.png"
+        },
+        {
+          "name": "Ino Yamanaka",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b2009-H7n38Ns1fr0Y.jpg"
+        },
+        {
+          "name": "Choji Akimichi",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/n2008-j1oCafEGZucg.png"
+        },
+        {
+          "name": "Kiba Inuzuka",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/n3495-dtw0gHa5SOo6.png"
+        },
+        {
+          "name": "Shino Aburame",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/n3428-KVeHMgx0xMqO.png"
+        },
+        {
+          "name": "Jiraiya",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b2423-RO5MyoXSA9OL.png"
+        },
+        {
+          "name": "Tsunade",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b2767-r61Cj9v8I0wl.png"
+        },
+        {
+          "name": "Orochimaru",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/n2455-V9tLMS3TIgJW.png"
+        },
+        {
+          "name": "Itachi Uchiha",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b14-9Kb1E5oel1ke.png"
+        },
+        {
+          "name": "Minato Namikaze",
+          "imageMedium": null
+        },
+        {
+          "name": "Might Guy",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b307-xieUEdhdTVwQ.png"
+        },
+        {
+          "name": "Killer Bee",
+          "imageMedium": null
+        },
+        {
+          "name": "Pain",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b3180-ITMGBLWNBOgV.png"
+        },
+        {
+          "name": "Madara Uchiha",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b13-SISLEw1oAD7a.png"
+        },
+        {
+          "name": "Obito Uchiha",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b13-SISLEw1oAD7a.png"
+        }
+      ]
+    },
+    {
+      "key": "jjk",
+      "title": "Jujutsu Kaisen",
+      "anilistId": 113415,
+      "apiTitle": "JUJUTSU KAISEN",
+      "characters": [
+        {
+          "name": "Yuji Itadori",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b127212-FVm2tD0erQ5B.png"
+        },
+        {
+          "name": "Megumi Fushiguro",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b126635-L0y3I92JSUkN.png"
+        },
+        {
+          "name": "Nobara Kugisaki",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b133700-f6sOO3TcgLV6.png"
+        },
+        {
+          "name": "Satoru Gojo",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b127691-9zqh1xpIubn7.png"
+        },
+        {
+          "name": "Maki Zenin",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b134167-5TCytk45YByD.png"
+        },
+        {
+          "name": "Toge Inumaki",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b157115-kdhRYQdVhH95.png"
+        },
+        {
+          "name": "Panda",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b137974-9qnK3DPrvLKh.jpg"
+        },
+        {
+          "name": "Kento Nanami",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b133704-8wLTGjc234q2.png"
+        },
+        {
+          "name": "Suguru Geto",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b133699-FCnXaISgazAi.png"
+        },
+        {
+          "name": "Yuta Okkotsu",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b129571-GHJk7gviHOOw.jpg"
+        },
+        {
+          "name": "Mahito",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b133702-Y7JRG5vAvjIL.png"
+        },
+        {
+          "name": "Toji Fushiguro",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b126635-L0y3I92JSUkN.png"
+        },
+        {
+          "name": "Choso",
+          "imageMedium": null
+        },
+        {
+          "name": "Aoi Todo",
+          "imageMedium": null
+        },
+        {
+          "name": "Mai Zenin",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b134168-FdWz5w2LqpeF.jpg"
+        },
+        {
+          "name": "Utahime Iori",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b157864-rejVYNx0kQZr.jpg"
+        },
+        {
+          "name": "Mechamaru",
+          "imageMedium": null
+        },
+        {
+          "name": "Hanami",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b172743-4Y5SXqED6A3G.jpg"
+        },
+        {
+          "name": "Jogo",
+          "imageMedium": null
+        },
+        {
+          "name": "Dagon",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b204383-5oTlVPpaCnM2.jpg"
+        },
+        {
+          "name": "Naobito Zenin",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b188432-WePQBJsEuSts.png"
+        },
+        {
+          "name": "Naoya Zenin",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b134167-5TCytk45YByD.png"
+        },
+        {
+          "name": "Kinji Hakari",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b197584-fK7Jc6DLfx7e.jpg"
+        },
+        {
+          "name": "Kirara Hoshi",
+          "imageMedium": null
+        }
+      ]
+    },
+    {
+      "key": "dbz",
+      "title": "Dragon Ball Z",
+      "anilistId": 813,
+      "apiTitle": "Dragon Ball Z",
+      "characters": [
+        {
+          "name": "Son Goku",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/246-wsRRr6z1kii8.png"
+        },
+        {
+          "name": "Vegeta",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b913-NIFkKazWM8VO.png"
+        },
+        {
+          "name": "Son Gohan",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b2093-kdFZhqcNSsqW.png"
+        },
+        {
+          "name": "Piccolo",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b914-KuS8AWjqBrqa.jpg"
+        },
+        {
+          "name": "Trunks",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b2707-YKWmn4q87oF8.png"
+        },
+        {
+          "name": "Bulma",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b678-2YCe13F0tFos.jpg"
+        },
+        {
+          "name": "Krillin",
+          "imageMedium": null
+        },
+        {
+          "name": "Android 18",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b4318-HfIy9rOIOZXM.png"
+        },
+        {
+          "name": "Master Roshi",
+          "imageMedium": null
+        },
+        {
+          "name": "Chi-Chi",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/2102.jpg"
+        },
+        {
+          "name": "Goten",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/2551.jpg"
+        },
+        {
+          "name": "Videl",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b2111-9XqkV0tpjRPB.png"
+        },
+        {
+          "name": "Yamcha",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b4014-of2ONLvA7T8p.jpg"
+        },
+        {
+          "name": "Tien Shinhan",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b5499-Cn9kTD2J9dU5.png"
+        },
+        {
+          "name": "Android 17",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b2147-AQ0iJ9QEmwPf.png"
+        },
+        {
+          "name": "Frieza",
+          "imageMedium": null
+        },
+        {
+          "name": "Cell",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/3908.jpg"
+        },
+        {
+          "name": "Majin Buu",
+          "imageMedium": null
+        },
+        {
+          "name": "Beerus",
+          "imageMedium": null
+        },
+        {
+          "name": "Whis",
+          "imageMedium": null
+        },
+        {
+          "name": "Broly",
+          "imageMedium": null
+        },
+        {
+          "name": "Raditz",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/6155.jpg"
+        },
+        {
+          "name": "Nappa",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/5224.jpg"
+        },
+        {
+          "name": "Dende",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/6273.jpg"
+        }
+      ]
+    },
+    {
+      "key": "one-piece",
+      "title": "One Piece",
+      "anilistId": 21,
+      "apiTitle": "ONE PIECE",
+      "characters": [
+        {
+          "name": "Luffy",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b40-MNypXsxSRb1R.png"
+        },
+        {
+          "name": "Zoro",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b62-S7oAeA9WInjV.png"
+        },
+        {
+          "name": "Nami",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b723-vp5hPptgnNEC.png"
+        },
+        {
+          "name": "Sanji",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b305-6lisPmHtCnLT.png"
+        },
+        {
+          "name": "Robin",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b61-ywXUyyocEEqt.png"
+        },
+        {
+          "name": "Chopper",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b309-H64NhbJ2ywIQ.jpg"
+        },
+        {
+          "name": "Usopp",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b724-GFGgI9AJQkfy.jpg"
+        },
+        {
+          "name": "Franky",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/n64-ChX6ZzHHjXqA.png"
+        },
+        {
+          "name": "Brook",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b5627-av8oD3zhKvDl.png"
+        },
+        {
+          "name": "Jinbe",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b18938-yZANEfjsVhW4.png"
+        },
+        {
+          "name": "Shanks",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b727-wUJx7M1z5xON.png"
+        },
+        {
+          "name": "Ace",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b2072-Lc6jEdsueJUK.jpg"
+        },
+        {
+          "name": "Sabo",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b32893-3weZS61cdwLD.png"
+        },
+        {
+          "name": "Law",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b13767-U604OJN9dxCn.jpg"
+        },
+        {
+          "name": "Hancock",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b16342-kVOF6V5Q94go.png"
+        },
+        {
+          "name": "Mihawk",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/n2064-OpnF4nLi6bvL.png"
+        },
+        {
+          "name": "Whitebeard",
+          "imageMedium": null
+        },
+        {
+          "name": "Buggy",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/n725-g04AaiaK5f9B.png"
+        },
+        {
+          "name": "Crocodile",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b2749-e8ebEBN1SlS2.png"
+        },
+        {
+          "name": "Doflamingo",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b2754-B4gGSlNYgsyh.jpg"
+        },
+        {
+          "name": "Kaido",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b46109-MT7Hm4Bk93In.png"
+        },
+        {
+          "name": "Big Mom",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b126184-QZ8JNecT5wQc.png"
+        },
+        {
+          "name": "Marco",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b9323-tGArly93xBZv.png"
+        },
+        {
+          "name": "Yamato",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b176840-8KRqXXLJeLOg.png"
+        }
+      ]
+    },
+    {
+      "key": "evangelion",
+      "title": "Neon Genesis Evangelion",
+      "anilistId": 30,
+      "apiTitle": "Neon Genesis Evangelion",
+      "characters": [
+        {
+          "name": "Shinji Ikari",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b89-ZtZhXkh1rITn.png"
+        },
+        {
+          "name": "Rei Ayanami",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/86-cA1zL7fyls8E.jpg"
+        },
+        {
+          "name": "Asuka",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b94-d631a3Z2KPvd.png"
+        },
+        {
+          "name": "Misato Katsuragi",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b1259-afTQkZ5SVMOn.png"
+        },
+        {
+          "name": "Kaworu Nagisa",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b1261-HYRv3HpsSL92.jpg"
+        },
+        {
+          "name": "Gendo Ikari",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b89-ZtZhXkh1rITn.png"
+        },
+        {
+          "name": "Ritsuko Akagi",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/1251-gLa2Arv5E8a9.png"
+        },
+        {
+          "name": "Toji Suzuhara",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b1262-srj1373Rz8dI.png"
+        },
+        {
+          "name": "Kaji",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b1260-QCPCuARGDhqK.jpg"
+        },
+        {
+          "name": "Fuyutsuki",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b1253-4VmJuD5jUSvJ.png"
+        },
+        {
+          "name": "Mari Illustrious",
+          "imageMedium": null
+        },
+        {
+          "name": "Kensuke Aida",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b1250-GU74dqhQEaUN.png"
+        },
+        {
+          "name": "Hikari Horaki",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b1254-Ps0twCqNZZH2.png"
+        },
+        {
+          "name": "Naoko Akagi",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/19207-ouxkWAjw2nyF.png"
+        },
+        {
+          "name": "Yui Ikari",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/1258-FiCAgSWsP2Xz.png"
+        },
+        {
+          "name": "Maya Ibuki",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/1256-7NjpwB5vSlPZ.png"
+        },
+        {
+          "name": "Shigeru Aoba",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/1252-gSQPK15PSOl9.png"
+        },
+        {
+          "name": "Makoto Hyuga",
+          "imageMedium": null
+        },
+        {
+          "name": "Keel Lorenz",
+          "imageMedium": null
+        },
+        {
+          "name": "Sachiel",
+          "imageMedium": null
+        },
+        {
+          "name": "Ramiel",
+          "imageMedium": null
+        },
+        {
+          "name": "Lilith",
+          "imageMedium": null
+        },
+        {
+          "name": "Adam",
+          "imageMedium": null
+        }
+      ]
+    },
+    {
+      "key": "mha",
+      "title": "My Hero Academia",
+      "anilistId": 21459,
+      "apiTitle": "My Hero Academia",
+      "characters": [
+        {
+          "name": "Izuku Midoriya",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b89028-8w1I9o1ISHMg.png"
+        },
+        {
+          "name": "Katsuki Bakugo",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b88892-bdOha3lNcaN6.png"
+        },
+        {
+          "name": "Shoto Todoroki",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b89220-KNBwaVFAR8FD.png"
+        },
+        {
+          "name": "All Might",
+          "imageMedium": null
+        },
+        {
+          "name": "Ochaco Uraraka",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b89221-gSF2a4gPbG4m.png"
+        },
+        {
+          "name": "Tenya Iida",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b89222-TL8MQM3wJgEB.png"
+        },
+        {
+          "name": "Eijiro Kirishima",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b89243-R2WJlNuj3aEs.jpg"
+        },
+        {
+          "name": "Tsuyu Asui",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b89223-5762vburxnlz.png"
+        },
+        {
+          "name": "Momo Yaoyorozu",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b89241-Q8KzAfX4Qe2y.png"
+        },
+        {
+          "name": "Denki Kaminari",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b89249-Ygc30RlYoFta.png"
+        },
+        {
+          "name": "Kyoka Jiro",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b89243-R2WJlNuj3aEs.jpg"
+        },
+        {
+          "name": "Mina Ashido",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b89247-hu5MCqfoN82E.png"
+        },
+        {
+          "name": "Fumikage Tokoyami",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b89898-yAYDmPQPSOTV.png"
+        },
+        {
+          "name": "Shota Aizawa",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b89225-XBgvUhI9naVI.png"
+        },
+        {
+          "name": "Endeavor",
+          "imageMedium": null
+        },
+        {
+          "name": "Hawks",
+          "imageMedium": null
+        },
+        {
+          "name": "Mirio Togata",
+          "imageMedium": null
+        },
+        {
+          "name": "Eri",
+          "imageMedium": null
+        },
+        {
+          "name": "Shigaraki",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b89226-qGXqFthO4SM3.jpg"
+        },
+        {
+          "name": "Dabi",
+          "imageMedium": null
+        },
+        {
+          "name": "Toga",
+          "imageMedium": null
+        },
+        {
+          "name": "Twice",
+          "imageMedium": null
+        },
+        {
+          "name": "Overhaul",
+          "imageMedium": null
+        },
+        {
+          "name": "Lady Nagant",
+          "imageMedium": null
+        }
+      ]
+    },
+    {
+      "key": "seven-deadly-sins",
+      "title": "The Seven Deadly Sins",
+      "anilistId": 20789,
+      "apiTitle": "The Seven Deadly Sins",
+      "characters": [
+        {
+          "name": "Meliodas",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b72921-XDHNd1wflN6P.png"
+        },
+        {
+          "name": "Elizabeth Liones",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b72923-Hidpb955mwMW.png"
+        },
+        {
+          "name": "Ban",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b77605-NrjhQwZwgJ3l.png"
+        },
+        {
+          "name": "King",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b83801-52RnDXQDZ1I7.png"
+        },
+        {
+          "name": "Diane",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b74653-XpMcsLVZBnkZ.jpg"
+        },
+        {
+          "name": "Gowther",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b88823-Oppzl2h6OhO8.png"
+        },
+        {
+          "name": "Merlin",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b89180-rN6OVPki8h3V.png"
+        },
+        {
+          "name": "Escanor",
+          "imageMedium": null
+        },
+        {
+          "name": "Hawk",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/n86683-ZXPoLZnKqNtx.png"
+        },
+        {
+          "name": "Gilthunder",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b74285-qGwNsXKYRPcC.png"
+        },
+        {
+          "name": "Howzer",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/86685-EVUJUHwElo95.png"
+        },
+        {
+          "name": "Guila",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/n86665-ZbYVIjmbyfl9.jpg"
+        },
+        {
+          "name": "Jericho",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/86699-oRLKbh6x7ijB.jpg"
+        },
+        {
+          "name": "Elaine",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/86681-6kx3mfwNhraK.png"
+        },
+        {
+          "name": "Zeldris",
+          "imageMedium": null
+        },
+        {
+          "name": "Estarossa",
+          "imageMedium": null
+        },
+        {
+          "name": "Derieri",
+          "imageMedium": null
+        },
+        {
+          "name": "Monspeet",
+          "imageMedium": null
+        },
+        {
+          "name": "Drole",
+          "imageMedium": null
+        },
+        {
+          "name": "Gloxinia",
+          "imageMedium": null
+        },
+        {
+          "name": "Melascula",
+          "imageMedium": null
+        },
+        {
+          "name": "Grayroad",
+          "imageMedium": null
+        },
+        {
+          "name": "Galand",
+          "imageMedium": null
+        },
+        {
+          "name": "Dreyfus",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/86677-TVr1h1HFTZ43.png"
+        }
+      ]
+    },
+    {
+      "key": "aot",
+      "title": "Attack on Titan",
+      "anilistId": 16498,
+      "apiTitle": "Attack on Titan",
+      "characters": [
+        {
+          "name": "Eren Yeager",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b40882-dsj7IP943WFF.jpg"
+        },
+        {
+          "name": "Mikasa Ackerman",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b40881-F3gr1PkreDvj.png"
+        },
+        {
+          "name": "Armin Arlert",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b46494-g7xYYuBtYPnO.png"
+        },
+        {
+          "name": "Levi Ackerman",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b40881-F3gr1PkreDvj.png"
+        },
+        {
+          "name": "Historia Reiss",
+          "imageMedium": null
+        },
+        {
+          "name": "Erwin Smith",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b46496-Mu86MENd5wNB.png"
+        },
+        {
+          "name": "Hange Zoe",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b71121-7R7CnQd3lHgt.png"
+        },
+        {
+          "name": "Jean Kirstein",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b46498-ritqAj9FW6jX.png"
+        },
+        {
+          "name": "Sasha Blouse",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b45887-QPtJH0KwqthW.jpg"
+        },
+        {
+          "name": "Connie Springer",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/n46486-izhPjzut6WCZ.png"
+        },
+        {
+          "name": "Reiner Braun",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b46484-P6A2GjNQn49F.png"
+        },
+        {
+          "name": "Bertholdt Hoover",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b46488-wm6HvkdkHoZu.jpg"
+        },
+        {
+          "name": "Annie Leonhart",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b46490-tan274Ifc1Jf.jpg"
+        },
+        {
+          "name": "Zeke Yeager",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b40882-dsj7IP943WFF.jpg"
+        },
+        {
+          "name": "Pieck Finger",
+          "imageMedium": null
+        },
+        {
+          "name": "Porco Galliard",
+          "imageMedium": null
+        },
+        {
+          "name": "Falco Grice",
+          "imageMedium": null
+        },
+        {
+          "name": "Gabi Braun",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b46484-P6A2GjNQn49F.png"
+        },
+        {
+          "name": "Ymir",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b71479-huCD908XIdqv.png"
+        },
+        {
+          "name": "Hitch Dreyse",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/b86017-m6vXFRKWMwUo.jpg"
+        },
+        {
+          "name": "Moblit Berner",
+          "imageMedium": "https://s4.anilist.co/file/anilistcdn/character/medium/n127573-VSYSvQ1VK1c7.jpg"
+        },
+        {
+          "name": "Floch Forster",
+          "imageMedium": null
+        },
+        {
+          "name": "Onyankopon",
+          "imageMedium": null
+        },
+        {
+          "name": "Niccolo",
+          "imageMedium": null
+        }
+      ]
+    }
+  ]
+}
