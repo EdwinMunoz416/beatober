@@ -281,7 +281,10 @@ body.strudel-global-draw-active #test-canvas {
 
   .beatober-workspace {
     grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(0, 34%) minmax(0, 1fr);
+    grid-template-rows:
+      auto
+      minmax(0, clamp(6.25rem, 20dvh, 8.75rem))
+      minmax(0, 1fr);
     overflow: hidden;
   }
 
@@ -289,6 +292,12 @@ body.strudel-global-draw-active #test-canvas {
     grid-column: 1;
     grid-row: 2;
     align-items: center;
+    max-height: clamp(6.25rem, 20dvh, 8.75rem);
+  }
+
+  .site-header-spacer {
+    min-height: clamp(2.35rem, 6.5dvh, 3.5rem);
+    margin-bottom: 0.2rem;
   }
 
   .beatober-day-wheel.option-wheel {

@@ -71,12 +71,12 @@ export function DayOptionWheel({
         items={labels}
         selected={focusIndex}
         loop
-        fontSize={mobileLayout ? 0.92 : 1.64}
-        spacing={mobileLayout ? 2.5 : 3.1}
-        tilt={mobileLayout ? 3 : 6}
-        curve={mobileLayout ? 0.15 : 0.85}
-        blur={2.4}
-        fade={0.165}
+        fontSize={mobileLayout ? 0.88 : 1.64}
+        spacing={mobileLayout ? 2.15 : 3.1}
+        tilt={mobileLayout ? 2.5 : 6}
+        curve={mobileLayout ? 0.12 : 0.85}
+        blur={mobileLayout ? 2 : 2.4}
+        fade={mobileLayout ? 0.2 : 0.165}
         inset={mobileLayout ? 0 : 12}
         textColor="#a6a6a6"
         activeColor="#ffffff"
