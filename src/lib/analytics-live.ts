@@ -1,4 +1,5 @@
 import { getSql } from "@/lib/db";
+import { isListeningActivity } from "@/lib/live-activity-display";
 import { resolveDisplayIdentity } from "@/lib/visitor-identity-store";
 
 export type LiveAudience = "visitor" | "internal" | "all";
@@ -26,12 +27,15 @@ export type LiveSnapshot = {
   generatedAt: string;
   windowSeconds: number;
   activeCount: number;
+  listeningCount: number;
   visitors: LiveVisitorRow[];
+  listeners: LiveVisitorRow[];
   dbConfigured: boolean;
   hint: string;
 };
 
-const WINDOW_SECONDS = 120;
+export const LIVE_PRESENCE_WINDOW_SECONDS = 120;
+const WINDOW_SECONDS = LIVE_PRESENCE_WINDOW_SECONDS;
 
 type RawRow = {
   visitor_id: string;
@@ -66,6 +70,46 @@ function parseProps(raw: Record<string, unknown> | null | string): Record<string
     }
   }
   return raw;
+}
+
+/** Visitor IDs with a presence heartbeat in the live window. */
+export async function fetchOnlineVisitorIds(
+  audience: LiveAudience = "visitor",
+): Promise<string[]> {
+  const sql = getSql();
+
+  if (audience === "internal") {
+    const rows = (await sql`
+      SELECT DISTINCT visitor_id
+      FROM analytics_events
+      WHERE created_at >= now() - interval '120 seconds'
+        AND visitor_id IS NOT NULL
+        AND audience = 'internal'
+        AND event_name = 'visitor_presence'
+    `) as { visitor_id: string }[];
+    return rows.map((r) => r.visitor_id);
+  }
+
+  if (audience === "all") {
+    const rows = (await sql`
+      SELECT DISTINCT visitor_id
+      FROM analytics_events
+      WHERE created_at >= now() - interval '120 seconds'
+        AND visitor_id IS NOT NULL
+        AND event_name = 'visitor_presence'
+    `) as { visitor_id: string }[];
+    return rows.map((r) => r.visitor_id);
+  }
+
+  const rows = (await sql`
+    SELECT DISTINCT visitor_id
+    FROM analytics_events
+    WHERE created_at >= now() - interval '120 seconds'
+      AND visitor_id IS NOT NULL
+      AND audience = 'visitor'
+      AND event_name = 'visitor_presence'
+  `) as { visitor_id: string }[];
+  return rows.map((r) => r.visitor_id);
 }
 
 export async function fetchLiveSnapshot(
@@ -187,14 +231,17 @@ export async function fetchLiveSnapshot(
   });
 
   visitors.sort((a, b) => a.secondsAgo - b.secondsAgo);
+  const listeners = visitors.filter((v) => isListeningActivity(v.activity));
 
   return {
     generatedAt: new Date().toISOString(),
     windowSeconds,
     activeCount: visitors.length,
+    listeningCount: listeners.length,
     visitors,
+    listeners,
     dbConfigured: true,
     hint:
-      "Active = visitor_presence in the last 2 minutes. Localhost works with DATABASE_URL in .env.local; geo is usually unknown locally.",
+      "Active = visitor_presence in the last 2 minutes (10s while listening). Listen totals use beat_listen chunks + final flush.",
   };
 }

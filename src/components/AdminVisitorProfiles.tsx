@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AdminVisitorProfileDrawer } from "@/components/AdminVisitorProfileDrawer";
 import { VisitorAvatar } from "@/components/VisitorAvatar";
 import type { AdminMetrics, MetricsAudience } from "@/lib/analytics-query";
@@ -24,6 +24,38 @@ type Props = {
 export function AdminVisitorProfiles({ metrics, loading, audience }: Props) {
   const visitors = metrics?.visitors ?? [];
   const [selected, setSelected] = useState<VisitorProfile | null>(null);
+  const [onlineIds, setOnlineIds] = useState<Set<string>>(() => new Set());
+
+  useEffect(() => {
+    setOnlineIds(new Set(metrics?.onlineVisitorIds ?? []));
+  }, [metrics?.onlineVisitorIds]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const poll = async () => {
+      try {
+        const res = await fetch(
+          `/api/admin/online?audience=${encodeURIComponent(audience)}`,
+        );
+        if (!res.ok || cancelled) return;
+        const data = (await res.json()) as { visitorIds?: string[] };
+        setOnlineIds(new Set(data.visitorIds ?? []));
+      } catch {
+        /* ignore poll errors */
+      }
+    };
+    void poll();
+    const timer = window.setInterval(() => void poll(), 10_000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [audience]);
+
+  const onlineCount = useMemo(
+    () => visitors.filter((v) => onlineIds.has(v.visitorId)).length,
+    [visitors, onlineIds],
+  );
 
   return (
     <section className="admin-dash__people" aria-label="Visitors">
@@ -33,8 +65,14 @@ export function AdminVisitorProfiles({ metrics, loading, audience }: Props) {
           <p className="admin-dash__people-desc">
             {loading && !metrics
               ? "Loading…"
-              : `${visitors.length} browsers · all-time stats · open a card for timeline`}
+              : `${visitors.length} browsers · ${onlineCount} online now · all-time stats`}
           </p>
+          {metrics && onlineCount > 0 ? (
+            <p className="admin-dash__people-online-legend">
+              <span className="admin-dash__avatar-online-dot" aria-hidden />
+              Online = site tab open in the last {metrics.onlineWindowSeconds}s
+            </p>
+          ) : null}
           {visitors.length > 0 ? (
             <p className="admin-dash__people-note">
               Each browser gets a unique character on first visit (locked in the
@@ -54,6 +92,7 @@ export function AdminVisitorProfiles({ metrics, loading, audience }: Props) {
             <VisitorCard
               key={`${v.visitorId}-${v.audience}`}
               profile={v}
+              online={onlineIds.has(v.visitorId)}
               onOpen={() => setSelected(v)}
             />
           ))}
@@ -64,6 +103,7 @@ export function AdminVisitorProfiles({ metrics, loading, audience }: Props) {
         <AdminVisitorProfileDrawer
           profile={selected}
           audience={audience}
+          online={onlineIds.has(selected.visitorId)}
           onClose={() => setSelected(null)}
         />
       ) : null}
@@ -73,9 +113,11 @@ export function AdminVisitorProfiles({ metrics, loading, audience }: Props) {
 
 function VisitorCard({
   profile: v,
+  online,
   onOpen,
 }: {
   profile: VisitorProfile;
+  online: boolean;
   onOpen: () => void;
 }) {
   const name = profileDisplayName(v.deviceLabel, v.lockedNickname);
@@ -103,9 +145,15 @@ function VisitorCard({
             visitorId={v.visitorId}
             avatarUrl={v.lockedAvatarUrl}
             alt={name}
+            online={online}
           />
           <div className="admin-dash__profile-id-block">
-            <span className="admin-dash__profile-name">{name}</span>
+            <span className="admin-dash__profile-name">
+              {name}
+              {online ? (
+                <span className="admin-dash__profile-online-label">Online</span>
+              ) : null}
+            </span>
             <span className="admin-dash__profile-location">{location}</span>
           </div>
         </div>

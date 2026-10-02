@@ -3,6 +3,8 @@ import { trackEvent } from "@/lib/analytics";
 
 const MIN_LISTEN_MS = 300;
 const MAX_LISTEN_MS = 30 * 60 * 1000;
+/** Chunk long sessions so Listen totals survive tab kills; also fresher live state. */
+const LISTEN_PROGRESS_MS = 30_000;
 
 type ActiveListen = {
   day: number;
@@ -12,7 +14,27 @@ type ActiveListen = {
 };
 
 let active: ActiveListen | null = null;
+let progressTimer: ReturnType<typeof setInterval> | null = null;
 let pageHandlersInstalled = false;
+
+function clearListenProgressTimer(): void {
+  if (progressTimer != null) {
+    clearInterval(progressTimer);
+    progressTimer = null;
+  }
+}
+
+function startListenProgressTimer(): void {
+  clearListenProgressTimer();
+  progressTimer = setInterval(() => {
+    const current = active;
+    if (!current) return;
+    const day = current.day;
+    const medium = current.medium;
+    flushBeatListen("interval");
+    startBeatListen(day, medium);
+  }, LISTEN_PROGRESS_MS);
+}
 
 function segmentId(): string {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
@@ -29,6 +51,7 @@ export function startBeatListen(day: number, medium: BeatMedium): void {
     flushBeatListen("replaced");
   }
   active = { day, medium, startedAt: Date.now(), segmentId: segmentId() };
+  startListenProgressTimer();
 }
 
 /**
@@ -44,10 +67,12 @@ export function flushBeatListen(
     | "unmount"
     | "pagehide"
     | "day_change"
-    | "replaced",
+    | "replaced"
+    | "interval",
 ): void {
   const listen = active;
   if (!listen) return;
+  clearListenProgressTimer();
   active = null;
 
   const durationMs = listenDurationMs(listen);

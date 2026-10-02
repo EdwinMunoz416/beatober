@@ -24,6 +24,7 @@ import {
 type Props = {
   profile: VisitorProfile;
   audience: MetricsAudience;
+  online?: boolean;
   onClose: () => void;
 };
 
@@ -41,6 +42,7 @@ function timelineDetail(ev: VisitorTimelineEvent): string | null {
 export function AdminVisitorProfileDrawer({
   profile,
   audience,
+  online = false,
   onClose,
 }: Props) {
   const [events, setEvents] = useState<VisitorTimelineEvent[]>([]);
@@ -138,6 +140,7 @@ export function AdminVisitorProfileDrawer({
               avatarUrl={profile.lockedAvatarUrl}
               alt={name}
               large
+              online={online}
             />
             <div>
               <h2 id="visitor-drawer-title" className="admin-dash__drawer-title">
@@ -166,6 +169,10 @@ export function AdminVisitorProfileDrawer({
         </header>
 
         <dl className="admin-dash__drawer-stats">
+          <div>
+            <dt>Status</dt>
+            <dd>{online ? "Online now" : "Offline"}</dd>
+          </div>
           <div>
             <dt>Visitor type</dt>
             <dd>{profile.isReturning ? "Returning" : "First visit"}</dd>

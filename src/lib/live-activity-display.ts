@@ -8,3 +8,9 @@ const LABELS: Record<string, string> = {
 export function formatLiveActivity(activity: string): string {
   return LABELS[activity] ?? activity.replace(/_/g, " ");
 }
+
+export function isListeningActivity(activity: string): boolean {
+  return (
+    activity === "listening_strudel" || activity === "listening_audio"
+  );
+}

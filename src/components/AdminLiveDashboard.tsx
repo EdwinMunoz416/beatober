@@ -5,7 +5,10 @@ import { AdminShell, AdminLoginPage } from "@/components/AdminShell";
 import { formatGeoChip } from "@/lib/geo-display";
 import type { LiveSnapshot } from "@/lib/analytics-live";
 import type { LiveAudience } from "@/lib/analytics-live";
-import { formatLiveActivity } from "@/lib/live-activity-display";
+import {
+  formatLiveActivity,
+  isListeningActivity,
+} from "@/lib/live-activity-display";
 import { formatReferrerSource } from "@/lib/referrer-display";
 import { VisitorAvatar } from "@/components/VisitorAvatar";
 import { profileDisplayName } from "@/lib/visitor-profile-ui";
@@ -120,7 +123,7 @@ export function AdminLiveDashboard({ initialAuthed }: Props) {
     <AdminShell
       active="live"
       title="Live dashboard"
-      subtitle="Browsers on the site in the last 2 minutes"
+      subtitle="Who’s on site and who’s listening now (presence heartbeats)"
       toolbar={toolbar}
       onLogout={() => void logout()}
     >
@@ -131,6 +134,7 @@ export function AdminLiveDashboard({ initialAuthed }: Props) {
           <span className="admin-dash__live-pulse" aria-hidden />
           {snapshot.activeCount} active
           {snapshot.activeCount === 1 ? " browser" : " browsers"}
+          · {snapshot.listeningCount} listening now
           · window {snapshot.windowSeconds}s
           · updated {new Date(snapshot.generatedAt).toLocaleTimeString()}
         </p>
@@ -152,6 +156,45 @@ export function AdminLiveDashboard({ initialAuthed }: Props) {
           (incognito or a non-admin window) to see yourself.
         </p>
       ) : snapshot ? (
+        <>
+        {snapshot.listeners.length > 0 ? (
+          <section
+            className="admin-dash__live-listening"
+            aria-label="Listening now"
+          >
+            <h2 className="admin-dash__live-listening-title">Listening now</h2>
+            <ul className="admin-dash__live-listening-list">
+              {snapshot.listeners.map((v) => (
+                <li key={v.visitorId} className="admin-dash__live-listening-item">
+                  <VisitorAvatar
+                    visitorId={v.visitorId}
+                    avatarUrl={v.lockedAvatarUrl}
+                    alt={profileDisplayName(null, v.lockedNickname)}
+                    compact
+                  />
+                  <span className="admin-dash__live-name">
+                    {profileDisplayName(null, v.lockedNickname)}
+                  </span>
+                  <span className="admin-dash__live-listening-activity">
+                    {formatLiveActivity(v.activity)}
+                    {v.day != null
+                      ? ` · day ${String(v.day).padStart(2, "0")}`
+                      : ""}
+                  </span>
+                  <span className="admin-dash__live-listening-when">
+                    {v.secondsAgo < 12 ? "live" : `${v.secondsAgo}s ago`}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : (
+          <p className="admin-dash__note admin-dash__note--top">
+            No one is marked as listening in the last {snapshot.windowSeconds}s.
+            Activity updates every 10s while audio or Strudel is playing.
+          </p>
+        )}
+
         <div className="admin-dash__live-table-wrap">
           <table className="admin-dash__live-table">
             <thead>
@@ -177,6 +220,7 @@ export function AdminLiveDashboard({ initialAuthed }: Props) {
                         avatarUrl={v.lockedAvatarUrl}
                         alt={profileDisplayName(null, v.lockedNickname)}
                         compact
+                        online
                       />
                       <span className="admin-dash__live-name">
                         {profileDisplayName(null, v.lockedNickname)}
@@ -186,7 +230,13 @@ export function AdminLiveDashboard({ initialAuthed }: Props) {
                       <span className="admin-dash__live-badge">{v.audience}</span>
                     ) : null}
                   </td>
-                  <td>
+                  <td
+                    className={
+                      isListeningActivity(v.activity)
+                        ? "admin-dash__live-cell--listening"
+                        : undefined
+                    }
+                  >
                     <strong>{formatLiveActivity(v.activity)}</strong>
                     {v.day != null ? (
                       <span className="admin-dash__live-day">
@@ -210,6 +260,7 @@ export function AdminLiveDashboard({ initialAuthed }: Props) {
             </tbody>
           </table>
         </div>
+        </>
       ) : null}
     </AdminShell>
   );

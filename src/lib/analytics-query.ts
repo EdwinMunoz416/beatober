@@ -4,6 +4,10 @@ import {
   type GeoMetrics7d,
 } from "@/lib/analytics-geo-metrics";
 import {
+  fetchOnlineVisitorIds,
+  LIVE_PRESENCE_WINDOW_SECONDS,
+} from "@/lib/analytics-live";
+import {
   fetchVisitorProfiles,
   type VisitorProfile,
 } from "@/lib/analytics-visitor-profiles";
@@ -31,6 +35,9 @@ export type AdminMetrics = {
   byDay: DayMetric[];
   recent: RecentEvent[];
   visitors: VisitorProfile[];
+  /** Presence heartbeat within LIVE_PRESENCE_WINDOW_SECONDS. */
+  onlineVisitorIds: string[];
+  onlineWindowSeconds: number;
   geo7d: GeoMetrics7d;
   compareNote: string;
 };
@@ -670,6 +677,7 @@ export async function fetchAdminMetrics(
     shareRows,
     geo7d,
     visitors,
+    onlineVisitorIds,
   ] = await Promise.all([
     window24(sql, audience) as Promise<WindowRow[]>,
     window7(sql, audience) as Promise<WindowRow[]>,
@@ -692,6 +700,7 @@ export async function fetchAdminMetrics(
     >,
     fetchGeoMetrics7d(audience),
     fetchVisitorProfiles(audience, 100),
+    fetchOnlineVisitorIds(audience),
   ]);
 
   let recent: {
@@ -788,6 +797,8 @@ export async function fetchAdminMetrics(
       audience: r.audience,
     })),
     visitors,
+    onlineVisitorIds,
+    onlineWindowSeconds: LIVE_PRESENCE_WINDOW_SECONDS,
     geo7d,
     compareNote: `${audienceNote} Geo = first page view per browser (Vercel edge country/region). Unknown geo is common in local dev. Vercel Hobby Analytics is separate.`,
   };
