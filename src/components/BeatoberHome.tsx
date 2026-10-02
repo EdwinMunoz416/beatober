@@ -96,9 +96,23 @@ export function BeatoberHome({
     setPlaybackWorkspaceBg(undefined);
   }
   const days = manifest.days;
+  const now = new Date(nowIso);
   const prevInitialStopRef = useRef(initialDay);
 
-  const presenceDay = viewDay >= 1 && viewDay <= 31 ? viewDay : null;
+  const focusEntry = days.find((d) => d.day === viewDay) ?? days[0]!;
+  const viewLocked = isDayLocked(
+    focusEntry.day,
+    focusEntry.approved,
+    calendar,
+    now,
+    canPublish,
+  );
+  const presenceDay =
+    viewLocked && !canPublish
+      ? null
+      : viewDay >= 1 && viewDay <= 31
+        ? viewDay
+        : null;
 
   const pingPresence = useCallback(() => {
     trackVisitorPresence({ path: pathname, day: presenceDay });
@@ -125,8 +139,6 @@ export function BeatoberHome({
     prevInitialStopRef.current = initialDay;
   }, [initialDay]);
 
-  const now = new Date(nowIso);
-
   const pushPlayableDay = (day: number) => {
     const target = dayPath(day);
     if (pathname !== target) {
@@ -140,7 +152,6 @@ export function BeatoberHome({
     flushPageEngagementForDayChange();
     stopStrudelForDayChange();
     setPlaybackWorkspaceBg(undefined);
-    setViewDay(day);
     const entry = days.find((d) => d.day === day);
     const locked = isDayLocked(
       day,
@@ -149,6 +160,11 @@ export function BeatoberHome({
       now,
       canPublish,
     );
+    if (locked && !canPublish) {
+      trackEvent("day_locked_interaction", { day });
+      return;
+    }
+    setViewDay(day);
     if (locked) {
       trackEvent("day_locked_interaction", { day });
       return;
@@ -165,26 +181,20 @@ export function BeatoberHome({
   }, [pathname]);
 
   useEffect(() => {
+    if (viewLocked && !canPublish) return;
     trackEvent("day_view", { day: viewDay });
     trackEvent("day_select", { day: viewDay });
-  }, [viewDay]);
+  }, [viewDay, viewLocked, canPublish]);
 
   useEffect(() => {
     syncPageEngagement({
       surface: pathname.startsWith("/day/") ? "day" : "home",
-      day: viewDay,
+      day: viewLocked && !canPublish ? null : viewDay,
       path: pathname,
     });
-  }, [pathname, viewDay]);
+  }, [pathname, viewDay, viewLocked, canPublish]);
 
-  const entry = days.find((d) => d.day === viewDay) ?? days[0]!;
-  const viewLocked = isDayLocked(
-    entry.day,
-    entry.approved,
-    calendar,
-    now,
-    canPublish,
-  );
+  const entry = focusEntry;
 
   useEffect(() => {
     if (!viewLocked) return;

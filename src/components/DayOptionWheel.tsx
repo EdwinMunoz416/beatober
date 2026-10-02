@@ -24,6 +24,7 @@ export function DayOptionWheel({
   onFocusDay,
 }: Props) {
   const [mobileLayout, setMobileLayout] = useState(false);
+  const [wheelResetKey, setWheelResetKey] = useState(0);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 640px)");
@@ -48,15 +49,12 @@ export function DayOptionWheel({
     [sorted],
   );
 
-  const lockedByIndex = useMemo(
-    () => {
-      const now = new Date(nowIso);
-      return sorted.map((d) =>
-        isDayLocked(d.day, d.approved, calendar, now, false),
-      );
-    },
-    [sorted, calendar, nowIso],
-  );
+  const lockedByIndex = useMemo(() => {
+    const now = new Date(nowIso);
+    return sorted.map((d) =>
+      isDayLocked(d.day, d.approved, calendar, now, authorMode),
+    );
+  }, [sorted, calendar, nowIso, authorMode]);
 
   const focusIndex = Math.max(
     0,
@@ -70,6 +68,7 @@ export function DayOptionWheel({
         centerLabels
         items={labels}
         selected={focusIndex}
+        resetKey={wheelResetKey}
         loop
         fontSize={mobileLayout ? 0.88 : 1.64}
         spacing={mobileLayout ? 2.15 : 3.1}
@@ -82,6 +81,13 @@ export function DayOptionWheel({
         activeColor="#ffffff"
         soundUrl=""
         soundVolume={0}
+        commitChange={(index) => {
+          if (lockedByIndex[index]) {
+            setWheelResetKey((k) => k + 1);
+            return false;
+          }
+          return true;
+        }}
         onChange={(index) => {
           const entry = sorted[index];
           if (!entry) return;

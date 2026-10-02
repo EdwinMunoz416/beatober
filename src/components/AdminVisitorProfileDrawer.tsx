@@ -11,6 +11,7 @@ import { groupTimelineBySession } from "@/lib/visitor-timeline-ui";
 import { VisitorAvatar } from "@/components/VisitorAvatar";
 import { formatGeoChip } from "@/lib/geo-display";
 import { formatReferrerTrail } from "@/lib/referrer-display";
+import { formatBeatProgress } from "@/lib/beat-progress";
 import {
   formatActiveDays,
   formatDurationMs,
@@ -184,6 +185,14 @@ export function AdminVisitorProfileDrawer({
           <div>
             <dt>Page views</dt>
             <dd>{profile.pageViews > 0 ? profile.pageViews : "—"}</dd>
+          </div>
+          <div>
+            <dt>Beat progress (started)</dt>
+            <dd>{formatBeatProgress(profile.beatProgressStarted)}</dd>
+          </div>
+          <div>
+            <dt>Beat progress (complete)</dt>
+            <dd>{formatBeatProgress(profile.beatProgressComplete)}</dd>
           </div>
           <div>
             <dt>Beat listen</dt>

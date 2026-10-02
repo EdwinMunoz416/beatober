@@ -16,7 +16,10 @@ export type VisitorProfile = {
   activeDays: number;
   eventCount: number;
   pageViews: number;
+  /** @deprecated use beatProgressStarted — approved days with play start (7d). */
   postsTouched: number;
+  beatProgressStarted: number;
+  beatProgressComplete: number;
   days: number[];
   beatPlays: number;
   playedBeat: boolean;
@@ -57,6 +60,8 @@ type ProfileRow = {
   event_count: number;
   page_views: number;
   posts_touched: number;
+  beats_started: number;
+  beats_complete: number;
   days_csv: string | null;
   beat_plays: number;
   referrer_bucket: string | null;
@@ -110,8 +115,34 @@ export async function fetchVisitorProfiles(
         COUNT(DISTINCT (e.created_at AT TIME ZONE 'UTC')::date)::int AS active_days,
         COUNT(*)::int AS event_count,
         COUNT(*) FILTER (WHERE e.event_name = 'page_view')::int AS page_views,
-        COUNT(DISTINCT e.day) FILTER (WHERE e.day IS NOT NULL)::int AS posts_touched,
-        STRING_AGG(DISTINCT e.day::text, ',' ORDER BY e.day::text) FILTER (WHERE e.day IS NOT NULL) AS days_csv,
+        COUNT(DISTINCT e.day) FILTER (
+          WHERE e.day IS NOT NULL
+            AND e.event_name IN ('beat_play', 'play_beat', 'strudel_play')
+            AND EXISTS (
+              SELECT 1 FROM beatober_days bd WHERE bd.day = e.day AND bd.approved = true
+            )
+        )::int AS beats_started,
+        COUNT(DISTINCT e.day) FILTER (
+          WHERE e.day IS NOT NULL
+            AND e.event_name = 'beat_loop_complete'
+            AND EXISTS (
+              SELECT 1 FROM beatober_days bd WHERE bd.day = e.day AND bd.approved = true
+            )
+        )::int AS beats_complete,
+        COUNT(DISTINCT e.day) FILTER (
+          WHERE e.day IS NOT NULL
+            AND e.event_name IN ('beat_play', 'play_beat', 'strudel_play')
+            AND EXISTS (
+              SELECT 1 FROM beatober_days bd WHERE bd.day = e.day AND bd.approved = true
+            )
+        )::int AS posts_touched,
+        STRING_AGG(DISTINCT e.day::text, ',' ORDER BY e.day::text) FILTER (
+          WHERE e.day IS NOT NULL
+            AND e.event_name IN ('beat_play', 'play_beat', 'strudel_play')
+            AND EXISTS (
+              SELECT 1 FROM beatober_days bd WHERE bd.day = e.day AND bd.approved = true
+            )
+        ) AS days_csv,
         (
           SELECT sub.day::int
           FROM (
@@ -196,8 +227,34 @@ export async function fetchVisitorProfiles(
         COUNT(DISTINCT (e.created_at AT TIME ZONE 'UTC')::date)::int AS active_days,
         COUNT(*)::int AS event_count,
         COUNT(*) FILTER (WHERE e.event_name = 'page_view')::int AS page_views,
-        COUNT(DISTINCT e.day) FILTER (WHERE e.day IS NOT NULL)::int AS posts_touched,
-        STRING_AGG(DISTINCT e.day::text, ',' ORDER BY e.day::text) FILTER (WHERE e.day IS NOT NULL) AS days_csv,
+        COUNT(DISTINCT e.day) FILTER (
+          WHERE e.day IS NOT NULL
+            AND e.event_name IN ('beat_play', 'play_beat', 'strudel_play')
+            AND EXISTS (
+              SELECT 1 FROM beatober_days bd WHERE bd.day = e.day AND bd.approved = true
+            )
+        )::int AS beats_started,
+        COUNT(DISTINCT e.day) FILTER (
+          WHERE e.day IS NOT NULL
+            AND e.event_name = 'beat_loop_complete'
+            AND EXISTS (
+              SELECT 1 FROM beatober_days bd WHERE bd.day = e.day AND bd.approved = true
+            )
+        )::int AS beats_complete,
+        COUNT(DISTINCT e.day) FILTER (
+          WHERE e.day IS NOT NULL
+            AND e.event_name IN ('beat_play', 'play_beat', 'strudel_play')
+            AND EXISTS (
+              SELECT 1 FROM beatober_days bd WHERE bd.day = e.day AND bd.approved = true
+            )
+        )::int AS posts_touched,
+        STRING_AGG(DISTINCT e.day::text, ',' ORDER BY e.day::text) FILTER (
+          WHERE e.day IS NOT NULL
+            AND e.event_name IN ('beat_play', 'play_beat', 'strudel_play')
+            AND EXISTS (
+              SELECT 1 FROM beatober_days bd WHERE bd.day = e.day AND bd.approved = true
+            )
+        ) AS days_csv,
         (
           SELECT sub.day::int
           FROM (
@@ -280,8 +337,34 @@ export async function fetchVisitorProfiles(
         COUNT(DISTINCT (e.created_at AT TIME ZONE 'UTC')::date)::int AS active_days,
         COUNT(*)::int AS event_count,
         COUNT(*) FILTER (WHERE e.event_name = 'page_view')::int AS page_views,
-        COUNT(DISTINCT e.day) FILTER (WHERE e.day IS NOT NULL)::int AS posts_touched,
-        STRING_AGG(DISTINCT e.day::text, ',' ORDER BY e.day::text) FILTER (WHERE e.day IS NOT NULL) AS days_csv,
+        COUNT(DISTINCT e.day) FILTER (
+          WHERE e.day IS NOT NULL
+            AND e.event_name IN ('beat_play', 'play_beat', 'strudel_play')
+            AND EXISTS (
+              SELECT 1 FROM beatober_days bd WHERE bd.day = e.day AND bd.approved = true
+            )
+        )::int AS beats_started,
+        COUNT(DISTINCT e.day) FILTER (
+          WHERE e.day IS NOT NULL
+            AND e.event_name = 'beat_loop_complete'
+            AND EXISTS (
+              SELECT 1 FROM beatober_days bd WHERE bd.day = e.day AND bd.approved = true
+            )
+        )::int AS beats_complete,
+        COUNT(DISTINCT e.day) FILTER (
+          WHERE e.day IS NOT NULL
+            AND e.event_name IN ('beat_play', 'play_beat', 'strudel_play')
+            AND EXISTS (
+              SELECT 1 FROM beatober_days bd WHERE bd.day = e.day AND bd.approved = true
+            )
+        )::int AS posts_touched,
+        STRING_AGG(DISTINCT e.day::text, ',' ORDER BY e.day::text) FILTER (
+          WHERE e.day IS NOT NULL
+            AND e.event_name IN ('beat_play', 'play_beat', 'strudel_play')
+            AND EXISTS (
+              SELECT 1 FROM beatober_days bd WHERE bd.day = e.day AND bd.approved = true
+            )
+        ) AS days_csv,
         (
           SELECT sub.day::int
           FROM (
@@ -520,7 +603,9 @@ function mapProfile(row: ProfileRow): VisitorProfile {
     activeDays: row.active_days ?? 1,
     eventCount: row.event_count ?? 0,
     pageViews: row.page_views,
-    postsTouched: row.posts_touched,
+    postsTouched: row.beats_started ?? row.posts_touched ?? 0,
+    beatProgressStarted: row.beats_started ?? 0,
+    beatProgressComplete: row.beats_complete ?? 0,
     days,
     beatPlays: row.beat_plays,
     playedBeat: row.beat_plays > 0,
