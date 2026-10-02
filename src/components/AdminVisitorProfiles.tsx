@@ -23,7 +23,6 @@ type Props = {
 
 export function AdminVisitorProfiles({ metrics, loading, audience }: Props) {
   const visitors = metrics?.visitors ?? [];
-  const total7d = metrics?.windows.days7.siteVisitors ?? 0;
   const [selected, setSelected] = useState<VisitorProfile | null>(null);
 
   return (
@@ -34,7 +33,7 @@ export function AdminVisitorProfiles({ metrics, loading, audience }: Props) {
           <p className="admin-dash__people-desc">
             {loading && !metrics
               ? "Loading…"
-              : `${visitors.length} browsers shown · ${total7d} touched the site in 7d · open a card for timeline`}
+              : `${visitors.length} browsers · all-time stats · open a card for timeline`}
           </p>
           {visitors.length > 0 ? (
             <p className="admin-dash__people-note">
@@ -48,7 +47,7 @@ export function AdminVisitorProfiles({ metrics, loading, audience }: Props) {
       {!metrics && loading ? (
         <p className="admin-dash__empty">Loading visitor profiles…</p>
       ) : visitors.length === 0 ? (
-        <p className="admin-dash__empty">No visitors in the last 7 days yet.</p>
+        <p className="admin-dash__empty">No visitor analytics yet.</p>
       ) : (
         <ul className="admin-dash__profile-grid">
           {visitors.map((v) => (
@@ -118,7 +117,7 @@ function VisitorCard({
           </div>
           <div>
             <dt>Active days</dt>
-            <dd title="Distinct calendar days with activity (7d)">
+            <dd title="Distinct calendar days with activity (all time)">
               {formatActiveDays(v.activeDays)}
             </dd>
           </div>

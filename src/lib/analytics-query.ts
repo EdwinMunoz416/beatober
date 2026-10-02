@@ -691,7 +691,7 @@ export async function fetchAdminMetrics(
       { day: number; unique_visitors: number; landing_count: number }[]
     >,
     fetchGeoMetrics7d(audience),
-    fetchVisitorProfiles(audience, 48),
+    fetchVisitorProfiles(audience, 100),
   ]);
 
   let recent: {

@@ -12,7 +12,7 @@ export type VisitorProfile = {
   firstSeenAt: string;
   lastSeenAt: string;
   sessions: number;
-  /** Distinct calendar days with any event (7d window). */
+  /** Distinct calendar days (UTC) with any event, all time. */
   activeDays: number;
   eventCount: number;
   pageViews: number;
@@ -149,7 +149,6 @@ export async function fetchVisitorProfiles(
             SELECT e3.day, COUNT(*) AS c
             FROM analytics_events e3
             WHERE e3.visitor_id = e.visitor_id
-              AND e3.created_at >= now() - interval '7 days'
               AND e3.day IS NOT NULL
               AND e3.audience = 'internal'
             GROUP BY e3.day
@@ -204,7 +203,6 @@ export async function fetchVisitorProfiles(
       LEFT JOIN device_registry dr ON dr.visitor_id = e.visitor_id
       LEFT JOIN visitor_nicknames vn ON vn.visitor_id = e.visitor_id
       WHERE e.visitor_id IS NOT NULL
-        AND e.created_at >= now() - interval '7 days'
         AND e.audience = 'internal'
       GROUP BY e.visitor_id, e.audience
       ORDER BY MAX(e.created_at) DESC
@@ -261,7 +259,6 @@ export async function fetchVisitorProfiles(
             SELECT e3.day, COUNT(*) AS c
             FROM analytics_events e3
             WHERE e3.visitor_id = e.visitor_id
-              AND e3.created_at >= now() - interval '7 days'
               AND e3.day IS NOT NULL
             GROUP BY e3.day
             ORDER BY c DESC, e3.day ASC
@@ -315,7 +312,6 @@ export async function fetchVisitorProfiles(
       LEFT JOIN device_registry dr ON dr.visitor_id = e.visitor_id
       LEFT JOIN visitor_nicknames vn ON vn.visitor_id = e.visitor_id
       WHERE e.visitor_id IS NOT NULL
-        AND e.created_at >= now() - interval '7 days'
       GROUP BY e.visitor_id, e.audience
       ORDER BY MAX(e.created_at) DESC
       LIMIT ${cap}
@@ -371,7 +367,6 @@ export async function fetchVisitorProfiles(
             SELECT e3.day, COUNT(*) AS c
             FROM analytics_events e3
             WHERE e3.visitor_id = e.visitor_id
-              AND e3.created_at >= now() - interval '7 days'
               AND e3.day IS NOT NULL
               AND e3.audience = 'visitor'
             GROUP BY e3.day
@@ -426,7 +421,6 @@ export async function fetchVisitorProfiles(
       LEFT JOIN device_registry dr ON dr.visitor_id = e.visitor_id
       LEFT JOIN visitor_nicknames vn ON vn.visitor_id = e.visitor_id
       WHERE e.visitor_id IS NOT NULL
-        AND e.created_at >= now() - interval '7 days'
         AND e.audience = 'visitor'
       GROUP BY e.visitor_id, e.audience
       ORDER BY MAX(e.created_at) DESC
@@ -480,7 +474,6 @@ export async function fetchVisitorTimeline(
       FROM analytics_events
       WHERE visitor_id = ${id}
         AND audience = 'internal'
-        AND created_at >= now() - interval '30 days'
       ORDER BY created_at DESC
       LIMIT ${cap}
     `) as TimelineRow[];
@@ -489,7 +482,6 @@ export async function fetchVisitorTimeline(
       SELECT created_at, event_name, day, path, referrer_bucket, session_id, props
       FROM analytics_events
       WHERE visitor_id = ${id}
-        AND created_at >= now() - interval '30 days'
       ORDER BY created_at DESC
       LIMIT ${cap}
     `) as TimelineRow[];
@@ -499,7 +491,6 @@ export async function fetchVisitorTimeline(
       FROM analytics_events
       WHERE visitor_id = ${id}
         AND audience = 'visitor'
-        AND created_at >= now() - interval '30 days'
       ORDER BY created_at DESC
       LIMIT ${cap}
     `) as TimelineRow[];
