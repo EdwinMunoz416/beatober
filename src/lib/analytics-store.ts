@@ -10,6 +10,7 @@ export type IngestEvent = {
   props?: AnalyticsProps;
   path?: string;
   referrerBucket?: string;
+  referrerSource?: string;
 };
 
 export type IngestResult = {
@@ -41,6 +42,7 @@ export async function insertAnalyticsEvent(
       props,
       path,
       referrer_bucket,
+      referrer_source,
       audience
     ) VALUES (
       ${event.eventName},
@@ -50,6 +52,7 @@ export async function insertAnalyticsEvent(
       ${propsJson}::jsonb,
       ${event.path ?? null},
       ${event.referrerBucket ?? null},
+      ${event.referrerSource ?? null},
       ${audience}
     )
   `;

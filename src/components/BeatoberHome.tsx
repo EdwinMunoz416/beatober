@@ -25,6 +25,13 @@ import { StrudelRepl } from "@/components/StrudelRepl";
 import { StrudelVisualBootstrap } from "@/components/StrudelVisualBootstrap";
 import { StrudelWarmBoot } from "@/components/StrudelWarmBoot";
 import { StudioDazeHeader } from "@/components/StudioDazeHeader";
+import { bindLockedDayScroll } from "@/lib/analytics-locked-scroll";
+import { flushBeatListen } from "@/lib/analytics-beat-listen";
+import {
+  flushPageEngagementForDayChange,
+  syncPageEngagement,
+} from "@/lib/analytics-page-engagement";
+import { recordSessionLanding } from "@/lib/analytics-landing";
 import { trackEvent } from "@/lib/analytics";
 import { stopStrudelForDayChange } from "@/lib/strudel-playback-control";
 import { useDayPattern } from "@/lib/use-day-pattern";
@@ -111,6 +118,8 @@ export function BeatoberHome({
 
   const handleFocusDay = (day: number) => {
     if (day === viewDay) return;
+    flushBeatListen("day_change");
+    flushPageEngagementForDayChange();
     stopStrudelForDayChange();
     setPlaybackWorkspaceBg(undefined);
     setViewDay(day);
@@ -130,8 +139,10 @@ export function BeatoberHome({
   };
 
   useEffect(() => {
+    const landing = recordSessionLanding(pathname);
     trackEvent("page_view", {
       surface: pathname.startsWith("/day/") ? "day" : "home",
+      ...landing,
     });
   }, [pathname]);
 
@@ -139,6 +150,14 @@ export function BeatoberHome({
     trackEvent("day_view", { day: viewDay });
     trackEvent("day_select", { day: viewDay });
   }, [viewDay]);
+
+  useEffect(() => {
+    syncPageEngagement({
+      surface: pathname.startsWith("/day/") ? "day" : "home",
+      day: viewDay,
+      path: pathname,
+    });
+  }, [pathname, viewDay]);
 
   const entry = days.find((d) => d.day === viewDay) ?? days[0]!;
   const viewLocked = isDayLocked(
@@ -148,6 +167,12 @@ export function BeatoberHome({
     now,
     canPublish,
   );
+
+  useEffect(() => {
+    if (!viewLocked) return;
+    return bindLockedDayScroll(entry.day);
+  }, [viewLocked, entry.day]);
+
   const showStrudel = !viewLocked || canPublish;
   const {
     code: publishedCode,

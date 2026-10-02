@@ -5,7 +5,8 @@ import {
   getCachedDeviceLabel,
   shouldSkipTracking,
 } from "@/lib/analytics-audience-client";
-import { getSessionId, getVisitorId, referrerBucket } from "@/lib/visitor-id";
+import { getReferrerContext } from "@/lib/referrer-classify";
+import { getSessionId, getVisitorId } from "@/lib/visitor-id";
 
 function cleanProps(
   properties?: AnalyticsProps,
@@ -47,14 +48,24 @@ export function trackEvent(name: AnalyticsEventName, properties?: AnalyticsProps
     /* Vercel script optional in dev */
   }
 
+  const ref = getReferrerContext();
+  const propsWithReferrer = {
+    ...clean,
+    referrer_source: ref.source,
+    ...(ref.host ? { referrer_host: ref.host } : {}),
+    ...(ref.utmSource ? { utm_source: ref.utmSource } : {}),
+    ...(ref.utmMedium ? { utm_medium: ref.utmMedium } : {}),
+  };
+
   const body = {
     eventName: name,
     visitorId: getVisitorId(),
     sessionId: getSessionId(),
     day: dayFromProps(properties),
-    props: clean,
+    props: propsWithReferrer,
     path: window.location.pathname,
-    referrerBucket: referrerBucket(),
+    referrerBucket: ref.bucket,
+    referrerSource: ref.source,
   };
 
   try {

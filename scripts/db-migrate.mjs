@@ -55,6 +55,17 @@ await sql`
 `;
 
 await sql`
+  ALTER TABLE analytics_events
+  ADD COLUMN IF NOT EXISTS referrer_source TEXT
+`;
+
+await sql`
+  CREATE INDEX IF NOT EXISTS analytics_events_referrer_source_idx
+  ON analytics_events (referrer_source)
+  WHERE event_name = 'page_view' AND referrer_source IS NOT NULL
+`;
+
+await sql`
   CREATE TABLE IF NOT EXISTS device_registry (
     visitor_id TEXT PRIMARY KEY,
     role TEXT NOT NULL CHECK (role IN ('internal', 'ignore')),

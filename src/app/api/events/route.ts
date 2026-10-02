@@ -24,6 +24,7 @@ export async function POST(request: Request) {
     props,
     path,
     referrerBucket,
+    referrerSource,
   } = body as {
     eventName?: string;
     visitorId?: string;
@@ -32,6 +33,7 @@ export async function POST(request: Request) {
     props?: Record<string, unknown>;
     path?: string;
     referrerBucket?: string;
+    referrerSource?: string;
   };
 
   if (!eventName || !isAllowedEvent(eventName)) {
@@ -57,6 +59,13 @@ export async function POST(request: Request) {
     ...ipHashForProps(request),
   };
 
+  const sourceFromBody =
+    typeof referrerSource === "string"
+      ? referrerSource.slice(0, 64)
+      : typeof mergedProps.referrer_source === "string"
+        ? mergedProps.referrer_source.slice(0, 64)
+        : undefined;
+
   try {
     const result = await insertAnalyticsEvent({
       eventName,
@@ -69,6 +78,7 @@ export async function POST(request: Request) {
         typeof referrerBucket === "string"
           ? referrerBucket.slice(0, 32)
           : undefined,
+      referrerSource: sourceFromBody,
     });
     return NextResponse.json({
       ok: true,

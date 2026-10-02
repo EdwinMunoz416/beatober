@@ -3,6 +3,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ReplTransport } from "@/components/ReplTransport";
 import { StrudelCodeEditor } from "@/components/StrudelCodeEditor";
+import { trackBeatPlay } from "@/lib/analytics-beat-play";
+import {
+  startStrudelLoopWatch,
+  stopStrudelLoopWatch,
+} from "@/lib/analytics-beat-loop";
+import {
+  ensureBeatListenPageHandlers,
+  flushBeatListen,
+  startBeatListen,
+} from "@/lib/analytics-beat-listen";
 import { trackEvent } from "@/lib/analytics";
 import {
   getStrudelRuntimeError,
@@ -92,14 +102,19 @@ export function StrudelRepl({
       clearRuntimeError();
       hushSync();
       void hush();
-      if (opts?.trackStop && wasPlaying) {
-        trackEvent("strudel_stop", { day });
+      if (wasPlaying) {
+        stopStrudelLoopWatch();
+        flushBeatListen(opts?.trackStop ? "stop" : "unmount");
+        if (opts?.trackStop) {
+          trackEvent("strudel_stop", { day });
+        }
       }
     },
     [clearRuntimeError, day, hush, hushSync, notifyPlayback],
   );
 
   useEffect(() => {
+    ensureBeatListenPageHandlers();
     return registerStrudelPlaybackStop(() => {
       stopPlayback({ trackStop: true });
     });
@@ -125,19 +140,30 @@ export function StrudelRepl({
         notifyPlayback(false);
         const msg =
           getStrudelRuntimeError()?.message ?? "Pattern could not be evaluated";
-        trackEvent("strudel_error", { day, error: msg.slice(0, 120) });
+        if (!canPublish) {
+          trackEvent("strudel_error", {
+            day,
+            error: msg.slice(0, 120),
+            scope: "visitor_play",
+          });
+        }
         return;
       }
       setPlaying(true);
       notifyPlayback(true);
-      trackEvent("strudel_play", { day });
+      startBeatListen(day, "strudel");
+      startStrudelLoopWatch(day);
+      trackBeatPlay(day, "strudel");
     } catch (err) {
       setPlaying(false);
       notifyPlayback(false);
-      trackEvent("strudel_error", {
-        day,
-        error: errorMessage(err).slice(0, 120),
-      });
+      if (!canPublish) {
+        trackEvent("strudel_error", {
+          day,
+          error: errorMessage(err).slice(0, 120),
+          scope: "visitor_play",
+        });
+      }
     } finally {
       setBusy(false);
     }

@@ -90,6 +90,19 @@ export function getStrudelBootSnapshot(): BootSnapshot {
   return { status, bootError };
 }
 
+/** Fractional cycle position while Strudel is playing (for loop completion analytics). */
+export function readStrudelCycleNow(): number | null {
+  const scheduler = repl?.scheduler as
+    | { now?: () => number; started?: boolean }
+    | undefined;
+  if (!scheduler?.started || typeof scheduler.now !== "function") return null;
+  try {
+    return scheduler.now();
+  } catch {
+    return null;
+  }
+}
+
 /** Clears failed boot so ensureStrudelBoot can run again (visitor retry). */
 export function resetStrudelBoot(): void {
   bootPromise = null;

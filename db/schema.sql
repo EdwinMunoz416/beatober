@@ -17,7 +17,8 @@ CREATE TABLE IF NOT EXISTS analytics_events (
   day SMALLINT CHECK (day IS NULL OR (day >= 1 AND day <= 31)),
   props JSONB NOT NULL DEFAULT '{}'::jsonb,
   path TEXT,
-  referrer_bucket TEXT
+  referrer_bucket TEXT,
+  referrer_source TEXT
 );
 
 CREATE INDEX IF NOT EXISTS analytics_events_created_at_idx ON analytics_events (created_at DESC);

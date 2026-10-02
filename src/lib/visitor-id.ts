@@ -1,3 +1,5 @@
+import { getReferrerContext } from "@/lib/referrer-classify";
+
 const VID_KEY = "beatober_vid";
 const SID_KEY = "beatober_sid";
 
@@ -28,24 +30,11 @@ export function getSessionId(): string {
   return id;
 }
 
+/** Coarse bucket stored on analytics_events.referrer_bucket */
 export function referrerBucket(): string {
-  if (typeof document === "undefined") return "direct";
-  const ref = document.referrer;
-  if (!ref) return "direct";
-  try {
-    const host = new URL(ref).hostname.toLowerCase();
-    if (host.includes("google.") || host.includes("bing.")) return "search";
-    if (
-      host.includes("twitter.") ||
-      host.includes("x.com") ||
-      host.includes("instagram.") ||
-      host.includes("facebook.") ||
-      host.includes("tiktok.")
-    ) {
-      return "social";
-    }
-    return "other";
-  } catch {
-    return "other";
-  }
+  return getReferrerContext().bucket;
+}
+
+export function referrerSource(): string {
+  return getReferrerContext().source;
 }

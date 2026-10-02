@@ -1,13 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import {
   setCachedAudience,
   type ClientAudience,
 } from "@/lib/analytics-audience-client";
 import { getVisitorId } from "@/lib/visitor-id";
-import { AdminLoginForm } from "@/components/AdminLoginForm";
+import { AdminLoginPage, AdminShell } from "@/components/AdminShell";
 
 type Device = {
   visitorId: string;
@@ -65,6 +64,11 @@ export function AdminDevices({ initialAuthed }: Props) {
     setPassword("");
   };
 
+  const logout = async () => {
+    await fetch("/api/admin/logout", { method: "POST" });
+    setAuthed(false);
+  };
+
   const registerThis = async () => {
     setErr(null);
     setMsg(null);
@@ -104,48 +108,34 @@ export function AdminDevices({ initialAuthed }: Props) {
 
   if (!authed) {
     return (
-      <div className="ctrl-page">
-        <header className="ctrl-header">
-          <h1 className="ctrl-title">devices</h1>
-          <Link href="/" className="ctrl-link">
-            ← site
-          </Link>
-        </header>
-        <AdminLoginForm
-          password={password}
-          error={loginError}
-          onPasswordChange={setPassword}
-          onSubmit={() => void login()}
-        />
-      </div>
+      <AdminLoginPage
+        title="Devices"
+        password={password}
+        error={loginError}
+        onPasswordChange={setPassword}
+        onSubmit={() => void login()}
+      />
     );
   }
 
   return (
-    <div className="ctrl-page">
-      <header className="ctrl-header">
-        <div>
-          <h1 className="ctrl-title">devices</h1>
-          <p className="ctrl-subtitle">register · ignore · internal</p>
-        </div>
-        <div className="ctrl-header-actions">
-          <Link href="/admin" className="ctrl-link">
-            control room
-          </Link>
-          <Link href="/" className="ctrl-link">
-            site
-          </Link>
-        </div>
-      </header>
-
-      <section className="ctrl-panel">
-        <h2 className="ctrl-panel-title">This browser</h2>
-        <div className="ctrl-device-form">
-          <p className="ctrl-note ctrl-mono-id">{thisId || "…"}</p>
-          <label className="ctrl-field">
+    <AdminShell
+      active="devices"
+      title="Device management"
+      subtitle="Tag browsers as internal or exclude them from visitor metrics"
+      onLogout={() => void logout()}
+    >
+      <section className="admin-dash__panel">
+        <h2 className="admin-dash__panel-title">This browser</h2>
+        <p className="admin-dash__panel-desc">
+          Internal events appear under the Internal audience filter on Metrics.
+        </p>
+        <div className="admin-dash__form-stack">
+          <p className="admin-dash__mono">{thisId || "…"}</p>
+          <label className="admin-dash__field">
             <span>Role</span>
             <select
-              className="ctrl-input"
+              className="admin-dash__input"
               value={role}
               onChange={(e) =>
                 setRole(e.target.value as "internal" | "ignore")
@@ -155,37 +145,41 @@ export function AdminDevices({ initialAuthed }: Props) {
               <option value="ignore">Ignore (no tracking)</option>
             </select>
           </label>
-          <label className="ctrl-field">
+          <label className="admin-dash__field">
             <span>Label (optional)</span>
             <input
-              className="ctrl-input"
+              className="admin-dash__input"
               placeholder="macbook-chrome"
               value={label}
               onChange={(e) => setLabel(e.target.value)}
             />
           </label>
-          <button type="button" className="ctrl-btn" onClick={() => void registerThis()}>
+          <button
+            type="button"
+            className="admin-dash__btn"
+            onClick={() => void registerThis()}
+          >
             Save this device
           </button>
-          {msg ? <p className="ctrl-note">{msg}</p> : null}
-          {err ? <p className="ctrl-error">{err}</p> : null}
+          {msg ? <p className="admin-dash__note">{msg}</p> : null}
+          {err ? <p className="admin-dash__error">{err}</p> : null}
         </div>
       </section>
 
-      <section className="ctrl-panel">
-        <h2 className="ctrl-panel-title">Registered</h2>
-        <ul className="ctrl-device-list">
+      <section className="admin-dash__panel admin-dash__panel--spaced">
+        <h2 className="admin-dash__panel-title">Registered devices</h2>
+        <ul className="admin-dash__device-list">
           {devices.length === 0 ? (
-            <li className="ctrl-empty">No devices registered yet</li>
+            <li className="admin-dash__empty-cell">No devices registered yet</li>
           ) : (
             devices.map((d) => (
               <li key={d.visitorId}>
-                <span className="ctrl-mono-id">{d.visitorId.slice(0, 12)}…</span>
-                <span className="ctrl-stream-event">{d.role}</span>
+                <span className="admin-dash__mono">{d.visitorId.slice(0, 12)}…</span>
+                <span className="admin-dash__stream-event">{d.role}</span>
                 {d.label ? <span>{d.label}</span> : null}
                 <button
                   type="button"
-                  className="ctrl-btn ctrl-btn--ghost"
+                  className="admin-dash__btn admin-dash__btn--ghost admin-dash__btn--compact"
                   onClick={() => void remove(d.visitorId)}
                 >
                   Remove
@@ -194,11 +188,11 @@ export function AdminDevices({ initialAuthed }: Props) {
             ))
           )}
         </ul>
-        <p className="ctrl-note ctrl-device-foot">
-          Remove resets device to visitor. Re-open site on that device after
+        <p className="admin-dash__note admin-dash__note--foot">
+          Remove resets a device to visitor. Re-open the site on that device after
           remove to refresh cache.
         </p>
       </section>
-    </div>
+    </AdminShell>
   );
 }

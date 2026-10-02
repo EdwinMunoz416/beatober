@@ -1,6 +1,13 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+import { trackBeatLoopComplete } from "@/lib/analytics-beat-loop";
+import { trackBeatPlay } from "@/lib/analytics-beat-play";
+import {
+  ensureBeatListenPageHandlers,
+  flushBeatListen,
+  startBeatListen,
+} from "@/lib/analytics-beat-listen";
 import { trackEvent } from "@/lib/analytics";
 
 type Props = {
@@ -11,6 +18,14 @@ type Props = {
 
 export function BeatAudio({ day, audioUrl, title }: Props) {
   const playedRef = useRef(false);
+  const loopsRef = useRef(0);
+
+  useEffect(() => {
+    ensureBeatListenPageHandlers();
+    return () => {
+      flushBeatListen("unmount");
+    };
+  }, [day]);
 
   return (
     <div className="beat-audio">
@@ -21,16 +36,25 @@ export function BeatAudio({ day, audioUrl, title }: Props) {
         src={audioUrl}
         aria-label={title ?? `Beat day ${day}`}
         onPlay={() => {
+          startBeatListen(day, "audio");
           if (!playedRef.current) {
             playedRef.current = true;
-            trackEvent("play_beat", { day });
-            trackEvent("beat_play", { day });
+            trackBeatPlay(day, "audio");
           } else {
-            trackEvent("beat_play", { day, repeat: true });
+            trackBeatPlay(day, "audio", { repeat: true });
           }
         }}
-        onEnded={() => trackEvent("beat_ended", { day })}
-        onError={() => trackEvent("beat_error", { day })}
+        onPause={() => flushBeatListen("pause")}
+        onEnded={() => {
+          flushBeatListen("ended");
+          loopsRef.current += 1;
+          trackBeatLoopComplete(day, "audio", loopsRef.current);
+          trackEvent("beat_ended", { day });
+        }}
+        onError={() => {
+          flushBeatListen("error");
+          trackEvent("beat_error", { day });
+        }}
       />
     </div>
   );
