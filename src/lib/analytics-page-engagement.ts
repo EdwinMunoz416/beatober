@@ -2,6 +2,8 @@ import { trackEvent } from "@/lib/analytics";
 
 const MIN_ENGAGEMENT_MS = 1000;
 const MAX_ENGAGEMENT_MS = 60 * 60 * 1000;
+/** Chunk long visible sessions (mirrors beat_listen) so totals survive tab kills. */
+const ENGAGEMENT_PROGRESS_MS = 30_000;
 
 type EngagementCtx = {
   surface: string;
@@ -12,7 +14,15 @@ type EngagementCtx = {
   accumulatedVisibleMs: number;
 };
 
+type EngagementOpts = {
+  surface: string;
+  day: number | null;
+  path: string;
+};
+
 let current: EngagementCtx | null = null;
+let lastEngagementOpts: EngagementOpts | null = null;
+let progressTimer: ReturnType<typeof setInterval> | null = null;
 let hooksInstalled = false;
 
 function visibleElapsed(ctx: EngagementCtx): number {
@@ -28,16 +38,19 @@ function totalVisibleMs(ctx: EngagementCtx): number {
   );
 }
 
-function flushEngagement(
-  reason: "route_change" | "pagehide" | "hidden" | "day_change",
+function clearProgressTimer(): void {
+  if (progressTimer != null) {
+    clearInterval(progressTimer);
+    progressTimer = null;
+  }
+}
+
+function emitEngagement(
+  ctx: EngagementCtx,
+  durationMs: number,
+  reason: EngagementFlushReason,
 ): void {
-  const ctx = current;
-  if (!ctx) return;
-  current = null;
-
-  const durationMs = totalVisibleMs(ctx);
   if (durationMs < MIN_ENGAGEMENT_MS) return;
-
   trackEvent("page_engagement", {
     surface: ctx.surface,
     ...(ctx.day != null ? { day: ctx.day } : {}),
@@ -47,13 +60,83 @@ function flushEngagement(
   });
 }
 
+type EngagementFlushReason =
+  | "route_change"
+  | "pagehide"
+  | "hidden"
+  | "day_change"
+  | "interval"
+  | "unmount";
+
+function resetSliceAccumulation(ctx: EngagementCtx): EngagementCtx {
+  return {
+    ...ctx,
+    startedAt: Date.now(),
+    visibleSince: Date.now(),
+    accumulatedVisibleMs: 0,
+  };
+}
+
+function startProgressTimer(): void {
+  clearProgressTimer();
+  progressTimer = setInterval(() => {
+    const ctx = current;
+    if (!ctx || document.visibilityState !== "visible") return;
+    const durationMs = totalVisibleMs(ctx);
+    emitEngagement(ctx, durationMs, "interval");
+    current = resetSliceAccumulation(ctx);
+  }, ENGAGEMENT_PROGRESS_MS);
+}
+
+function flushEngagement(
+  reason: EngagementFlushReason,
+  opts?: { endSlice?: boolean },
+): void {
+  const ctx = current;
+  if (!ctx) return;
+
+  clearProgressTimer();
+  const durationMs = totalVisibleMs(ctx);
+  emitEngagement(ctx, durationMs, reason);
+
+  const endSlice = opts?.endSlice !== false;
+  if (endSlice) {
+    current = null;
+  } else {
+    current = resetSliceAccumulation(ctx);
+    startProgressTimer();
+  }
+}
+
+function beginSlice(opts: EngagementOpts): void {
+  lastEngagementOpts = opts;
+  current = {
+    surface: opts.surface,
+    day: opts.day,
+    path: opts.path,
+    startedAt: Date.now(),
+    visibleSince: Date.now(),
+    accumulatedVisibleMs: 0,
+  };
+  startProgressTimer();
+}
+
 function onVisibilityChange(): void {
-  if (!current) return;
   if (document.visibilityState === "hidden") {
+    if (!current) return;
     current.accumulatedVisibleMs += visibleElapsed(current);
     current.visibleSince = Date.now();
-  } else {
+    flushEngagement("hidden");
+    return;
+  }
+
+  if (current) {
     current.visibleSince = Date.now();
+    return;
+  }
+
+  if (lastEngagementOpts) {
+    beginSlice(lastEngagementOpts);
   }
 }
 
@@ -68,15 +151,12 @@ function ensureEngagementHooks(): void {
  * Track visible time on the current route / day focus.
  * Call when `surface`, `day`, or path changes — previous slice is flushed first.
  */
-export function syncPageEngagement(opts: {
-  surface: string;
-  day: number | null;
-  path: string;
-}): void {
+export function syncPageEngagement(opts: EngagementOpts): void {
   if (typeof window === "undefined") return;
   ensureEngagementHooks();
 
   const path = opts.path.slice(0, 256);
+  const normalized = { surface: opts.surface, day: opts.day, path };
   const same =
     current &&
     current.path === path &&
@@ -86,18 +166,15 @@ export function syncPageEngagement(opts: {
   if (same) return;
 
   flushEngagement("route_change");
-
-  current = {
-    surface: opts.surface,
-    day: opts.day,
-    path,
-    startedAt: Date.now(),
-    visibleSince: Date.now(),
-    accumulatedVisibleMs: 0,
-  };
+  beginSlice(normalized);
 }
 
 /** Flush when selected day changes but path stays on /day/N. */
 export function flushPageEngagementForDayChange(): void {
   flushEngagement("day_change");
+}
+
+/** Flush on React unmount (route away, strict mode remount). */
+export function flushPageEngagementOnUnmount(): void {
+  flushEngagement("unmount");
 }

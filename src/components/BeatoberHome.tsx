@@ -29,6 +29,7 @@ import { bindLockedDayScroll } from "@/lib/analytics-locked-scroll";
 import { flushBeatListen } from "@/lib/analytics-beat-listen";
 import {
   flushPageEngagementForDayChange,
+  flushPageEngagementOnUnmount,
   syncPageEngagement,
 } from "@/lib/analytics-page-engagement";
 import { recordSessionLanding } from "@/lib/analytics-landing";
@@ -192,6 +193,9 @@ export function BeatoberHome({
       day: viewLocked && !canPublish ? null : viewDay,
       path: pathname,
     });
+    return () => {
+      flushPageEngagementOnUnmount();
+    };
   }, [pathname, viewDay, viewLocked, canPublish]);
 
   const entry = focusEntry;

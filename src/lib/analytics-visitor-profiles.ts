@@ -162,15 +162,27 @@ export async function fetchVisitorProfiles(
             OR (e.event_name = 'beat_play' AND e.props->>'medium' = 'strudel')
         )::int AS strudel_plays,
         COUNT(*) FILTER (WHERE e.event_name = 'beat_play' AND e.props->>'medium' = 'audio')::int AS audio_plays,
-        COALESCE(
-          SUM((NULLIF(e.props->>'duration_ms', ''))::bigint)
-            FILTER (WHERE e.event_name = 'beat_listen'),
-          0
+        (
+          SELECT COALESCE(SUM(
+            CASE
+              WHEN (e_d.props->>'duration_ms') ~ '^[0-9]+$'
+              THEN (e_d.props->>'duration_ms')::bigint
+            END
+          ), 0)
+          FROM analytics_events e_d
+          WHERE e_d.visitor_id = e.visitor_id
+            AND e_d.event_name = 'beat_listen'
         )::bigint AS beat_listen_ms,
-        COALESCE(
-          SUM((NULLIF(e.props->>'duration_ms', ''))::bigint)
-            FILTER (WHERE e.event_name = 'page_engagement'),
-          0
+        (
+          SELECT COALESCE(SUM(
+            CASE
+              WHEN (e_d.props->>'duration_ms') ~ '^[0-9]+$'
+              THEN (e_d.props->>'duration_ms')::bigint
+            END
+          ), 0)
+          FROM analytics_events e_d
+          WHERE e_d.visitor_id = e.visitor_id
+            AND e_d.event_name = 'page_engagement'
         )::bigint AS page_engagement_ms,
         COUNT(*) FILTER (WHERE e.event_name = 'day_locked_interaction')::int AS locked_taps,
         COUNT(*) FILTER (WHERE e.event_name = 'locked_day_scroll')::int AS locked_scrolls,
@@ -271,15 +283,27 @@ export async function fetchVisitorProfiles(
             OR (e.event_name = 'beat_play' AND e.props->>'medium' = 'strudel')
         )::int AS strudel_plays,
         COUNT(*) FILTER (WHERE e.event_name = 'beat_play' AND e.props->>'medium' = 'audio')::int AS audio_plays,
-        COALESCE(
-          SUM((NULLIF(e.props->>'duration_ms', ''))::bigint)
-            FILTER (WHERE e.event_name = 'beat_listen'),
-          0
+        (
+          SELECT COALESCE(SUM(
+            CASE
+              WHEN (e_d.props->>'duration_ms') ~ '^[0-9]+$'
+              THEN (e_d.props->>'duration_ms')::bigint
+            END
+          ), 0)
+          FROM analytics_events e_d
+          WHERE e_d.visitor_id = e.visitor_id
+            AND e_d.event_name = 'beat_listen'
         )::bigint AS beat_listen_ms,
-        COALESCE(
-          SUM((NULLIF(e.props->>'duration_ms', ''))::bigint)
-            FILTER (WHERE e.event_name = 'page_engagement'),
-          0
+        (
+          SELECT COALESCE(SUM(
+            CASE
+              WHEN (e_d.props->>'duration_ms') ~ '^[0-9]+$'
+              THEN (e_d.props->>'duration_ms')::bigint
+            END
+          ), 0)
+          FROM analytics_events e_d
+          WHERE e_d.visitor_id = e.visitor_id
+            AND e_d.event_name = 'page_engagement'
         )::bigint AS page_engagement_ms,
         COUNT(*) FILTER (WHERE e.event_name = 'day_locked_interaction')::int AS locked_taps,
         COUNT(*) FILTER (WHERE e.event_name = 'locked_day_scroll')::int AS locked_scrolls,
@@ -380,15 +404,27 @@ export async function fetchVisitorProfiles(
             OR (e.event_name = 'beat_play' AND e.props->>'medium' = 'strudel')
         )::int AS strudel_plays,
         COUNT(*) FILTER (WHERE e.event_name = 'beat_play' AND e.props->>'medium' = 'audio')::int AS audio_plays,
-        COALESCE(
-          SUM((NULLIF(e.props->>'duration_ms', ''))::bigint)
-            FILTER (WHERE e.event_name = 'beat_listen'),
-          0
+        (
+          SELECT COALESCE(SUM(
+            CASE
+              WHEN (e_d.props->>'duration_ms') ~ '^[0-9]+$'
+              THEN (e_d.props->>'duration_ms')::bigint
+            END
+          ), 0)
+          FROM analytics_events e_d
+          WHERE e_d.visitor_id = e.visitor_id
+            AND e_d.event_name = 'beat_listen'
         )::bigint AS beat_listen_ms,
-        COALESCE(
-          SUM((NULLIF(e.props->>'duration_ms', ''))::bigint)
-            FILTER (WHERE e.event_name = 'page_engagement'),
-          0
+        (
+          SELECT COALESCE(SUM(
+            CASE
+              WHEN (e_d.props->>'duration_ms') ~ '^[0-9]+$'
+              THEN (e_d.props->>'duration_ms')::bigint
+            END
+          ), 0)
+          FROM analytics_events e_d
+          WHERE e_d.visitor_id = e.visitor_id
+            AND e_d.event_name = 'page_engagement'
         )::bigint AS page_engagement_ms,
         COUNT(*) FILTER (WHERE e.event_name = 'day_locked_interaction')::int AS locked_taps,
         COUNT(*) FILTER (WHERE e.event_name = 'locked_day_scroll')::int AS locked_scrolls,
@@ -557,9 +593,10 @@ function mapTimelineEvent(row: TimelineRow): VisitorTimelineEvent {
   };
 }
 
-function toMs(value: string | number | null | undefined): number {
+function toMs(value: string | number | bigint | null | undefined): number {
   if (value == null) return 0;
-  if (typeof value === "number") return value;
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "bigint") return Number(value);
   const n = Number.parseInt(String(value), 10);
   return Number.isFinite(n) ? n : 0;
 }
