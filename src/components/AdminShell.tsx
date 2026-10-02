@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-type NavId = "metrics" | "devices";
+type NavId = "live" | "metrics" | "devices";
 
 type Props = {
   active: NavId;
@@ -15,7 +15,8 @@ type Props = {
 };
 
 const NAV: { id: NavId; href: string; label: string; hint: string }[] = [
-  { id: "metrics", href: "/admin", label: "Metrics", hint: "visitor profiles" },
+  { id: "live", href: "/admin/live", label: "Live", hint: "on site now" },
+  { id: "metrics", href: "/admin", label: "Metrics", hint: "history · profiles" },
   { id: "devices", href: "/admin/devices", label: "Devices", hint: "internal · ignore" },
 ];
 

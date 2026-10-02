@@ -33,8 +33,13 @@ import {
 } from "@/lib/analytics-page-engagement";
 import { recordSessionLanding } from "@/lib/analytics-landing";
 import { trackEvent } from "@/lib/analytics";
+import {
+  setVisitorActivity,
+  trackVisitorPresence,
+} from "@/lib/analytics-presence";
 import { stopStrudelForDayChange } from "@/lib/strudel-playback-control";
 import { useDayPattern } from "@/lib/use-day-pattern";
+import { useVisitorPresence } from "@/lib/use-visitor-presence";
 
 type Props = {
   manifest: Manifest;
@@ -93,12 +98,25 @@ export function BeatoberHome({
   const days = manifest.days;
   const prevInitialStopRef = useRef(initialDay);
 
+  const presenceDay = viewDay >= 1 && viewDay <= 31 ? viewDay : null;
+
+  const pingPresence = useCallback(() => {
+    trackVisitorPresence({ path: pathname, day: presenceDay });
+  }, [pathname, presenceDay]);
+
+  useVisitorPresence(pathname, viewDay);
+
   const handleStrudelPlayback = useCallback(
     (playing: boolean, day: number) => {
       const url = workspaceBgForDay(day);
       setPlaybackWorkspaceBg(playing && url ? url : undefined);
+      setVisitorActivity(playing ? "listening_strudel" : "browsing");
+      trackVisitorPresence({
+        path: pathname,
+        day: day >= 1 && day <= 31 ? day : null,
+      });
     },
-    [],
+    [pathname],
   );
 
   useEffect(() => {
@@ -173,6 +191,13 @@ export function BeatoberHome({
     return bindLockedDayScroll(entry.day);
   }, [viewLocked, entry.day]);
 
+  useEffect(() => {
+    if (viewLocked && !canPublish) {
+      setVisitorActivity("locked_day");
+      pingPresence();
+    }
+  }, [viewLocked, canPublish, pingPresence]);
+
   const showStrudel = !viewLocked || canPublish;
   const {
     code: publishedCode,
@@ -223,6 +248,9 @@ export function BeatoberHome({
               day={entry.day}
               audioUrl={entry.audioUrl}
               title={entry.title}
+              idleActivity={
+                viewLocked && !canPublish ? "locked_day" : "browsing"
+              }
             />
           ) : null}
           {showStrudel ? (

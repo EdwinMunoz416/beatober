@@ -23,6 +23,8 @@ export const ANALYTICS_EVENTS = [
   "beat_loop_complete",
   /** First session hit on /day/N from off-site (share / OG / message link) */
   "share_landing",
+  /** Heartbeat for live admin (activity + path + day) */
+  "visitor_presence",
 ] as const;
 
 export type AnalyticsEventName = (typeof ANALYTICS_EVENTS)[number];

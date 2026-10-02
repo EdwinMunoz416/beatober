@@ -5,8 +5,8 @@ import {
   getCachedDeviceLabel,
   shouldSkipTracking,
 } from "@/lib/analytics-audience-client";
+import { postAnalyticsPayload } from "@/lib/analytics-ingest-client";
 import { getReferrerContext } from "@/lib/referrer-classify";
-import { getSessionId, getVisitorId } from "@/lib/visitor-id";
 
 function cleanProps(
   properties?: AnalyticsProps,
@@ -57,31 +57,12 @@ export function trackEvent(name: AnalyticsEventName, properties?: AnalyticsProps
     ...(ref.utmMedium ? { utm_medium: ref.utmMedium } : {}),
   };
 
-  const body = {
+  postAnalyticsPayload({
     eventName: name,
-    visitorId: getVisitorId(),
-    sessionId: getSessionId(),
     day: dayFromProps(properties),
     props: propsWithReferrer,
     path: window.location.pathname,
     referrerBucket: ref.bucket,
     referrerSource: ref.source,
-  };
-
-  try {
-    const payload = JSON.stringify(body);
-    if (navigator.sendBeacon) {
-      const blob = new Blob([payload], { type: "application/json" });
-      navigator.sendBeacon("/api/events", blob);
-    } else {
-      void fetch("/api/events", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: payload,
-        keepalive: true,
-      });
-    }
-  } catch {
-    /* non-fatal */
-  }
+  });
 }
