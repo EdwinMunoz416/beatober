@@ -97,25 +97,41 @@ body.strudel-global-draw-active #test-canvas {
 }
 
 .site-header {
-  flex-shrink: 0;
+  position: fixed;
+  top: max(clamp(0.35rem, 1.2vh, 0.85rem), env(safe-area-inset-top, 0px));
+  left: 0;
+  right: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 100vw;
+  margin: 0;
+  padding-inline: max(var(--page-gap), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+  box-sizing: border-box;
   pointer-events: none;
 }
 
 /* Matches OG preview: black Ledlight + 2px white stroke halo (no pill) */
 .site-title {
-  position: fixed;
-  top: clamp(0.35rem, 1.2vh, 0.85rem);
-  left: 50%;
-  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.05em;
+  width: auto;
+  max-width: 100%;
   margin: 0;
   font-family: "Ledlight", system-ui, sans-serif;
   font-size: clamp(1.85rem, 5.5vh, 3.75rem);
   font-weight: 400;
   letter-spacing: 0.06em;
-  line-height: 1;
+  line-height: 1.05;
   color: #000;
   text-transform: lowercase;
-  transform: translateX(-50%);
+  text-align: center;
   pointer-events: auto;
   text-shadow:
     -2px 0 0 #fff,
@@ -126,6 +142,32 @@ body.strudel-global-draw-active #test-canvas {
     2px -2px 0 #fff,
     -2px 2px 0 #fff,
     2px 2px 0 #fff;
+}
+
+.site-title__line {
+  display: block;
+  width: auto;
+  text-align: center;
+}
+
+@media (min-width: 480px) {
+  .site-title {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.28em;
+  }
+
+  .site-title__line {
+    display: inline;
+  }
+}
+
+@media (max-width: 640px) {
+  .site-title {
+    font-size: clamp(1.2rem, 4.2vw, 1.75rem);
+    letter-spacing: 0.03em;
+  }
 }
 
 .beatober-workspace {
@@ -197,12 +239,12 @@ body.strudel-global-draw-active #test-canvas {
   color: inherit;
 }
 
-.beatober-workspace > .site-header {
+.site-header-spacer {
   grid-column: 1 / -1;
   grid-row: 1;
-  min-width: 0;
-  min-height: clamp(2.25rem, 6vh, 4.25rem);
+  min-height: clamp(2.75rem, 7vh, 4.75rem);
   margin-bottom: clamp(0.15rem, 0.8vh, 0.5rem);
+  pointer-events: none;
 }
 
 .beatober-workspace > .day-wheel-panel {
@@ -233,19 +275,25 @@ body.strudel-global-draw-active #test-canvas {
 }
 
 @media (max-width: 640px) {
+  .beatober-page {
+    overflow: visible;
+  }
+
   .beatober-workspace {
     grid-template-columns: 1fr;
     grid-template-rows: auto minmax(0, 34%) minmax(0, 1fr);
-  }
-
-  .beatober-workspace > .site-header {
-    grid-column: 1 / -1;
-    grid-row: 1;
+    overflow: hidden;
   }
 
   .beatober-workspace > .day-wheel-panel {
     grid-column: 1;
     grid-row: 2;
+    align-items: center;
+  }
+
+  .beatober-day-wheel.option-wheel {
+    width: 100%;
+    max-width: 100vw;
   }
 
   .beatober-workspace > .beatober-main {
@@ -304,22 +352,6 @@ body.strudel-global-draw-active #test-canvas {
   background: transparent;
 }
 
-.locked-day-panel__header {
-  margin: 0;
-  max-width: 28rem;
-}
-
-.locked-day-panel__title {
-  margin: 0;
-  font-family: "Ledlight", system-ui, sans-serif;
-  font-size: clamp(1.35rem, 3.2vh, 2.1rem);
-  font-weight: 400;
-  letter-spacing: 0.06em;
-  line-height: 1.1;
-  text-transform: lowercase;
-  color: var(--text);
-}
-
 .locked-day-panel__stage {
   display: flex;
   align-items: center;
@@ -329,18 +361,49 @@ body.strudel-global-draw-active #test-canvas {
 }
 
 .locked-day-panel__display {
+  display: flex;
+  justify-content: center;
+  width: 100%;
   margin: 0;
   font-family: "Ledlight", system-ui, sans-serif;
   font-size: clamp(2rem, 6vh, 3.75rem);
   font-weight: 400;
   letter-spacing: 0.1em;
-  line-height: 1;
+  line-height: 1.1;
   text-transform: lowercase;
   color: var(--text);
+  text-align: center;
 }
 
 .locked-day-panel__blur {
   color: inherit;
+}
+
+.locked-day-panel__display .rb-blur-text {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 0.35em;
+  max-width: 100%;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .locked-day-panel__display {
+    font-size: clamp(1.25rem, 4.5vw, 1.85rem);
+    letter-spacing: 0.05em;
+    padding-inline: 0.5rem;
+  }
+
+  .beatober-day-wheel.option-wheel {
+    --ow-font-size: 0.92rem !important;
+  }
+
+  .beatober-day-wheel .option-wheel__item {
+    max-width: calc(100% - 0.5rem);
+    line-height: 1.15;
+    letter-spacing: 0.02em;
+  }
 }
 
 .repl {

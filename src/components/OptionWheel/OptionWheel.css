@@ -51,3 +51,18 @@
 .option-wheel__item--locked {
   color: color-mix(in srgb, var(--ow-text-color) 55%, transparent);
 }
+
+.option-wheel--center-labels .option-wheel__item {
+  left: 50%;
+  right: auto;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.2;
+  max-width: calc(100% - 1.25rem);
+  transform-origin: center center;
+}
+
+.option-wheel--center-labels.option-wheel--right .option-wheel__item {
+  left: 50%;
+  right: auto;
+}

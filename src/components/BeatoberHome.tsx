@@ -171,6 +171,7 @@ export function BeatoberHome({
           <StrudelWarmBoot />
         </>
       ) : null}
+      <StudioDazeHeader />
       <div
         className={`beatober-workspace${playbackWorkspaceBg ? " beatober-workspace--playback-bg" : ""}`}
         style={
@@ -181,7 +182,7 @@ export function BeatoberHome({
             : undefined
         }
       >
-        <StudioDazeHeader />
+        <div className="site-header-spacer" aria-hidden />
         <DayOptionWheel
           days={days}
           calendar={calendar}

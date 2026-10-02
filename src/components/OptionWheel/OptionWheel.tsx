@@ -43,6 +43,8 @@ export interface OptionWheelProps {
   soundUrl?: string;
   soundVolume?: number;
   className?: string;
+  /** Multi-line labels centered on the wheel anchor (narrow columns). */
+  centerLabels?: boolean;
   /** Increment to snap the wheel back to `selected` (e.g. rejected locked pick). */
   resetKey?: number;
 }
@@ -62,6 +64,7 @@ interface WheelConfig {
   draggable: boolean;
   soundUrl: string;
   soundVolume: number;
+  centerLabels: boolean;
 }
 
 export default function OptionWheel({
@@ -88,6 +91,7 @@ export default function OptionWheel({
   soundUrl = "",
   soundVolume = 0.5,
   className = "",
+  centerLabels = false,
   resetKey,
 }: OptionWheelProps) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -135,6 +139,7 @@ export default function OptionWheel({
     draggable,
     soundUrl,
     soundVolume,
+    centerLabels,
   };
 
   const runFrame = useCallback((now: number) => {
@@ -174,7 +179,10 @@ export default function OptionWheel({
         x = -mirror * R * (1 - Math.cos(ang)) * cfg.curve;
         rot = (mirror * ang * 180) / Math.PI;
       }
-      el.style.transform = `translate(${x.toFixed(2)}px, calc(${y.toFixed(2)}px - 50%)) rotate(${rot.toFixed(3)}deg)`;
+      const xTranslate = cfg.centerLabels
+        ? `calc(-50% + ${x.toFixed(2)}px)`
+        : `${x.toFixed(2)}px`;
+      el.style.transform = `translate(${xTranslate}, calc(${y.toFixed(2)}px - 50%)) rotate(${rot.toFixed(3)}deg)`;
       el.style.opacity = String(Math.max(cfg.minOpacity, 1 - dist * cfg.fade));
       el.style.filter =
         cfg.blur > 0 ? `blur(${(dist * cfg.blur).toFixed(2)}px)` : "none";
@@ -379,7 +387,7 @@ export default function OptionWheel({
       role="listbox"
       tabIndex={0}
       aria-label="October days"
-      className={`option-wheel${side === "right" ? " option-wheel--right" : ""}${isDragging ? " option-wheel--dragging" : ""}${className ? ` ${className}` : ""}`}
+      className={`option-wheel${side === "right" ? " option-wheel--right" : ""}${centerLabels ? " option-wheel--center-labels" : ""}${isDragging ? " option-wheel--dragging" : ""}${className ? ` ${className}` : ""}`}
       style={
         {
           "--ow-text-color": textColor,

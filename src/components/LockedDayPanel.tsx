@@ -10,26 +10,19 @@ type Props = {
 /** Public locked days — standalone content shell (no Strudel). */
 export function LockedDayPanel({ day, title }: Props) {
   const pad = String(day).padStart(2, "0");
-  const theme = title?.trim() || `day ${pad}`;
+  const label = title?.trim()
+    ? `${title} — coming soon`
+    : `Day ${pad} — coming soon`;
 
   return (
-    <article
-      className="locked-day-panel"
-      aria-labelledby={`locked-day-${day}-title`}
-    >
-      <header className="locked-day-panel__header">
-        <h2 id={`locked-day-${day}-title`} className="locked-day-panel__title">
-          {theme}
-        </h2>
-      </header>
-
+    <article className="locked-day-panel" aria-label={label}>
       <div className="locked-day-panel__stage">
         <p className="locked-day-panel__display" aria-live="polite">
           <BlurText
             text="coming soon"
-            animateBy="letters"
+            animateBy="words"
             direction="top"
-            delay={90}
+            delay={120}
             stepDuration={0.5}
             className="locked-day-panel__blur"
           />

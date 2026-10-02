@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { DayEntry } from "@/lib/content";
 import type { BeatoberCalendar } from "@/lib/day-access";
 import { isDayLocked } from "@/lib/day-access";
@@ -23,6 +23,16 @@ export function DayOptionWheel({
   focusDay,
   onFocusDay,
 }: Props) {
+  const [mobileLayout, setMobileLayout] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 640px)");
+    const sync = () => setMobileLayout(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
   const sorted = useMemo(
     () => [...days].sort((a, b) => a.day - b.day),
     [days],
@@ -57,16 +67,17 @@ export function DayOptionWheel({
     <nav className="day-wheel-panel" aria-label="October days">
       <OptionWheel
         className="beatober-day-wheel"
+        centerLabels
         items={labels}
         selected={focusIndex}
         loop
-        fontSize={1.64}
-        spacing={3.1}
-        tilt={6}
-        curve={0.85}
+        fontSize={mobileLayout ? 0.92 : 1.64}
+        spacing={mobileLayout ? 2.5 : 3.1}
+        tilt={mobileLayout ? 3 : 6}
+        curve={mobileLayout ? 0.15 : 0.85}
         blur={2.4}
         fade={0.165}
-        inset={12}
+        inset={mobileLayout ? 0 : 12}
         textColor="#a6a6a6"
         activeColor="#ffffff"
         soundUrl=""
