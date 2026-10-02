@@ -165,8 +165,12 @@ export async function fetchVisitorProfiles(
         (
           SELECT COALESCE(SUM(
             CASE
-              WHEN (e_d.props->>'duration_ms') ~ '^[0-9]+$'
-              THEN (e_d.props->>'duration_ms')::bigint
+              WHEN e_d.props ? 'duration_ms'
+                AND (e_d.props->>'duration_ms') ~ '^[0-9]+(\.[0-9]+)?$'
+              THEN GREATEST(
+                0,
+                FLOOR((e_d.props->>'duration_ms')::numeric)
+              )::bigint
             END
           ), 0)
           FROM analytics_events e_d
@@ -176,8 +180,12 @@ export async function fetchVisitorProfiles(
         (
           SELECT COALESCE(SUM(
             CASE
-              WHEN (e_d.props->>'duration_ms') ~ '^[0-9]+$'
-              THEN (e_d.props->>'duration_ms')::bigint
+              WHEN e_d.props ? 'duration_ms'
+                AND (e_d.props->>'duration_ms') ~ '^[0-9]+(\.[0-9]+)?$'
+              THEN GREATEST(
+                0,
+                FLOOR((e_d.props->>'duration_ms')::numeric)
+              )::bigint
             END
           ), 0)
           FROM analytics_events e_d
@@ -286,8 +294,12 @@ export async function fetchVisitorProfiles(
         (
           SELECT COALESCE(SUM(
             CASE
-              WHEN (e_d.props->>'duration_ms') ~ '^[0-9]+$'
-              THEN (e_d.props->>'duration_ms')::bigint
+              WHEN e_d.props ? 'duration_ms'
+                AND (e_d.props->>'duration_ms') ~ '^[0-9]+(\.[0-9]+)?$'
+              THEN GREATEST(
+                0,
+                FLOOR((e_d.props->>'duration_ms')::numeric)
+              )::bigint
             END
           ), 0)
           FROM analytics_events e_d
@@ -297,8 +309,12 @@ export async function fetchVisitorProfiles(
         (
           SELECT COALESCE(SUM(
             CASE
-              WHEN (e_d.props->>'duration_ms') ~ '^[0-9]+$'
-              THEN (e_d.props->>'duration_ms')::bigint
+              WHEN e_d.props ? 'duration_ms'
+                AND (e_d.props->>'duration_ms') ~ '^[0-9]+(\.[0-9]+)?$'
+              THEN GREATEST(
+                0,
+                FLOOR((e_d.props->>'duration_ms')::numeric)
+              )::bigint
             END
           ), 0)
           FROM analytics_events e_d
@@ -407,8 +423,12 @@ export async function fetchVisitorProfiles(
         (
           SELECT COALESCE(SUM(
             CASE
-              WHEN (e_d.props->>'duration_ms') ~ '^[0-9]+$'
-              THEN (e_d.props->>'duration_ms')::bigint
+              WHEN e_d.props ? 'duration_ms'
+                AND (e_d.props->>'duration_ms') ~ '^[0-9]+(\.[0-9]+)?$'
+              THEN GREATEST(
+                0,
+                FLOOR((e_d.props->>'duration_ms')::numeric)
+              )::bigint
             END
           ), 0)
           FROM analytics_events e_d
@@ -418,8 +438,12 @@ export async function fetchVisitorProfiles(
         (
           SELECT COALESCE(SUM(
             CASE
-              WHEN (e_d.props->>'duration_ms') ~ '^[0-9]+$'
-              THEN (e_d.props->>'duration_ms')::bigint
+              WHEN e_d.props ? 'duration_ms'
+                AND (e_d.props->>'duration_ms') ~ '^[0-9]+(\.[0-9]+)?$'
+              THEN GREATEST(
+                0,
+                FLOOR((e_d.props->>'duration_ms')::numeric)
+              )::bigint
             END
           ), 0)
           FROM analytics_events e_d

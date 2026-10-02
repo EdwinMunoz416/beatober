@@ -193,10 +193,13 @@ export function BeatoberHome({
       day: viewLocked && !canPublish ? null : viewDay,
       path: pathname,
     });
+  }, [pathname, viewDay, viewLocked, canPublish]);
+
+  useEffect(() => {
     return () => {
       flushPageEngagementOnUnmount();
     };
-  }, [pathname, viewDay, viewLocked, canPublish]);
+  }, []);
 
   const entry = focusEntry;
 

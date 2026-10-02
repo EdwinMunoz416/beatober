@@ -1715,8 +1715,14 @@ body.strudel-global-draw-active #test-canvas {
 .admin-dash__drawer-identity {
   display: flex;
   gap: 0.65rem;
-  align-items: center;
+  align-items: flex-start;
   min-width: 0;
+  flex: 1;
+}
+
+.admin-dash__drawer-identity-text {
+  min-width: 0;
+  flex: 1;
 }
 
 .admin-dash__drawer-title {
@@ -1996,13 +2002,47 @@ body.strudel-global-draw-active #test-canvas {
   flex: 1;
 }
 
+.admin-dash__profile-head-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.admin-dash__profile-first-seen {
+  flex-shrink: 0;
+  max-width: 42%;
+  text-align: right;
+  font-size: 0.58rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
+}
+
+.admin-dash__profile-first-seen-label {
+  display: block;
+  font-size: 0.52rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: 0.9;
+}
+
 .admin-dash__profile-name {
   display: block;
+  flex: 1;
+  min-width: 0;
   font-size: 0.82rem;
   color: var(--text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.admin-dash__profile-head-row .admin-dash__drawer-title {
+  flex: 1;
+  min-width: 0;
 }
 
 .admin-dash__profile-handle {

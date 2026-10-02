@@ -142,13 +142,27 @@ export function AdminVisitorProfileDrawer({
               large
               online={online}
             />
-            <div>
-              <h2 id="visitor-drawer-title" className="admin-dash__drawer-title">
-                {name}
-                {series ? (
-                  <span className="admin-dash__drawer-series">{series}</span>
-                ) : null}
-              </h2>
+            <div className="admin-dash__drawer-identity-text">
+              <div className="admin-dash__profile-head-row">
+                <h2
+                  id="visitor-drawer-title"
+                  className="admin-dash__drawer-title"
+                >
+                  {name}
+                  {series ? (
+                    <span className="admin-dash__drawer-series">{series}</span>
+                  ) : null}
+                </h2>
+                <span
+                  className="admin-dash__profile-first-seen"
+                  title={profile.firstSeenAt}
+                >
+                  <span className="admin-dash__profile-first-seen-label">
+                    First seen
+                  </span>
+                  {formatWhen(profile.firstSeenAt)}
+                </span>
+              </div>
               <p className="admin-dash__drawer-sub">{story}</p>
               <button
                 type="button"
@@ -176,10 +190,6 @@ export function AdminVisitorProfileDrawer({
           <div>
             <dt>Visitor type</dt>
             <dd>{profile.isReturning ? "Returning" : "First visit"}</dd>
-          </div>
-          <div>
-            <dt>First seen</dt>
-            <dd>{formatWhen(profile.firstSeenAt)}</dd>
           </div>
           <div>
             <dt>Last active</dt>

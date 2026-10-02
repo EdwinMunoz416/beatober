@@ -95,7 +95,8 @@ export function visitorStoryLine(input: StoryInput): string {
 
 export function formatDurationMs(ms: number): string {
   if (!ms || ms < 1000) return "<1s";
-  const totalSec = Math.round(ms / 1000);
+  /** Floor so the label never ticks backward when ms only grows. */
+  const totalSec = Math.floor(ms / 1000);
   if (totalSec < 60) return `${totalSec}s`;
   const mins = Math.floor(totalSec / 60);
   const sec = totalSec % 60;

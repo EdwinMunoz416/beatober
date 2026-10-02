@@ -57,6 +57,27 @@ export function AdminVisitorProfiles({ metrics, loading, audience }: Props) {
     [visitors, onlineIds],
   );
 
+  useEffect(() => {
+    if (!selected) return;
+    const fresh = visitors.find(
+      (v) =>
+        v.visitorId === selected.visitorId && v.audience === selected.audience,
+    );
+    if (!fresh) return;
+    setSelected((prev) => {
+      if (!prev || prev.visitorId !== fresh.visitorId) return prev;
+      if (
+        prev.pageEngagementMs === fresh.pageEngagementMs &&
+        prev.lastSeenAt === fresh.lastSeenAt &&
+        prev.beatListenMs === fresh.beatListenMs &&
+        prev.eventCount === fresh.eventCount
+      ) {
+        return prev;
+      }
+      return fresh;
+    });
+  }, [visitors, selected?.visitorId, selected?.audience]);
+
   return (
     <section className="admin-dash__people" aria-label="Visitors">
       <header className="admin-dash__people-head">
@@ -148,12 +169,25 @@ function VisitorCard({
             online={online}
           />
           <div className="admin-dash__profile-id-block">
-            <span className="admin-dash__profile-name">
-              {name}
-              {online ? (
-                <span className="admin-dash__profile-online-label">Online</span>
-              ) : null}
-            </span>
+            <div className="admin-dash__profile-head-row">
+              <span className="admin-dash__profile-name">
+                {name}
+                {online ? (
+                  <span className="admin-dash__profile-online-label">
+                    Online
+                  </span>
+                ) : null}
+              </span>
+              <span
+                className="admin-dash__profile-first-seen"
+                title={v.firstSeenAt}
+              >
+                <span className="admin-dash__profile-first-seen-label">
+                  First seen
+                </span>
+                {firstSeen}
+              </span>
+            </div>
             <span className="admin-dash__profile-location">{location}</span>
           </div>
         </div>
@@ -193,7 +227,9 @@ function VisitorCard({
           </div>
           <div>
             <dt>On page</dt>
-            <dd title={`${v.pageEngagementMs} ms`}>
+            <dd
+              title={`${v.pageEngagementMs} ms total · saved in ~30s chunks while the tab is visible`}
+            >
               {v.pageEngagementMs > 0
                 ? formatDurationMs(v.pageEngagementMs)
                 : "—"}
@@ -252,7 +288,6 @@ function VisitorCard({
         </p>
 
         <footer className="admin-dash__profile-foot">
-          <span>First seen {firstSeen}</span>
           <span className="admin-dash__profile-open-hint">View timeline →</span>
         </footer>
       </button>
