@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { isAllowedEvent } from "@/lib/analytics-events";
 import { insertAnalyticsEvent } from "@/lib/analytics-store";
 import { dbConfigured } from "@/lib/db";
+import { geoFromRequest } from "@/lib/geo-from-request";
 import { allowAnalyticsEvent, ipHashForProps } from "@/lib/event-rate-limit";
 
 export async function POST(request: Request) {
@@ -66,6 +67,8 @@ export async function POST(request: Request) {
         ? mergedProps.referrer_source.slice(0, 64)
         : undefined;
 
+  const geo = geoFromRequest(request);
+
   try {
     const result = await insertAnalyticsEvent({
       eventName,
@@ -79,6 +82,8 @@ export async function POST(request: Request) {
           ? referrerBucket.slice(0, 32)
           : undefined,
       referrerSource: sourceFromBody,
+      geoCountry: geo.country,
+      geoRegion: geo.region,
     });
     return NextResponse.json({
       ok: true,

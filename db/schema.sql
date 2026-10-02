@@ -18,7 +18,9 @@ CREATE TABLE IF NOT EXISTS analytics_events (
   props JSONB NOT NULL DEFAULT '{}'::jsonb,
   path TEXT,
   referrer_bucket TEXT,
-  referrer_source TEXT
+  referrer_source TEXT,
+  geo_country TEXT,
+  geo_region TEXT
 );
 
 CREATE INDEX IF NOT EXISTS analytics_events_created_at_idx ON analytics_events (created_at DESC);

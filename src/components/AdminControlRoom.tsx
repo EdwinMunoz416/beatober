@@ -5,6 +5,7 @@ import {
   AdminMetricsPosts,
   mergePostMetrics,
 } from "@/components/AdminMetricsPosts";
+import { AdminGeography } from "@/components/AdminGeography";
 import { AdminTrafficSources } from "@/components/AdminTrafficSources";
 import { AdminVisitorFunnel } from "@/components/AdminVisitorFunnel";
 import { AdminVisitorProfiles } from "@/components/AdminVisitorProfiles";
@@ -211,6 +212,8 @@ export function AdminControlRoom({ initialAuthed }: Props) {
       />
 
       <AdminTrafficSources metrics={metrics} loading={refreshing} />
+
+      <AdminGeography metrics={metrics} loading={refreshing} />
 
       <AdminVisitorFunnel metrics={metrics} loading={refreshing} />
 

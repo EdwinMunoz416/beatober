@@ -9,6 +9,7 @@ import type {
 } from "@/lib/analytics-visitor-profiles";
 import { groupTimelineBySession } from "@/lib/visitor-timeline-ui";
 import { VisitorUserIcon } from "@/components/VisitorUserIcon";
+import { formatGeoChip } from "@/lib/geo-display";
 import { formatReferrerTrail } from "@/lib/referrer-display";
 import {
   formatDurationMs,
@@ -202,6 +203,17 @@ export function AdminVisitorProfileDrawer({
                 profile.referrerSource,
                 profile.lastReferrerSource,
               )}
+            </dd>
+          </div>
+          <div>
+            <dt>Location</dt>
+            <dd>
+              {profile.geoCountry || profile.lastGeoCountry
+                ? profile.geoCountry === profile.lastGeoCountry &&
+                  profile.geoRegion === profile.lastGeoRegion
+                  ? formatGeoChip(profile.geoCountry, profile.geoRegion)
+                  : `${formatGeoChip(profile.geoCountry, profile.geoRegion)} → ${formatGeoChip(profile.lastGeoCountry, profile.lastGeoRegion)}`
+                : "—"}
             </dd>
           </div>
           <div>

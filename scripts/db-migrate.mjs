@@ -66,6 +66,22 @@ await sql`
 `;
 
 await sql`
+  ALTER TABLE analytics_events
+  ADD COLUMN IF NOT EXISTS geo_country TEXT
+`;
+
+await sql`
+  ALTER TABLE analytics_events
+  ADD COLUMN IF NOT EXISTS geo_region TEXT
+`;
+
+await sql`
+  CREATE INDEX IF NOT EXISTS analytics_events_geo_country_idx
+  ON analytics_events (geo_country)
+  WHERE event_name = 'page_view' AND geo_country IS NOT NULL
+`;
+
+await sql`
   CREATE TABLE IF NOT EXISTS device_registry (
     visitor_id TEXT PRIMARY KEY,
     role TEXT NOT NULL CHECK (role IN ('internal', 'ignore')),

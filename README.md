@@ -74,7 +74,7 @@ Share a day: **`/day/3`** (OG image for social previews). Sitemap: `/sitemap.xml
 **Control room:** https://studiodaze-beatober.vercel.app/admin — password = `BEATOBER_AUTHOR_SECRET`.  
 **Devices:** `/admin/devices` — tag this browser as **internal** or **ignore** (visitors-only metrics by default).
 
-Events: `page_view` (`referrer_source`: discord, x, … + `referrer_host`), `share_landing`, … Admin **Traffic sources** uses first-touch vs all views. Optional `?utm_source=discord` on links.
+Events: `page_view` (`referrer_source`, `geo_country` / `geo_region` from Vercel edge on ingest), … Admin **Geography** = first-touch country, US regions, EU countries + subregions.
 
 After deploy: `npm run db:migrate` (adds `analytics_events` if missing).
 

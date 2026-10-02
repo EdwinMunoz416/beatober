@@ -5,6 +5,7 @@ import { AdminVisitorProfileDrawer } from "@/components/AdminVisitorProfileDrawe
 import { VisitorUserIcon } from "@/components/VisitorUserIcon";
 import type { AdminMetrics, MetricsAudience } from "@/lib/analytics-query";
 import type { VisitorProfile } from "@/lib/analytics-visitor-profiles";
+import { formatGeoChip } from "@/lib/geo-display";
 import { formatReferrerTrail } from "@/lib/referrer-display";
 import {
   formatDurationMs,
@@ -79,6 +80,15 @@ function VisitorCard({
       ? v.days.map((d) => String(d).padStart(2, "0")).join(", ")
       : "—";
 
+  const geoFirst = formatGeoChip(v.geoCountry, v.geoRegion);
+  const geoLast = formatGeoChip(v.lastGeoCountry, v.lastGeoRegion);
+  const geoLabel =
+    geoFirst === "Geo unknown" && geoLast === "Geo unknown"
+      ? null
+      : geoFirst === geoLast
+        ? geoFirst
+        : `${geoFirst} → ${geoLast}`;
+
   return (
     <li className="admin-dash__profile-cell">
       <button type="button" className="admin-dash__profile" onClick={onOpen}>
@@ -96,6 +106,11 @@ function VisitorCard({
               >
                 {formatReferrerTrail(v.referrerSource, v.lastReferrerSource)}
               </span>
+              {geoLabel ? (
+                <span className="admin-dash__profile-tag admin-dash__profile-tag--geo">
+                  {geoLabel}
+                </span>
+              ) : null}
               {v.audience !== "visitor" ? (
                 <span className="admin-dash__profile-tag admin-dash__profile-tag--internal">
                   {v.audience}

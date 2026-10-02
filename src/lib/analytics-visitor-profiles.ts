@@ -33,6 +33,10 @@ export type VisitorProfile = {
   pageEngagementMs: number;
   lockedTaps: number;
   lockedScrolls: number;
+  geoCountry: string | null;
+  geoRegion: string | null;
+  lastGeoCountry: string | null;
+  lastGeoRegion: string | null;
 };
 
 type ProfileRow = {
@@ -56,6 +60,10 @@ type ProfileRow = {
   beat_loop_completes: number;
   pattern_errors: number;
   share_landings: number;
+  geo_country: string | null;
+  geo_region: string | null;
+  last_geo_country: string | null;
+  last_geo_region: string | null;
   top_day: number | null;
   strudel_plays: number;
   audio_plays: number;
@@ -135,6 +143,14 @@ export async function fetchVisitorProfiles(
           COALESCE(NULLIF(e.referrer_source, ''), e.props->>'referrer_source', e.referrer_bucket, 'direct')
           ORDER BY e.created_at DESC
         ) FILTER (WHERE e.event_name = 'page_view'))[1] AS last_referrer_source,
+        (array_agg(e.geo_country ORDER BY e.created_at ASC)
+          FILTER (WHERE e.event_name = 'page_view' AND e.geo_country IS NOT NULL))[1] AS geo_country,
+        (array_agg(e.geo_region ORDER BY e.created_at ASC)
+          FILTER (WHERE e.event_name = 'page_view' AND e.geo_region IS NOT NULL))[1] AS geo_region,
+        (array_agg(e.geo_country ORDER BY e.created_at DESC)
+          FILTER (WHERE e.event_name = 'page_view' AND e.geo_country IS NOT NULL))[1] AS last_geo_country,
+        (array_agg(e.geo_region ORDER BY e.created_at DESC)
+          FILTER (WHERE e.event_name = 'page_view' AND e.geo_region IS NOT NULL))[1] AS last_geo_region,
         (array_agg(e.path ORDER BY e.created_at DESC)
           FILTER (WHERE e.path IS NOT NULL))[1] AS last_path
       FROM analytics_events e
@@ -206,6 +222,14 @@ export async function fetchVisitorProfiles(
           COALESCE(NULLIF(e.referrer_source, ''), e.props->>'referrer_source', e.referrer_bucket, 'direct')
           ORDER BY e.created_at DESC
         ) FILTER (WHERE e.event_name = 'page_view'))[1] AS last_referrer_source,
+        (array_agg(e.geo_country ORDER BY e.created_at ASC)
+          FILTER (WHERE e.event_name = 'page_view' AND e.geo_country IS NOT NULL))[1] AS geo_country,
+        (array_agg(e.geo_region ORDER BY e.created_at ASC)
+          FILTER (WHERE e.event_name = 'page_view' AND e.geo_region IS NOT NULL))[1] AS geo_region,
+        (array_agg(e.geo_country ORDER BY e.created_at DESC)
+          FILTER (WHERE e.event_name = 'page_view' AND e.geo_country IS NOT NULL))[1] AS last_geo_country,
+        (array_agg(e.geo_region ORDER BY e.created_at DESC)
+          FILTER (WHERE e.event_name = 'page_view' AND e.geo_region IS NOT NULL))[1] AS last_geo_region,
         (array_agg(e.path ORDER BY e.created_at DESC)
           FILTER (WHERE e.path IS NOT NULL))[1] AS last_path
       FROM analytics_events e
@@ -277,6 +301,14 @@ export async function fetchVisitorProfiles(
           COALESCE(NULLIF(e.referrer_source, ''), e.props->>'referrer_source', e.referrer_bucket, 'direct')
           ORDER BY e.created_at DESC
         ) FILTER (WHERE e.event_name = 'page_view'))[1] AS last_referrer_source,
+        (array_agg(e.geo_country ORDER BY e.created_at ASC)
+          FILTER (WHERE e.event_name = 'page_view' AND e.geo_country IS NOT NULL))[1] AS geo_country,
+        (array_agg(e.geo_region ORDER BY e.created_at ASC)
+          FILTER (WHERE e.event_name = 'page_view' AND e.geo_region IS NOT NULL))[1] AS geo_region,
+        (array_agg(e.geo_country ORDER BY e.created_at DESC)
+          FILTER (WHERE e.event_name = 'page_view' AND e.geo_country IS NOT NULL))[1] AS last_geo_country,
+        (array_agg(e.geo_region ORDER BY e.created_at DESC)
+          FILTER (WHERE e.event_name = 'page_view' AND e.geo_region IS NOT NULL))[1] AS last_geo_region,
         (array_agg(e.path ORDER BY e.created_at DESC)
           FILTER (WHERE e.path IS NOT NULL))[1] AS last_path
       FROM analytics_events e
@@ -476,5 +508,9 @@ function mapProfile(row: ProfileRow): VisitorProfile {
     pageEngagementMs: toMs(row.page_engagement_ms),
     lockedTaps: row.locked_taps ?? 0,
     lockedScrolls: row.locked_scrolls ?? 0,
+    geoCountry: row.geo_country,
+    geoRegion: row.geo_region,
+    lastGeoCountry: row.last_geo_country,
+    lastGeoRegion: row.last_geo_region,
   };
 }

@@ -11,6 +11,8 @@ export type IngestEvent = {
   path?: string;
   referrerBucket?: string;
   referrerSource?: string;
+  geoCountry?: string | null;
+  geoRegion?: string | null;
 };
 
 export type IngestResult = {
@@ -43,6 +45,8 @@ export async function insertAnalyticsEvent(
       path,
       referrer_bucket,
       referrer_source,
+      geo_country,
+      geo_region,
       audience
     ) VALUES (
       ${event.eventName},
@@ -53,6 +57,8 @@ export async function insertAnalyticsEvent(
       ${event.path ?? null},
       ${event.referrerBucket ?? null},
       ${event.referrerSource ?? null},
+      ${event.geoCountry ?? null},
+      ${event.geoRegion ?? null},
       ${audience}
     )
   `;

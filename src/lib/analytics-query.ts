@@ -1,9 +1,15 @@
 import { BEATOBER_TIMEZONE } from "@/lib/day-access";
 import {
+  fetchGeoMetrics7d,
+  type GeoMetrics7d,
+} from "@/lib/analytics-geo-metrics";
+import {
   fetchVisitorProfiles,
   type VisitorProfile,
 } from "@/lib/analytics-visitor-profiles";
 import { getSql } from "@/lib/db";
+
+export type { GeoMetrics7d };
 
 export type { VisitorProfile };
 
@@ -25,6 +31,7 @@ export type AdminMetrics = {
   byDay: DayMetric[];
   recent: RecentEvent[];
   visitors: VisitorProfile[];
+  geo7d: GeoMetrics7d;
   compareNote: string;
 };
 
@@ -661,6 +668,7 @@ export async function fetchAdminMetrics(
     dailyRows,
     funnelExt,
     shareRows,
+    geo7d,
     visitors,
   ] = await Promise.all([
     window24(sql, audience) as Promise<WindowRow[]>,
@@ -682,6 +690,7 @@ export async function fetchAdminMetrics(
     queryShareLandings7d(sql, audience) as Promise<
       { day: number; unique_visitors: number; landing_count: number }[]
     >,
+    fetchGeoMetrics7d(audience),
     fetchVisitorProfiles(audience, 48),
   ]);
 
@@ -779,6 +788,7 @@ export async function fetchAdminMetrics(
       audience: r.audience,
     })),
     visitors,
-    compareNote: `${audienceNote} Each card is one browser (anonymous id), not a named person. Vercel Hobby Analytics is separate.`,
+    geo7d,
+    compareNote: `${audienceNote} Geo = first page view per browser (Vercel edge country/region). Unknown geo is common in local dev. Vercel Hobby Analytics is separate.`,
   };
 }
