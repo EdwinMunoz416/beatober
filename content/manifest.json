@@ -3,7 +3,7 @@
   "month": 10,
   "days": [
     { "day": 1, "approved": true, "title": "night drive", "strudelFile": "01.strudel" },
-    { "day": 2, "approved": false, "title": "last train", "strudelFile": "02.strudel" },
+    { "day": 2, "approved": true, "title": "last train", "strudelFile": "02.strudel" },
     { "day": 3, "approved": false, "title": "empty streets", "strudelFile": "03.strudel" },
     { "day": 4, "approved": false, "title": "sunrise", "strudelFile": "04.strudel" },
     { "day": 5, "approved": false, "title": "after hours", "strudelFile": "05.strudel" },
