@@ -20,6 +20,7 @@ declare module "@strudel/webaudio" {
   export function registerSynthSounds(): Promise<unknown>;
   export function registerZZFXSounds(): Promise<unknown>;
   export function aliasBank(url: string): Promise<unknown>;
+  export function soundAlias(original: string, alias: string): void;
 }
 
 declare module "@strudel/core" {
