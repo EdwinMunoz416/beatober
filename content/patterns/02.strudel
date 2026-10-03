@@ -1,0 +1,338 @@
+setcpm(132 / 4)
+
+const dropChords = "<0@4 1@2 0@999>"
+const dropDrums  = "<0@6 1@999>"
+const preDrop    = "<0@4 1@4 0@999>"
+const fullArr    = "<0@8 1@999>"
+const intro12    = "<1@2 0@999>"
+const intro34    = "<0@2 1@2 0@999>"
+const build      = "<0@4 1@4 0@999>"
+
+// Cycle 8 only — fill + swell into drop (cycle 9)
+const fillBar    = "<0@7 1@1 0@999>"
+
+// 16-cycle drop loop (from cycle 9): 8 full → 2 sparkle rest → 4 full → 4 breakdown → repeat
+const dropTops   = "<0@8 1@8 0@2 1@4 0@4 1@8 0@2 1@4 0@4 1@999>"
+// Extra pad swell on breakdown bars only (repeats every 16 cycles from cycle 9)
+const breakOnly  = "<0@22 1@4 0@12 1@4 0@12 1@4 0@12 1@999>"
+
+const lead = note(`<
+  [[f#4 a4] e5@1.25 cs5@0.5 [e5 cs5]@0.25]
+  [[gs4 b4] e5@0.75 gs5@0.5 [e5 cs5]@1]
+  [[f#4 a4] e5@1 cs5@0.5 [a5 gs5]@0.5]
+  [[gs4 b4] cs5@0.75 e5@0.5 [gs5 e5]@1]
+>`).slow(4)
+
+const leadHead = note(`<
+  [[f#4 a4] [e5 cs5] [e5 cs5] [a4 gs4]]
+  [[gs4 b4] [e5 gs5] [e5 cs5] [b4 gs4]]
+>`).slow(2)
+
+const leadTail = note(`<
+  [[f#4 a4] [e5 cs5] [a5 gs5] [cs5 e5]]
+  [[gs4 b4] [cs5 e5] [gs5 e5] [b4 cs5]]
+>`).slow(2)
+
+const sparkleRiff = note(`<
+  [[~ f#5 cs6 e6] [f#6 e6] ~ [cs6 e6 f#6 a6]]
+  [[~ a5 e6 g#6] [a6 g#6] ~ [e6 g#6 a6 c#7]]
+>`).slow(2)
+
+const chords = note(`<
+  [f#3 cs4 e4 a4]@2
+  [a3 e4 gs4 cs5]@2
+>`).slow(2)
+
+const padBed = note(`<
+  [f#3 a3]@2 [a3 cs4]@2
+>`).slow(2)
+
+const bass808 = note(`<
+  [[f#1 ~ ~ f#1] ~ f#1 ~]
+  [[a1 ~ ~ a1] ~ a1 ~]
+>`).slow(2)
+
+const leadGrid = (pat) =>
+  pat.clip(0.92).legato(0.72).attack(0.002).release(0.42)
+
+const dropFull = (pat) => pat.mask(fullArr)
+const dropVar = (pat) => pat.mask(fullArr).mask(dropTops)
+
+$: stack(
+  padBed.s('gm_pad_warm')
+    .gain(sine.range(0.04, 0.11).slow(8))
+    .attack(0.8)
+    .release(4)
+    .lpf(sine.range(900, 3200).slow(6))
+    .pan(sine.range(0.38, 0.62).slow(5))
+    .room(0.72)
+    .size(0.85)
+    .mask(build),
+
+  // Drop swell (cycle 8) + extra lift on pad
+  padBed.s('gm_pad_warm')
+    .gain(sine.range(0.06, 0.18).slow(1))
+    .attack(0.2)
+    .release(2)
+    .lpf(sine.range(1200, 4800).slow(1))
+    .room(0.88)
+    .mask(fillBar),
+
+  s("white")
+    .gain(sine.range(0.01, 0.05).slow(1))
+    .hpf(300)
+    .lpf(10000)
+    .mask(fillBar),
+
+  dropVar(
+    note("f#5 a5 cs6")
+      .s('sine')
+      .struct("~ ~ ~ 1")
+      .gain(0.025)
+      .attack(1.2)
+      .release(2.5)
+      .hpf(2400)
+      .lpf(sine.range(4200, 11000).slow(4))
+      .pan(cosine.range(0.2, 0.8).slow(3))
+      .delay(0.35)
+      .delaytime(0.375)
+      .delayfeedback(0.45)
+      .room(0.55),
+  ),
+
+  s("white")
+    .gain(sine.range(0.008, 0.022).slow(7))
+    .hpf(5200)
+    .lpf(14000)
+    .pan(perlin.range(0.35, 0.65).slow(11))
+    .mask(build),
+
+  s("hh*16")
+    .gain(sine.range(0.035, 0.075).slow(2))
+    .speed("<1 1.02 0.98 1>")
+    .hpf(5200)
+    .lpf(11000)
+    .pan(0.58)
+    .degradeBy(0.12)
+    .mask(preDrop),
+
+  dropVar(s("hh*32"))
+    .gain(0.04)
+    .hpf(6200)
+    .lpf(12000)
+    .pan(0.42),
+
+  s("~ cp ~ ~ ~ cp ~ ~")
+    .gain(0.06)
+    .hpf(2800)
+    .room(0.22)
+    .speed(0.98)
+    .mask(dropDrums),
+
+  // Pre-drop fill (cycle 8)
+  s("sd*4 cp")
+    .gain(0.24)
+    .room(0.35)
+    .mask(fillBar),
+
+  s("oh")
+    .speed(-0.75)
+    .gain(0.11)
+    .hpf(400)
+    .room(0.5)
+    .mask(fillBar),
+
+  note("<f#4 a4 cs5 e5>")
+    .s('gm_synth_strings_1')
+    .slow(1)
+    .gain(sine.range(0.04, 0.12).slow(1))
+    .attack(0.05)
+    .release(1.5)
+    .lpf(4200)
+    .room(0.7)
+    .mask(fillBar),
+
+  chords.s('gm_choir_aahs')
+    .pan(0.5)
+    .gain("<0.02 0.08 0.14 0.20>")
+    .attack(0.4)
+    .release(3.0)
+    .lpf(sine.range(2200, 3600).slow(4))
+    .room("<0.78 0.85 0.92 0.88>")
+    .size(0.9)
+    .mask(dropChords),
+
+  bass808.s('gm_fretless_bass')
+    .gain(sine.range(0.28, 0.34).slow(4))
+    .attack(0.008)
+    .release(1.2)
+    .lpf("<240 280 260 320>")
+    .shape(0.12)
+    .postgain(0.95)
+    .mask(dropDrums),
+
+  // Sub layer (phones / small speakers)
+  bass808.s('sine')
+    .gain(0.14)
+    .attack(0.01)
+    .release(0.9)
+    .lpf(110)
+    .shape(0.06)
+    .mask(dropDrums),
+
+  s("bd ~ ~ bd ~ ~ bd ~")
+    .gain(0.36)
+    .lpf(1800)
+    .shape(0.08)
+    .mask(dropDrums),
+
+  s("~ ~ sd ~ ~ ~ sd ~")
+    .gain(0.28)
+    .room(0.25)
+    .size(0.6)
+    .hpf(180)
+    .mask(dropDrums),
+
+  s("~ ~ sd ~ ~ ~ sd ~")
+    .gain(0.1)
+    .late(0.015)
+    .hpf(400)
+    .room(0.15)
+    .mask(dropDrums),
+
+  dropFull(s("hh*8"))
+    .gain("<0.14 0.17 0.15 0.19 0.14 0.18 0.16 0.17>")
+    .hpf(4000)
+    .lpf(12000)
+    .pan(sine.range(0.45, 0.55).slow(6)),
+
+  dropFull(s("~ ~ oh ~ ~ ~ oh ~"))
+    .gain(0.14)
+    .room(0.4)
+    .hpf(800),
+
+  // Snare fill every 8 drop bars (cycles 16, 24, …)
+  s("~ ~ sd*4 ~ ~ ~ sd*2")
+    .gain(0.2)
+    .room(0.3)
+    .mask(fullArr)
+    .mask("<0@15 1@1 0@7 1@1 0@999>"),
+
+  dropVar(sparkleRiff.s('gm_vibraphone'))
+    .gain(0.34)
+    .hpf(1800)
+    .lpf(sine.range(3200, 9800).slow(3))
+    .attack(0.001)
+    .release(0.35)
+    .pan(sine.range(0.62, 0.82).slow(2))
+    .delay(0.18)
+    .delaytime(0.1875)
+    .delayfeedback(0.28)
+    .room(0.35)
+    .postgain(0.92),
+
+  lead.s('gm_epiano2')
+    .pan(0.26)
+    .gain(0.24)
+    .attack(0.002)
+    .release(2.2)
+    .lpf("<4000 5200 6800 8000>")
+    .delay(0.25)
+    .delaytime(0.1875)
+    .delayfeedback(0.28)
+    .room(0.75)
+    .size(0.75)
+    .mask(intro12),
+
+  lead.s('gm_synth_choir')
+    .pan(0.74)
+    .gain(0.20)
+    .attack(0.008)
+    .release(2.5)
+    .lpf(6400)
+    .delay(0.3)
+    .delaytime(0.375)
+    .delayfeedback(0.32)
+    .room(0.85)
+    .vowel("<a e i o>")
+    .mask(intro12),
+
+  lead.s('gm_epiano2')
+    .pan(0.42)
+    .gain(0.22)
+    .attack(0.002)
+    .release(1.8)
+    .lpf(5600)
+    .delay(0.18)
+    .delaytime(0.25)
+    .delayfeedback(0.22)
+    .room(0.55)
+    .mask(intro34),
+
+  leadGrid(leadHead).s('gm_epiano2')
+    .pan(0.28)
+    .gain(0.20)
+    .lpf(sine.range(4800, 7200).slow(2))
+    .delay(0.15)
+    .delaytime(0.25)
+    .delayfeedback(0.2)
+    .room(0.45)
+    .mask(preDrop),
+
+  leadGrid(leadHead).s('gm_synth_choir')
+    .pan(0.72)
+    .gain(0.14)
+    .lpf(5200)
+    .delay(0.12)
+    .delaytime(0.375)
+    .delayfeedback(0.18)
+    .room(0.4)
+    .mask(preDrop),
+
+  leadGrid(leadHead).s('gm_vibraphone')
+    .pan(0.52)
+    .gain(0.10)
+    .hpf(2200)
+    .room(0.55)
+    .mask(preDrop),
+
+  dropVar(leadGrid(leadTail).s('gm_epiano2'))
+    .pan(0.30)
+    .gain(0.19)
+    .lpf(sine.range(5600, 9000).slow(4))
+    .delay(0.12)
+    .delaytime(0.1875)
+    .delayfeedback(0.18)
+    .room(0.35),
+
+  dropVar(leadGrid(leadTail).s('gm_synth_choir'))
+    .pan(0.70)
+    .gain(0.13)
+    .lpf(5800)
+    .delay(0.15)
+    .delaytime(0.25)
+    .delayfeedback(0.2)
+    .room(0.4),
+
+  // Breakdown: pad swells, kick + sub only (4 cycles each 16-bar drop loop)
+  padBed.s('gm_pad_warm')
+    .gain(0.14)
+    .attack(0.5)
+    .release(3)
+    .lpf(2600)
+    .room(0.9)
+    .mask(fullArr)
+    .mask(breakOnly),
+
+  note("<f#5 e5 cs5 gs5>")
+    .slow(4)
+    .struct("1 ~ ~ ~")
+    .s('gm_celesta')
+    .gain(0.07)
+    .hpf(2800)
+    .release(0.9)
+    .room(0.65)
+    .delay(0.2)
+    .delayfeedback(0.25)
+    .mask(intro12)
+)

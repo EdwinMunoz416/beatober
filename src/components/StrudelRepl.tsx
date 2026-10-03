@@ -16,6 +16,7 @@ import {
 import { trackEvent } from "@/lib/analytics";
 import {
   getStrudelRuntimeError,
+  reportStrudelRuntimeError,
   strudelErrorKindLabel,
 } from "@/lib/strudel-runtime-errors";
 import { ensureStrudelAudioReady } from "@/lib/strudel-audio";
@@ -157,6 +158,7 @@ export function StrudelRepl({
     } catch (err) {
       setPlaying(false);
       notifyPlayback(false);
+      reportStrudelRuntimeError("scheduler", err);
       if (!canPublish) {
         trackEvent("strudel_error", {
           day,

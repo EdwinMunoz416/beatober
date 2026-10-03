@@ -14,6 +14,7 @@ import {
 } from "@/lib/strudel-runtime-errors";
 import { withQuietPatternEvalConsole } from "@/lib/strudel-eval-console";
 import { beatoberDrawScope } from "@/lib/strudel-draw-bridge";
+import { installStrudelAudioErrorGuard } from "@/lib/strudel-audio-guard";
 import { loadBeatoberSamples } from "@/lib/strudel-prebake";
 import {
   clearGlobalPatternCanvas,
@@ -122,6 +123,7 @@ export async function ensureStrudelBoot(): Promise<StrudelSessionApi> {
       emit();
       const started = performance.now();
       try {
+        installStrudelAudioErrorGuard();
         await ensureStrudelVisuals();
         const web = await import("@strudel/web");
         const nextRepl = (await web.initStrudel({

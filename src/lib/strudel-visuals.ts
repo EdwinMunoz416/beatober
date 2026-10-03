@@ -28,7 +28,7 @@ export async function clearGlobalPatternCanvas(): Promise<void> {
   setGlobalPatternDrawActive(false);
   try {
     const draw = await import("@strudel/draw");
-    // No repl id — `.pianoroll()` / `.draw()` use numeric rAF ids (e.g. `1`), not repl-scoped keys.
+    // No repl id — `.pianoroll()` / `.scope()` use numeric rAF ids (e.g. `1`), not repl-scoped keys.
     draw.cleanupDraw(true);
     const ctx = draw.getDrawContext(STRUDEL_PATTERN_CANVAS_ID);
     if ("clearRect" in ctx) {

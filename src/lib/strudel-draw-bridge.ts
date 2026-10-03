@@ -2,9 +2,8 @@
 
 import { STRUDEL_PATTERN_CANVAS_ID } from "@/lib/strudel-visuals";
 
-type Pat = {
+type Pat = Record<string, (...args: unknown[]) => Pat> & {
   onPaint: (fn: (...args: unknown[]) => void) => Pat;
-  punchcard: (options?: Record<string, unknown>) => Pat;
 };
 
 type VisualFn = (config?: Record<string, unknown>) => unknown;
@@ -29,6 +28,7 @@ function ctxForGlobalDraw(
   return ctx;
 }
 
+/** Full-page `#test-canvas` when a visual omits `ctx` (matches strudel.cc global draw). */
 function bindGlobalDrawCtx(
   getDrawContext: typeof import("@strudel/draw").getDrawContext,
   proto: Record<string, unknown>,
@@ -46,8 +46,34 @@ function bindGlobalDrawCtx(
   };
 }
 
+/** `all(pianoroll)` / `all(punchcard({…}))` — same contract as `@strudel/draw` `pianoroll()`. */
+function makeAllVisual(
+  isPattern: (x: unknown) => boolean,
+  method: string,
+): (arg?: unknown) => unknown {
+  return (arg?: unknown) => {
+    if (arg !== undefined && isPattern(arg)) {
+      return (arg as Pat)[method]();
+    }
+    const opts = (arg ?? {}) as Record<string, unknown>;
+    return (pat: Pat) => pat[method](opts);
+  };
+}
+
+const GLOBAL_DRAW_METHODS = [
+  "punchcard",
+  "wordfall",
+  "spiral",
+  "pitchwheel",
+  "spectrum",
+  "scope",
+  "tscope",
+  "fscope",
+] as const;
+
 /**
- * Global draw: pianoroll → Drawer/onPaint; spectrum/scope → `#test-canvas` + `.draw()`.
+ * Stock Strudel draw/webaudio APIs on `#test-canvas`.
+ * Pianoroll uses Drawer/onPaint (see commented path in `@strudel/draw/pianoroll.mjs`).
  */
 export async function installGlobalDrawBridge(): Promise<void> {
   if (drawBridgeInstalled) return;
@@ -83,30 +109,24 @@ export async function installGlobalDrawBridge(): Promise<void> {
     });
   };
 
-  bindGlobalDrawCtx(draw.getDrawContext, proto, "spectrum");
-  bindGlobalDrawCtx(draw.getDrawContext, proto, "tscope");
-  bindGlobalDrawCtx(draw.getDrawContext, proto, "fscope");
-  bindGlobalDrawCtx(draw.getDrawContext, proto, "spiral");
-  bindGlobalDrawCtx(draw.getDrawContext, proto, "pitchwheel");
-  bindGlobalDrawCtx(draw.getDrawContext, proto, "punchcard");
+  for (const key of GLOBAL_DRAW_METHODS) {
+    bindGlobalDrawCtx(draw.getDrawContext, proto, key);
+  }
 }
 
-/** `all(punchcard)` helper + re-export `pianoroll` for eval scope. */
+/** Extra eval-scope bindings for `all(…)` helpers not exported from `@strudel/draw`. */
 export async function beatoberDrawScope(): Promise<Record<string, unknown>> {
   await installGlobalDrawBridge();
 
   const draw = await import("@strudel/draw");
   const { isPattern } = await import("@strudel/core");
 
-  const punchcard = (arg?: unknown) => {
-    if (arg !== undefined && isPattern(arg)) {
-      return (arg as Pat).punchcard();
-    }
-    const opts = (arg ?? {}) as Record<string, unknown>;
-    return (pat: Pat) => pat.punchcard(opts);
-  };
-
   void draw.getDrawContext(STRUDEL_PATTERN_CANVAS_ID);
 
-  return { pianoroll: draw.pianoroll, punchcard };
+  return {
+    punchcard: makeAllVisual(isPattern, "punchcard"),
+    wordfall: makeAllVisual(isPattern, "wordfall"),
+    spiral: makeAllVisual(isPattern, "spiral"),
+    pitchwheel: makeAllVisual(isPattern, "pitchwheel"),
+  };
 }

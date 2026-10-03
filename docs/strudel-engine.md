@@ -19,13 +19,18 @@ Headless **`@strudel/web`** with a strudel.cc-style **prebake** (samples, synths
 
 ## Visuals (same APIs as strudel.cc)
 
+Prebake loads `@strudel/draw` + `@strudel/webaudio` (Pattern methods + globals like `pianoroll`, `x`/`y`/`animate`, Hydra scope). Full-page visuals target `#test-canvas` when `ctx` is omitted.
+
 | API | Where it renders |
 |-----|------------------|
 | `all(pianoroll)` / `.pianoroll()` | Full-screen `#test-canvas` (Drawer / onPaint) |
-| `.punchcard()` / `.spiral()` / `.pitchwheel()` (no `_`) | Full-page `#test-canvas` (onPaint + global ctx) |
+| `all(punchcard)` / `all(spiral)` / `all(pitchwheel)` / `all(wordfall)` | Full-page `#test-canvas` |
+| `.punchcard()` / `.wordfall()` / `.spiral()` / `.pitchwheel()` | Full-page `#test-canvas` (onPaint + global ctx) |
 | `._pianoroll()` / `._punchcard()` / `._spiral()` / `._pitchwheel()` | Inline canvas widgets in the editor |
 | `._scope()` / `._spectrum()` | Inline canvas in the editor |
-| `.scope()` / `.spectrum()` / `.fscope()` | Full-page `#test-canvas` (Web Audio `.draw()` + `.analyze()`) |
+| `.scope()` / `.tscope()` / `.fscope()` / `.spectrum()` | Full-page `#test-canvas` (Web Audio + `.analyze()` + `.draw()`) |
+| `.draw(fn, options?)` | Custom painter on `#test-canvas` (Strudel rAF draw loop) |
+| `.animate({ … })` | `#test-canvas` (position params `x`/`y`/`w`/`h`, etc.) |
 | `await initHydra()` | `#hydra-canvas` (WebGL, behind UI) |
 
 Hush / stop clears Hydra, draw animations, and mini highlights.
